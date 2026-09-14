@@ -1593,41 +1593,45 @@ pada semua indeks yang dapat dibandingkan. Gunakan toleransi numerik kecil. Uji 
 ## Rangkuman
 
 - Sinyal adalah representasi matematis dari informasi yang berkaitan dengan suatu fenomena atau sistem.
+
 - Sinyal waktu-kontinu ditulis sebagai $x(t)$, sedangkan sinyal waktu-diskret ditulis sebagai $x[n]$.
+
 - Diskret pada domain waktu tidak sama dengan kuantisasi amplitudo.
+
 - Sinyal digital mempunyai waktu diskret dan amplitudo yang direpresentasikan dengan jumlah tingkat yang terbatas.
+
 - Sinyal dapat diklasifikasikan sebagai deterministik atau acak, periodik atau aperiodik, genap atau ganjil, energi atau daya.
 
 - Sinyal periodik kontinu memenuhi
-   ```math
-   x(t+T)=x(t).
-   ```
+```math
+x(t+T)=x(t).
+```
 
 - Sinyal periodik diskret memenuhi
-   ```math
-   x[n+N]=x[n].
-   ```
+```math
+x[n+N]=x[n].
+```
 
 - Tidak semua sinusoid waktu-diskret bersifat periodik.
 
 - Setiap sinyal dapat didekomposisi menjadi komponen genap dan ganjil.
 
 - Energi sinyal kontinu diberikan oleh
-  ```math
-  E
-  =
-  \int_{-\infty}^{\infty}
-  |x(t)|^2\,dt.
-  ```
+```math
+E
+=
+\int_{-\infty}^{\infty}
+|x(t)|^2\,dt.
+```
 
 - Energi sinyal diskret diberikan oleh
-  ```math
-  E
-  =
-  \sum_{n=-\infty}^{\infty}
-  |x[n]|^2.
-  ```
-  
+```math
+E
+=
+\sum_{n=-\infty}^{\infty}
+|x[n]|^2.
+```
+
 - Sinyal dasar yang penting meliputi eksponensial, sinusoidal, unit step, impuls, ramp, dan sinc.
 
 - Operasi utama meliputi penskalaan amplitudo, penjumlahan, perkalian, pergeseran, pencerminan, dan penskalaan waktu.
