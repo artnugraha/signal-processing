@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="1072.3826"
+   height="615.64886"
+   viewBox="0 0 1072.3826 615.64886"
+   version="1.1"
+   id="svg9"
+   sodipodi:docname="operasi-waktu.svg"
+   inkscape:version="1.4 (e7c3feb100, 2024-10-09)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs9" />
+  <sodipodi:namedview
+     id="namedview9"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="0.84951023"
+     inkscape:cx="540.8999"
+     inkscape:cy="354.91038"
+     inkscape:window-width="1920"
+     inkscape:window-height="1124"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg9" />
+  <style
+     id="style1">
+text { font-family: Arial, Helvetica, sans-serif; fill:#111; }
+.title { font-size: 28px; font-weight:700; }
+.label { font-size: 20px; font-weight:700; }
+.axis { stroke:#333; stroke-width:1.5; }
+.sig { fill:none; stroke:#222; stroke-width:3; }
+</style>
+  <rect
+     style="fill:#ffffff;stroke-width:3.77953;stroke-miterlimit:10"
+     id="rect9"
+     width="1072.3826"
+     height="615.64886"
+     x="0"
+     y="0"
+     ry="1.5934939" />
+  <text
+     x="541.14258"
+     y="36.114258"
+     text-anchor="middle"
+     class="title"
+     id="text1">Operasi dasar pada variabel waktu</text>
+  <g
+     transform="translate(21.142555,94.114256)"
+     id="g3">
+    <text
+       x="220"
+       y="20"
+       text-anchor="middle"
+       class="label"
+       id="text2">x(t)</text>
+    <line
+       x1="20"
+       y1="150"
+       x2="420"
+       y2="150"
+       class="axis"
+       id="line2" />
+    <line
+       x1="220"
+       y1="40"
+       x2="220"
+       y2="180"
+       class="axis"
+       id="line3" />
+    <path
+       d="M 120,150 220,55 320,150"
+       class="sig"
+       id="path3" />
+  </g>
+  <g
+     transform="translate(591.14256,94.114256)"
+     id="g5">
+    <text
+       x="220"
+       y="20"
+       text-anchor="middle"
+       class="label"
+       id="text3">x(t-1): geser ke kanan</text>
+    <line
+       x1="20"
+       y1="150"
+       x2="420"
+       y2="150"
+       class="axis"
+       id="line4" />
+    <line
+       x1="220"
+       y1="40"
+       x2="220"
+       y2="180"
+       class="axis"
+       id="line5" />
+    <path
+       d="M 220,150 320,55 420,150"
+       class="sig"
+       id="path5" />
+  </g>
+  <g
+     transform="translate(21.142555,384.11426)"
+     id="g7">
+    <text
+       x="220"
+       y="20"
+       text-anchor="middle"
+       class="label"
+       id="text5">x(2t): kompresi waktu</text>
+    <line
+       x1="20"
+       y1="150"
+       x2="420"
+       y2="150"
+       class="axis"
+       id="line6" />
+    <line
+       x1="220"
+       y1="40"
+       x2="220"
+       y2="180"
+       class="axis"
+       id="line7" />
+    <path
+       d="m 170,150 50,-95 50,95"
+       class="sig"
+       id="path7" />
+  </g>
+  <g
+     transform="translate(591.14256,384.11426)"
+     id="g9">
+    <text
+       x="220"
+       y="20"
+       text-anchor="middle"
+       class="label"
+       id="text7">x(t/2): ekspansi waktu</text>
+    <line
+       x1="20"
+       y1="150"
+       x2="420"
+       y2="150"
+       class="axis"
+       id="line8" />
+    <line
+       x1="220"
+       y1="40"
+       x2="220"
+       y2="180"
+       class="axis"
+       id="line9" />
+    <path
+       d="M 40,150 220,55 400,150"
+       class="sig"
+       id="path9" />
+  </g>
+</svg>

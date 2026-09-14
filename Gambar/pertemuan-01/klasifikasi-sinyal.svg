@@ -1,0 +1,369 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="1100"
+   height="650"
+   viewBox="0 0 1100 650"
+   version="1.1"
+   id="svg30"
+   sodipodi:docname="klasifikasi-sinyal.svg"
+   inkscape:version="1.4 (e7c3feb100, 2024-10-09)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs30" />
+  <sodipodi:namedview
+     id="namedview30"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="0.94099595"
+     inkscape:cx="494.68863"
+     inkscape:cy="324.65602"
+     inkscape:window-width="1920"
+     inkscape:window-height="1124"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg30" />
+  <style
+     id="style1">
+text { font-family: Arial, Helvetica, sans-serif; fill:#111; }
+.title { font-size: 28px; font-weight: 700; }
+.head { font-size: 21px; font-weight: 700; }
+.body { font-size: 18px; }
+.box { fill:#fff; stroke:#222; stroke-width:2; rx:14; }
+.axis { stroke:#333; stroke-width:1.5; }
+.sample { stroke:#333; stroke-width:2; }
+.dot { fill:#111; }
+</style>
+  <rect
+     style="fill:#ffffff;stroke-width:3.77953;stroke-miterlimit:10"
+     id="rect30"
+     width="1102.0239"
+     height="649.31201"
+     x="0"
+     y="2.1254077"
+     ry="1.5934939" />
+  <text
+     x="550"
+     y="42"
+     text-anchor="middle"
+     class="title"
+     id="text1">Klasifikasi sinyal berdasarkan domain waktu dan amplitudo</text>
+  <rect
+     x="70"
+     y="95"
+     width="450"
+     height="210"
+     class="box"
+     id="rect1" />
+  <rect
+     x="580"
+     y="95"
+     width="450"
+     height="210"
+     class="box"
+     id="rect2" />
+  <rect
+     x="70"
+     y="360"
+     width="450"
+     height="210"
+     class="box"
+     id="rect3" />
+  <rect
+     x="580"
+     y="360"
+     width="450"
+     height="210"
+     class="box"
+     id="rect4" />
+  <text
+     x="295"
+     y="130"
+     text-anchor="middle"
+     class="head"
+     id="text4">Analog</text>
+  <text
+     x="805"
+     y="130"
+     text-anchor="middle"
+     class="head"
+     id="text5">Waktu-diskret, amplitudo kontinu</text>
+  <text
+     x="295"
+     y="395"
+     text-anchor="middle"
+     class="head"
+     id="text6">Waktu-kontinu, amplitudo diskret</text>
+  <text
+     x="805"
+     y="395"
+     text-anchor="middle"
+     class="head"
+     id="text7">Digital</text>
+  <text
+     x="295"
+     y="155"
+     text-anchor="middle"
+     class="body"
+     id="text8">waktu kontinu, amplitudo kontinu</text>
+  <text
+     x="805"
+     y="155"
+     text-anchor="middle"
+     class="body"
+     id="text9">data-tercacah</text>
+  <text
+     x="295"
+     y="420"
+     text-anchor="middle"
+     class="body"
+     id="text10">representasi terkuantisasi</text>
+  <text
+     x="805"
+     y="420"
+     text-anchor="middle"
+     class="body"
+     id="text11">waktu diskret, amplitudo diskret</text>
+  <!-- analog curve -->
+  <line
+     x1="120"
+     y1="260"
+     x2="470"
+     y2="260"
+     class="axis"
+     id="line11" />
+  <line
+     x1="150"
+     y1="185"
+     x2="150"
+     y2="275"
+     class="axis"
+     id="line12" />
+  <path
+     d="M150,230 C200,170 245,180 285,220 C330,270 390,245 455,195"
+     fill="none"
+     stroke="#222"
+     stroke-width="3"
+     id="path12" />
+  <!-- sampled -->
+  <line
+     x1="630"
+     y1="260"
+     x2="980"
+     y2="260"
+     class="axis"
+     id="line13" />
+  <line
+     x1="660"
+     y1="185"
+     x2="660"
+     y2="275"
+     class="axis"
+     id="line14" />
+  <g
+     id="g20">
+    <line
+       x1="690"
+       y1="260"
+       x2="690"
+       y2="225"
+       class="sample"
+       id="line15" />
+    <circle
+       cx="690"
+       cy="225"
+       r="5"
+       class="dot"
+       id="circle15" />
+    <line
+       x1="740"
+       y1="260"
+       x2="740"
+       y2="195"
+       class="sample"
+       id="line16" />
+    <circle
+       cx="740"
+       cy="195"
+       r="5"
+       class="dot"
+       id="circle16" />
+    <line
+       x1="790"
+       y1="260"
+       x2="790"
+       y2="210"
+       class="sample"
+       id="line17" />
+    <circle
+       cx="790"
+       cy="210"
+       r="5"
+       class="dot"
+       id="circle17" />
+    <line
+       x1="840"
+       y1="260"
+       x2="840"
+       y2="255"
+       class="sample"
+       id="line18" />
+    <circle
+       cx="840"
+       cy="255"
+       r="5"
+       class="dot"
+       id="circle18" />
+    <line
+       x1="890"
+       y1="260"
+       x2="890"
+       y2="235"
+       class="sample"
+       id="line19" />
+    <circle
+       cx="890"
+       cy="235"
+       r="5"
+       class="dot"
+       id="circle19" />
+    <line
+       x1="940"
+       y1="260"
+       x2="940"
+       y2="205"
+       class="sample"
+       id="line20" />
+    <circle
+       cx="940"
+       cy="205"
+       r="5"
+       class="dot"
+       id="circle20" />
+  </g>
+  <!-- continuous time discrete amplitude -->
+  <line
+     x1="120"
+     y1="525"
+     x2="470"
+     y2="525"
+     class="axis"
+     id="line21" />
+  <line
+     x1="150"
+     y1="450"
+     x2="150"
+     y2="540"
+     class="axis"
+     id="line22" />
+  <path
+     d="M150,500 L210,500 L210,475 L270,475 L270,520 L335,520 L335,465 L400,465 L400,500 L455,500"
+     fill="none"
+     stroke="#222"
+     stroke-width="3"
+     id="path22" />
+  <!-- digital -->
+  <line
+     x1="630"
+     y1="525"
+     x2="980"
+     y2="525"
+     class="axis"
+     id="line23" />
+  <line
+     x1="660"
+     y1="450"
+     x2="660"
+     y2="540"
+     class="axis"
+     id="line24" />
+  <g
+     id="g30">
+    <line
+       x1="690"
+       y1="525"
+       x2="690"
+       y2="500"
+       class="sample"
+       id="line25" />
+    <circle
+       cx="690"
+       cy="500"
+       r="5"
+       class="dot"
+       id="circle25" />
+    <line
+       x1="740"
+       y1="525"
+       x2="740"
+       y2="475"
+       class="sample"
+       id="line26" />
+    <circle
+       cx="740"
+       cy="475"
+       r="5"
+       class="dot"
+       id="circle26" />
+    <line
+       x1="790"
+       y1="525"
+       x2="790"
+       y2="475"
+       class="sample"
+       id="line27" />
+    <circle
+       cx="790"
+       cy="475"
+       r="5"
+       class="dot"
+       id="circle27" />
+    <line
+       x1="840"
+       y1="525"
+       x2="840"
+       y2="525"
+       class="sample"
+       id="line28" />
+    <circle
+       cx="840"
+       cy="525"
+       r="5"
+       class="dot"
+       id="circle28" />
+    <line
+       x1="890"
+       y1="525"
+       x2="890"
+       y2="500"
+       class="sample"
+       id="line29" />
+    <circle
+       cx="890"
+       cy="500"
+       r="5"
+       class="dot"
+       id="circle29" />
+    <line
+       x1="940"
+       y1="525"
+       x2="940"
+       y2="475"
+       class="sample"
+       id="line30" />
+    <circle
+       cx="940"
+       cy="475"
+       r="5"
+       class="dot"
+       id="circle30" />
+  </g>
+</svg>
