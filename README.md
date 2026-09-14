@@ -1,16 +1,13 @@
 # Pengolahan Sinyal
 
-Repositori ini berisi materi kuliah **Pengolahan Sinyal** untuk mahasiswa **Teknik Fisika** dengan bobot **3 SKS**. Materi disusun untuk 13 pertemuan, masing-masing sekitar 3 jam, dengan penekanan pada pemahaman konsep, formulasi matematis, contoh hitungan tangan, visualisasi, dan implementasi komputasional menggunakan Python.
+Repositori ini berisi materi kuliah **Pengolahan Sinyal** untuk mahasiswa **Teknik Fisika** dengan bobot **3 SKS**. Materi disusun untuk 13 pertemuan dari 16 pekan efektif kuliah (ada 3 pekan yang terambil untuk UTS, UAS, dan tugas besar). Setiap pertemuan kuliah masing-masing sekitar 3 jam, dengan penekanan pada pemahaman konsep, formulasi matematis, contoh hitungan tangan, visualisasi, dan implementasi komputasi menggunakan Python.
 
-Catatan kuliah disusun dengan mengacu terutama pada buku *Pengolahan Sinyal Digital* karya D. Gunawan dan F. H. Juwono, kemudian dilengkapi dengan referensi pengolahan sinyal lain untuk topik yang belum dibahas secara memadai dalam buku utama.
 
-Implementasi komputasi diupayakan menggunakan pustaka sesedikit mungkin. Sebagian besar contoh menggunakan
-
+Implementasi komputasi diupayakan menggunakan pustaka Python sesedikit mungkin. Sebagian besar contoh program dalam kuliah ini hanya memanggil dua pustaka utama untuk komputasi dengan Python.
 ```python
 import numpy as np
 import matplotlib.pyplot as plt
 ```
-
 Pustaka `scipy` hanya digunakan pada beberapa bagian tertentu ketika diperlukan.
 
 ---
