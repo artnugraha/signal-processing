@@ -900,13 +900,13 @@ t, & t\ge 0,\\
 
 Kita akan menggunakan definisi ternormalisasi untuk sinc, yakni
 ```math
-\operatorname{sinc}(x)
+\text{sinc}(x)
 =
 \frac{\sin(\pi x)}{\pi x},
 ```
 dengan nilai limit
 ```math
-\operatorname{sinc}(0)=1.
+\text{sinc}(0)=1.
 ```
 Dalam NumPy, fungsi
 ```python
