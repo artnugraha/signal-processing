@@ -18,7 +18,7 @@ Pustaka `scipy` hanya digunakan pada beberapa bagian tertentu ketika diperlukan.
 | No. | Topik | Link Catatan Kuliah |
 |---:|---|---|
 | 1 | 📈 Pengantar Pengolahan Sinyal dan Representasi Sinyal | [Materi 1](Catatan-Kuliah/pertemuan-01.md) |
-| 2 | ⚙️ Sistem, Sistem LTI Waktu-Diskret, dan Persamaan Selisih | Menyusul |
+| 2 | ⚙️ Sinyal dan Sistem | [Materi 2](Catatan-Kuliah/pertemuan-02.md) |
 | 3 | 🧩 Respons Impuls, Konvolusi, dan Korelasi | Menyusul |
 | 4 | 🎚️ Sampling, Kuantisasi, ADC, dan DAC | Menyusul |
 | 5 | 🌊 Representasi Fourier: FS, FT, dan DTFT | Menyusul |
