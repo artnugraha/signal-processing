@@ -469,8 +469,14 @@ x_o(t)
 
 ### Eksperimen Python: dekomposisi genap-ganjil
 
-Program Python berikut ini menguraikan sinyal asli $x(t)
-= 3\cos(2t)+2\sin(5t)$ menjadi komponen genap dan ganjilnya. 
+Program Python berikut ini menguraikan sinyal:
+$$
+x(t)
+=
+\begin{cases}e^{-t},&t\ge0,\\0,&t<0.\end{cases}
+$$
+menjadi komponen genap dan ganjilnya. 
+
 ```python
 import numpy as np
 import matplotlib.pyplot as plt
