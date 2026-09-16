@@ -1500,7 +1500,7 @@ untuk
 ```math
 N=5,\;10,\;20,\;50,\;100.
 ```
-Bandingkan dengan energi teoretisnya. Buat plot `E_N` terhadap `N`.
+Bandingkan dengan energi teoretisnya. Buat plot $E_N$ terhadap $N$.
 
 ---
 
