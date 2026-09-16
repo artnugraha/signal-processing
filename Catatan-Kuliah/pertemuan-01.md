@@ -593,14 +593,8 @@ P
 ### Klasifikasi sinyal energi vs. sinyal daya
 
 Sinyal dapat diklasifikasikan menurut energi dan dayanya. Sinyal energi memenuhi
-```math
-0<E<\infty
-```
-dan mempunyai daya rata-rata nol. Sementara itu, sinyal daya memenuhi
-```math
-0<P<\infty
-```
-dan biasanya mempunyai energi total tak berhingga.
+$0 < E < \infty$
+dan mempunyai daya rata-rata nol. Sementara itu, sinyal daya memenuhi $0<P<\infty$ dan biasanya mempunyai energi total tak berhingga.
 
 Catatan penting: Tidak semua sinyal harus termasuk salah satu dari kedua kelas tersebut.
 
