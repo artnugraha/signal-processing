@@ -470,11 +470,11 @@ x_o(t)
 ### Eksperimen Python: dekomposisi genap-ganjil
 
 Program Python berikut ini menguraikan sinyal:
-$$
+```math
 x(t)
 =
 \begin{cases}e^{-t},&t\ge0,\\0,&t<0.\end{cases}
-$$
+```
 menjadi komponen genap dan ganjilnya. 
 
 ```python
