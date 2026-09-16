@@ -545,7 +545,7 @@ P
 \int_{-T/2}^{T/2}
 |x(t)|^2\,dt.
 ```
-Untuk sinyal periodik dengan periode `T_0`,
+Untuk sinyal periodik dengan periode $T_0$,
 ```math
 P
 =
@@ -575,7 +575,7 @@ P
 \sum_{n=-N}^{N}
 |x[n]|^2.
 ```
-Untuk sinyal periodik dengan periode `N_0`,
+Untuk sinyal periodik dengan periode $N_0$,
 ```math
 P
 =
@@ -1576,7 +1576,7 @@ Gambarkan:
 
 ---
 
-### 8. Pemeriksaan periodisitas secar anumerik
+### 8. Pemeriksaan periodisitas secara numerik
 
 Buatlah fungsi Python
 ```python
