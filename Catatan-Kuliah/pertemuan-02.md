@@ -21,7 +21,7 @@ Setelah mengikuti kuliah ini, mahasiswa diharapkan mampu menghubungkan model mat
 
 ---
 
-## Aturan Pengolahan Sinyal
+## Aturan pengolahan sinyal
 
 Misalkan sebuah sensor temperatur menghasilkan satu data setiap detik. Deretan data tersebut merupakan sinyal waktu-diskret, tetapi pembacaan sesaat dapat berfluktuasi akibat derau pengukuran.
 
@@ -836,7 +836,7 @@ Istilah **keadaan awal diam** berarti seluruh elemen penyimpanan yang relevan di
 Persamaan orde satu hanya memerlukan satu nilai keluaran lama untuk menghitung keluaran berikutnya. Variabel penyimpanan tersebut diperbarui sesudah keluaran sekarang selesai dihitung.
 
 1. Baca koefisien $a$, $b$, masukan $x[n]$, dan nilai awal $q=y[-1]$.
-2. Tetapkan `y_lama` sama dengan $q$.
+2. Tetapkan $\texttt{y\_lama}$ sama dengan $q$.
 3. Untuk setiap indeks $n$, hitung $y[n]=a\,\texttt{y\_lama}+b\,x[n]$.
 4. Setelah penghitungan itu, perbarui `y_lama` menjadi $y[n]$.
 5. Ulangi sampai seluruh sampel masukan selesai diproses.
