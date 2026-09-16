@@ -1333,7 +1333,7 @@ x(t)
 =
 3+2t+t^2-t^3,
 ```
-tentukan `x_e(t)` (fungsi dekomposisi genap) dan `x_o(t)` (fungsi dekomposisi ganjil).
+tentukan $x_e(t)$ (fungsi dekomposisi genap) dan $x_o(t)$ (fungsi dekomposisi ganjil).
 
 ---
 
