@@ -15,7 +15,7 @@ Setelah mempelajari catatan ini, mahasiswa diharapkan dapat menjelaskan hubungan
 - Menghubungkan periode sampling, frekuensi sampling, dan frekuensi sinyal diskret.
 - Menjelaskan teorema sampling, aliasing, filter antialiasing, dan *sample-and-hold*.
 - Menghitung tingkat, langkah, dan galat kuantisasi serta kode biner suatu sampel.
-- Memahami asumsi dasar SQNR dan tujuan kuantisasi tidak seragam.
+- Memahami asumsi dasar *signal-to-quantization-noise ratio* (SQNR) dan tujuan kuantisasi tidak seragam.
 - Memeriksa hasil hitungan melalui program Python yang menggunakan NumPy dan Matplotlib.
 
 ---
@@ -1295,7 +1295,7 @@ Program [08_kuantisasi_pcm.py](../Kode/pertemuan-02/08_kuantisasi_pcm.py) juga m
 
 ### Model derau kuantisasi dan SQNR
 
-Galat kuantisasi sebenarnya merupakan akibat deterministik dari aturan pemetaan amplitudo. Untuk analisis tertentu, galat ini dapat didekati sebagai peubah acak seragam pada interval $[-\Delta/2,\Delta/2]$ jika sinyal menjelajahi cukup banyak tingkat dan hubungan galat dengan sinyal cukup lemah, sebagaimana juga dibahas dalam Referensi 4.
+Galat kuantisasi sebenarnya merupakan akibat deterministik dari aturan pemetaan amplitudo. Untuk analisis tertentu, galat ini dapat didekati sebagai variabel acak seragam pada interval $[-\Delta/2,\Delta/2]$ jika sinyal menjelajahi cukup banyak tingkat dan hubungan galat dengan sinyal cukup lemah.
 
 Model tersebut bukan sifat universal setiap sinyal terkuantisasi. Sebagai contoh, masukan nol pada kuantisator mid-rise yang digunakan di sini selalu menghasilkan $+\Delta/2$, sehingga galatnya konstan dan tidak memiliki rata-rata nol.
 
@@ -1307,7 +1307,7 @@ P_q=\sigma_q^2
 =\frac{\Delta^2}{12}.
 ```
 
-Rasio daya sinyal terhadap daya galat kuantisasi disebut *signal-to-quantization-noise ratio* atau SQNR. Besarannya dalam desibel dihitung menggunakan rasio daya, sehingga faktor pengalinya adalah sepuluh.
+Rasio daya sinyal terhadap daya galat kuantisasi disebut *signal-to-quantization-noise ratio* (SQNR). Besarannya dalam desibel dihitung menggunakan rasio daya, sehingga faktor pengalinya adalah sepuluh.
 
 ```math
 \mathrm{SQNR}=10\log_{10}\left(\frac{P_x}{P_q}\right)\ \mathrm{dB}.
