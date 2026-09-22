@@ -2,16 +2,14 @@
 
 ## Tujuan pembelajaran
 
-Pada pertemuan pertama, kita mempelajari representasi sinyal dan operasi dasar terhadap sinyal. Pada pertemuan ini, pembahasan bergerak dari aturan yang mengolah sinyal menuju cara memperoleh data digital dari pengukuran analog.
-
-Urutan materi mengikuti bagian 2.1, 2.2, 3.1, 3.2, dan 3.3 pada buku D. Gunawan dan F. H. Juwono. Pembahasannya disusun sebagai satu alur: pengertian sistem, sifat sistem, komponen pembentuk sistem, persamaan selisih, lalu sampling, kuantisasi, dan pengkodean digital.
+Pada pertemuan pertama, kita mempelajari representasi sinyal dan operasi dasar terhadap sinyal. Pada pertemuan ini, pembahasan berjalan dari aturan yang mengolah sinyal menuju cara memperoleh data digital dari pengukuran analog.
 
 Setelah mempelajari catatan ini, mahasiswa diharapkan dapat menjelaskan hubungan antara model matematis dan pelaksanaan pengolahan sinyal. Kemampuan khusus yang dituju dirangkum dalam daftar berikut.
 
 - Menyatakan sistem sebagai pemetaan masukan menjadi keluaran.
-- Menguji linearitas, invariansi waktu, memori, kausalitas, invertibilitas, dan stabilitas BIBO.
+- Menguji linearitas, invariansi waktu, memori, kausalitas, invertibilitas, dan stabilitas *bounded-input bounded-output* (BIBO).
 - Menggunakan penjumlah, pengali, penunda, dan diagram blok untuk menyatakan operasi sistem.
-- Menyusun serta menghitung persamaan selisih rekursif dan nonrekursif.
+- Menyusun serta menghitung persamaan selisih atau persamaan perbedaan (*difference equation*) rekursif dan nonrekursif.
 - Menentukan solusi homogen dan partikular serta menerapkan kondisi awal secara tepat.
 - Membedakan solusi partikular, respons masukan-nol, dan respons keadaan-nol.
 - Menghubungkan periode sampling, frekuensi sampling, dan frekuensi sinyal diskret.
@@ -22,7 +20,7 @@ Setelah mempelajari catatan ini, mahasiswa diharapkan dapat menjelaskan hubungan
 
 ---
 
-## Pendahuluan: dari sinyal menuju sistem
+## Pendahuluan: sistem sebagai aturan pengolahan sinyal
 
 Sebuah sensor mengubah besaran fisis menjadi sinyal yang dapat diukur, misalnya temperatur menjadi tegangan. Sinyal tersebut kemudian dapat diperkuat, disaring, dicuplik, dan diubah menjadi bilangan yang diolah komputer.
 
@@ -43,7 +41,7 @@ Hasil rata-rata lebih sedikit mengikuti lonjakan sesaat dibandingkan dengan peng
 
 Sistem waktu-kontinu menerima dan menghasilkan sinyal yang didefinisikan terhadap waktu kontinu. Sistem waktu-diskret menerima dan menghasilkan deretan nilai pada indeks bilangan bulat.
 
-Kita menuliskan operator sistem sebagai $\mathcal{T}$. Hubungan masukan-keluaran untuk kedua jenis sistem dinyatakan sebagai berikut.
+Kita menuliskan operator sistem sebagai $\mathcal{T}$ ("transformasi"). Hubungan masukan-keluaran untuk kedua jenis sistem dinyatakan sebagai berikut.
 
 ```math
 y(t)=\mathcal{T}\{x\}(t),
@@ -59,7 +57,7 @@ Sistem tidak harus mengubah nilai masukan menjadi nilai yang berbeda. Sistem ide
 
 Dalam pengujian sifat sistem, kita umumnya menggunakan sinyal yang didefinisikan untuk seluruh $n\in\mathbb{Z}$. Dalam program, rekaman hanya memuat sejumlah sampel, sehingga nilai sebelum atau sesudah rekaman harus dinyatakan melalui asumsi tambahan.
 
-Jika pemrosesan dimulai pada $n=0$, kita dapat menetapkan $x[n]=0$ untuk $n<0$ atau memberikan riwayat masukan tertentu. Kondisi awal elemen penyimpanan juga perlu dinyatakan, sebab masukan yang sama dapat menghasilkan keluaran berbeda ketika keadaan awal sistem berbeda.
+Jika pemrosesan dimulai pada $n=0$, kita dapat menetapkan $x[n]=0$ untuk $n<0$ atau memberikan riwayat masukan tertentu. Kondisi awal elemen penyimpanan juga perlu dinyatakan, karena masukan yang sama dapat menghasilkan keluaran berbeda ketika keadaan awal sistem berbeda.
 
 ---
 
@@ -69,7 +67,7 @@ Sifat sistem menjawab beberapa pertanyaan yang berbeda tentang aturan pengolahan
 
 ### Linearitas, homogenitas, dan superposisi
 
-Sistem linear memungkinkan pengaruh beberapa masukan dihitung terpisah lalu digabungkan. Hal ini berguna ketika sinyal pengukuran terdiri atas beberapa komponen, misalnya getaran mesin, gangguan periodik, dan derau.
+Sistem linear memungkinkan pengaruh beberapa masukan dihitung terpisah lalu digabungkan. Hal ini berguna ketika sinyal pengukuran terdiri atas beberapa komponen, misalnya getaran mesin, gangguan periodik, dan derau (*noise*).
 
 #### Homogenitas
 
@@ -98,8 +96,11 @@ Dalam catatan ini, kata superposisi digunakan untuk bentuk gabungan tersebut. Pe
 
 #### Contoh: rata-rata tiga sampel
 
-Tinjau sistem $\mathcal{T}\{x\}[n]=(x[n]+x[n-1]+x[n-2])/3$. Kita mengganti masukannya dengan kombinasi umum $\alpha x_1+\beta x_2$ untuk menguji linearitas.
-
+Tinjau sistem:
+```math
+\mathcal{T}\{x\}[n]=(x[n]+x[n-1]+x[n-2])/3. 
+```
+Kita ganti masukannya dengan kombinasi umum $\alpha x_1+\beta x_2$ untuk menguji linearitas.
 ```math
 \begin{aligned}
 \mathcal{T}\{\alpha x_1+\beta x_2\}[n]
@@ -117,9 +118,9 @@ Hasil ini berlaku tanpa memilih bentuk khusus bagi kedua masukan. Dengan demikia
 
 Sistem $y[n]=x^2[n]$ tidak homogen karena $\mathcal{T}\{2x\}=4x^2$, sedangkan $2\mathcal{T}\{x\}=2x^2$. Pada satu sampel dengan $x=3$, kedua hasil itu adalah $36$ dan $18$.
 
-Hubungan $y[n]=2x[n]+3$ juga tidak linear meskipun grafik keluaran terhadap masukan berbentuk garis lurus. Pemetaan ini disebut afin karena memiliki tambahan tetap, dan masukan nol memberikan keluaran tiga.
+Hubungan $y[n]=2x[n]+3$ juga tidak linear meskipun grafik keluaran terhadap masukan berbentuk garis lurus. Pemetaan ini disebut afin (*affine*) karena memiliki tambahan tetap, dan masukan nol memberikan keluaran tiga.
 
-Setiap pemetaan linear harus memenuhi $\mathcal{T}\{0\}=0$. Syarat ini perlu tetapi belum cukup, sebab penguadratan memenuhi syarat tersebut walaupun tidak linear.
+Setiap pemetaan linear harus memenuhi $\mathcal{T}\{0\}=0$. Syarat ini perlu (*necessary*) tetapi belum cukup (*sufficient*), karena penguadratan memenuhi syarat tersebut walaupun tidak linear.
 
 #### Eksperimen Python: dua jalur superposisi
 
@@ -216,7 +217,7 @@ Sistem nonlinear $y[n]=x^2[n]$ justru invarian waktu karena kedua jalur menghasi
 
 #### Eksperimen Python: urutan pergeseran dan pemrosesan
 
-Program berikut mendefinisikan masukan sebagai fungsi indeks agar dapat dievaluasi pada indeks negatif maupun positif. Cara ini menghindari kekeliruan akibat menganggap batas larik sebagai batas matematis sinyal.
+Program berikut mendefinisikan masukan sebagai fungsi indeks agar dapat dievaluasi pada indeks negatif maupun positif. Cara ini menghindari kekeliruan akibat menganggap batas larik (*array*) sebagai batas matematis sinyal.
 
 ```python
 import numpy as np
@@ -268,13 +269,12 @@ fig.tight_layout()
 plt.show()
 ```
 
-Skrip tersedia di [02_invariansi_waktu.py](../Kode/pertemuan-02/02_invariansi_waktu.py). Perhatikan bahwa kedua jalur pada sistem rata-rata berhimpit, sedangkan pada penguatan yang berubah terhadap indeks keduanya berbeda.
+Skrip tersedia di [02_invariansi_waktu.py](../Kode/pertemuan-02/02_invariansi_waktu.py). Perhatikan bahwa kedua jalur pada sistem rata-rata berhimpit, sedangkan pada sistem penguatan yang berubah terhadap indeks keduanya berbeda.
 
 ![Perbandingan dua jalur pengujian invariansi waktu](../Gambar/pertemuan-02/invariansi-waktu.svg)
 
-Penundaan biasa pada rekaman dengan riwayat nol berbeda dari pergeseran melingkar. Fungsi `np.roll` melakukan pergeseran melingkar, sehingga elemen yang melewati satu ujung larik muncul kembali pada ujung lainnya.
 
-### Sistem dengan dan tanpa memori
+### Sistem tanpa memori dan dengan memori
 
 Sistem tanpa memori hanya menggunakan masukan pada waktu yang sama untuk menentukan keluaran sekarang. Penguat $y[n]=Kx[n]$ dan penguadratan $y[n]=x^2[n]$ sama-sama tanpa memori meskipun linearitasnya berbeda.
 
@@ -292,7 +292,7 @@ Jika arus konstan $1\ \mathrm{mA}$ mengalir selama $2\ \mathrm{ms}$ pada kapasit
 
 Sistem kausal menentukan keluaran sekarang menggunakan masukan sekarang, masukan masa lalu, dan keadaan awal yang telah diketahui. Sistem nonkausal memerlukan setidaknya satu masukan masa depan untuk menentukan suatu keluaran.
 
-Definisi yang teliti membandingkan dua masukan yang sama hingga indeks $n_*$. Dengan keadaan awal yang sama, sistem kausal harus menghasilkan keluaran yang sama pada $n_*$ meskipun kedua masukan berbeda setelah waktu itu.
+Definisi yang teliti membandingkan dua masukan yang sama hingga indeks $n_{\star}$. Dengan keadaan awal yang sama, sistem kausal harus menghasilkan keluaran yang sama pada $n_{\star}$ meskipun kedua masukan berbeda setelah waktu itu.
 
 | Aturan sistem | Memori | Kausalitas | Informasi yang diperlukan |
 |---|---|---|---|
