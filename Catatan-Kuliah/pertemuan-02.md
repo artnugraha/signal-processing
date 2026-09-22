@@ -12,7 +12,7 @@ Setelah mempelajari catatan ini, mahasiswa diharapkan dapat menjelaskan hubungan
 - Menyusun serta menghitung persamaan selisih atau persamaan perbedaan (*difference equation*) rekursif dan nonrekursif.
 - Menentukan solusi homogen dan partikular serta menerapkan kondisi awal secara tepat.
 - Membedakan solusi partikular, respons masukan-nol, dan respons keadaan-nol.
-- Menghubungkan periode sampling, frekuensi sampling, dan frekuensi sinyal diskret.
+- Menghubungkan periode pencuplikan (*sampling*), frekuensi sampling, dan frekuensi sinyal diskret.
 - Menjelaskan teorema sampling, aliasing, filter antialiasing, dan *sample-and-hold*.
 - Menghitung tingkat, langkah, dan galat kuantisasi serta kode biner suatu sampel.
 - Memahami asumsi dasar *signal-to-quantization-noise ratio* (SQNR) dan tujuan kuantisasi tidak seragam.
@@ -1059,9 +1059,9 @@ Filter antialiasing harus mengurangi komponen yang dapat terlipat ke pita pengam
 
 Menaikkan $f_s$ memperlebar daerah frekuensi yang dapat ditangani, tetapi meningkatkan laju data dan kebutuhan komputasi. Pilihan yang masuk akal menggabungkan batas pita sinyal, filter analog, dan kapasitas penyimpanan, bukan hanya memperbesar satu parameter tanpa memeriksa keseluruhan sistem.
 
-### Pengayaan: sampling sinyal pita lewat
+### Pengayaan: sampling sinyal lolos-pita (*bandpass signal*)
 
-Syarat $f_s>2f_{\max}$ merupakan pilihan sederhana untuk sinyal pita dasar atau ketika letak spektrum tidak dimanfaatkan. Sinyal pita lewat yang hanya menempati $f_L\le |f|\le f_H$ dapat disampling lebih rendah melalui pemilihan interval $f_s$ yang mencegah salinan spektrumnya bertumpang tindih, dengan penjelasan tambahan tentang salinan spektrum pada Referensi 5.
+Syarat $f_s>2f_{\max}$ merupakan pilihan sederhana untuk sinyal pita dasar atau ketika letak spektrum tidak dimanfaatkan. Sinyal lolos-pita (*bandpass signal*) yang hanya menempati $f_L\le |f|\le f_H$ dapat disampling lebih rendah melalui pemilihan interval $f_s$ yang mencegah salinan spektrumnya bertumpang tindih, dengan penjelasan tambahan tentang salinan spektrum pada Referensi 5.
 
 Dengan lebar pita $W=f_H-f_L$, salah satu keluarga interval sampling ideal adalah sebagai berikut. Bilangan bulat $m$ menyatakan pilihan penempatan salinan spektrum, bukan jumlah bit atau jumlah sampel.
 
@@ -1599,7 +1599,7 @@ Setelah konversi, gunakan $y[n]=0.6y[n-1]+0.4x_q[n]$ dengan keadaan awal nol. Bu
 
 ## Latihan pemrograman
 
-Kerjakan paling banyak sepuluh tugas berikut menggunakan NumPy dan Matplotlib. Setiap jawaban perlu menyertakan program yang dapat dijalankan, grafik berlabel dan bersatuan jika relevan, serta penjelasan hasil dalam sedikitnya dua kalimat.
+Latihan di bawah ini dapat dikerjakan menggunakan Python dengan pustaka NumPy dan Matplotlib.
 
 ### 1. Penguji superposisi
 
