@@ -1,220 +1,190 @@
-"""Membuat seluruh ilustrasi SVG/PNG dari diagram dan demo kuliah.
-
-Jalankan: python Kode/pertemuan-02/00_buat_ilustrasi.py
-Pustaka tambahan di luar NumPy dan Matplotlib tidak diperlukan.
-"""
-
+"""Bangun ulang seluruh SVG dan PNG dengan NumPy serta Matplotlib."""
 from pathlib import Path
 import runpy
-
-import numpy as np
 import matplotlib
 
-matplotlib.use("Agg")
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
-from matplotlib.patches import Circle, FancyArrowPatch, FancyBboxPatch
+from matplotlib.patches import FancyBboxPatch, Circle, FancyArrowPatch
 
-
-AKAR = Path(__file__).resolve().parents[2]
-GAMBAR = AKAR / "Gambar" / "pertemuan-02"
-GAMBAR.mkdir(parents=True, exist_ok=True)
-BIRU = "#225D91"
-HIJAU = "#087F72"
-JINGGA = "#B65020"
-GELAP = "#253442"
-
+ROOT = Path(__file__).resolve().parents[2]
+OUT = ROOT / 'Gambar' / 'pertemuan-02'
+OUT.mkdir(parents=True, exist_ok=True)
 plt.rcParams.update({
-    "font.family": "DejaVu Sans",
-    "font.size": 11,
-    "axes.labelsize": 12,
-    "legend.fontsize": 10,
-    "axes.spines.top": False,
-    "axes.spines.right": False,
-    "svg.fonttype": "none",
-    "axes.prop_cycle": plt.cycler(color=[BIRU, JINGGA, HIJAU, "#8456A0"]),
+    'font.family': 'DejaVu Sans', 'font.size': 11,
+    'svg.fonttype': 'none', 'axes.spines.top': False,
+    'axes.spines.right': False, 'savefig.facecolor': 'white',
+    'axes.prop_cycle': plt.cycler(color=['#1765ad', '#e67e22', '#16875f', '#8054ac']),
 })
+BLUE, INK, PALE = '#1765ad', '#243746', '#edf5fb'
 
 
 def simpan(fig, nama):
-    for ekstensi in ["svg", "png"]:
-        fig.savefig(GAMBAR / f"{nama}.{ekstensi}", dpi=170,
-                    bbox_inches="tight", facecolor="white")
+    for ekstensi in ['svg', 'png']:
+        fig.savefig(OUT / f'{nama}.{ekstensi}', dpi=170, bbox_inches='tight')
     plt.close(fig)
 
 
-def kanvas(lebar, tinggi):
+def kanvas(lebar, tinggi, judul):
     fig, ax = plt.subplots(figsize=(lebar, tinggi))
-    ax.set_xlim(0, lebar)
-    ax.set_ylim(0, tinggi)
-    ax.set_aspect("equal")
-    ax.axis("off")
+    ax.set(xlim=(0, lebar), ylim=(0, tinggi))
+    ax.set_aspect('equal')
+    ax.axis('off')
+    ax.text(lebar / 2, tinggi - 0.25, judul, ha='center', va='top',
+            fontsize=15, fontweight='bold', color=INK)
     return fig, ax
 
 
-def teks(ax, x, y, isi, ukuran=14, warna=GELAP, ha="center"):
-    ax.text(x, y, isi, ha=ha, va="center", fontsize=ukuran, color=warna)
+def teks(ax, x, y, s, ukuran=11, **kwargs):
+    ax.text(x, y, s, ha='center', va='center', color=INK,
+            fontsize=ukuran, **kwargs)
 
 
-def kotak(ax, x, y, w, h, isi, warna=BIRU):
-    ax.add_patch(FancyBboxPatch((x - w/2, y - h/2), w, h,
-                 boxstyle="round,pad=0.02,rounding_size=0.08",
-                 linewidth=1.7, edgecolor=warna, facecolor="#F3F7FB"))
-    teks(ax, x, y, isi, 16, warna)
+def blok(ax, x, y, label, w=1.15, h=0.65):
+    ax.add_patch(FancyBboxPatch((x-w/2, y-h/2), w, h,
+                 boxstyle='round,pad=0.02,rounding_size=0.05',
+                 linewidth=1.5, edgecolor=BLUE, facecolor=PALE))
+    teks(ax, x, y, label)
 
 
-def panah(ax, x1, y1, x2, y2, warna=GELAP):
-    ax.add_patch(FancyArrowPatch((x1, y1), (x2, y2),
-                 arrowstyle="-|>", mutation_scale=14, linewidth=1.6,
-                 color=warna, shrinkA=0, shrinkB=0))
+def panah(ax, a, b):
+    ax.add_patch(FancyArrowPatch(a, b, arrowstyle='-|>', mutation_scale=13,
+                                linewidth=1.4, color=INK, shrinkA=0, shrinkB=0))
 
 
-def garis(ax, titik, warna=GELAP):
-    p = np.array(titik)
-    ax.plot(p[:, 0], p[:, 1], color=warna, linewidth=1.6)
+def garis(ax, titik):
+    ax.plot([p[0] for p in titik], [p[1] for p in titik], color=INK, lw=1.4)
 
 
-def simpul(ax, x, y):
-    ax.add_patch(Circle((x, y), 0.045, color=GELAP))
+def titik(ax, x, y):
+    ax.plot(x, y, 'o', color=INK, markersize=4)
 
 
-def penjumlah(ax, x, y, r=0.24):
-    ax.add_patch(Circle((x, y), r, linewidth=1.8,
-                        edgecolor=HIJAU, facecolor="#F0FAF7"))
-    teks(ax, x, y, "+", 20, HIJAU)
+def jumlah(ax, x, y, simbol='+'):
+    ax.add_patch(Circle((x, y), 0.24, facecolor=PALE, edgecolor=BLUE, lw=1.5))
+    teks(ax, x, y, simbol, ukuran=17)
 
 
-def gambar_blok_dasar():
-    fig, ax = kanvas(10, 4.6)
-    teks(ax, 0.3, 3.75, "Penjumlah", 14, ha="left")
-    teks(ax, 0.3, 2.25, "Pengali", 14, ha="left")
-    teks(ax, 0.3, 0.8, "Penunda", 14, ha="left")
+# Lima operator dasar, setiap panel memiliki masukan dan keluaran sendiri.
+fig, ax = kanvas(11, 7.5, 'Komponen dasar sistem waktu-diskret')
+for nomor, (judul, simbol, rumus) in enumerate([
+    ('Penjumlah', '+', r'$w[n]=v_1[n]+v_2[n]$'),
+    ('Pengali konstanta', 'K', r'$w[n]=Kv[n]$'),
+    ('Pengali sinyal', '×', r'$w[n]=v_1[n]v_2[n]$'),
+    ('Unit delay', 'D', r'$w[n]=v[n-1]$'),
+    ('Unit advance', r'$D^{-1}$', r'$w[n]=v[n+1]$'),
+]):
+    kolom, baris = nomor % 2, nomor // 2
+    cx, cy = 2.7 + 5.5 * kolom, 5.8 - 2.15 * baris
+    teks(ax, cx, cy + 0.75, judul, ukuran=12, fontweight='bold')
+    dua = nomor in [0, 2]
+    if dua:
+        jumlah(ax, cx, cy, simbol)
+        panah(ax, (cx-1.5, cy), (cx-0.24, cy))
+        panah(ax, (cx, cy+0.55), (cx, cy+0.24))
+        teks(ax, cx-1.65, cy, r'$v_1$')
+        teks(ax, cx+0.4, cy+0.5, r'$v_2$')
+        awal = cx + 0.24
+    else:
+        blok(ax, cx, cy, simbol)
+        panah(ax, (cx-1.5, cy), (cx-0.6, cy))
+        teks(ax, cx-1.7, cy, r'$v$')
+        awal = cx + 0.6
+    panah(ax, (awal, cy), (cx+1.5, cy))
+    teks(ax, cx+1.7, cy, r'$w$')
+    teks(ax, cx, cy-0.62, rumus, ukuran=12)
+teks(ax, 8.2, 1.45, 'Panah menunjukkan arah data.\nD menyimpan satu sampel.\nPemaju memerlukan sampel masa depan.', ukuran=11)
+simpan(fig, 'komponen-dasar')
 
-    teks(ax, 3.1, 4.1, r"$v_1[n]$", 14)
-    teks(ax, 3.1, 3.4, r"$v_2[n]$", 14)
-    garis(ax, [(3.6, 4.1), (4.35, 4.1)])
-    panah(ax, 4.35, 4.1, 4.8, 3.85)
-    garis(ax, [(3.6, 3.4), (4.35, 3.4)])
-    panah(ax, 4.35, 3.4, 4.8, 3.65)
-    penjumlah(ax, 5, 3.75)
-    panah(ax, 5.25, 3.75, 6.5, 3.75)
-    teks(ax, 6.75, 3.75, r"$w[n]=v_1[n]+v_2[n]$", 14, ha="left")
+# Rata-rata tiga sampel: dua penunda berantai dan tiga cabang maju.
+fig, ax = kanvas(10, 6.2, 'Realisasi nonrekursif: rata-rata tiga sampel')
+panah(ax, (0.7, 4.8), (2, 4.8))
+teks(ax, 0.65, 5.15, r'$x[n]$')
+for yy, label in [(4.8, r'$x[n]$'), (2.9, r'$x[n-1]$'), (1.0, r'$x[n-2]$')]:
+    titik(ax, 2, yy)
+    panah(ax, (2, yy), (4.0, yy))
+    blok(ax, 4.6, yy, '1/3')
+    teks(ax, 3.1, yy+0.3, label)
+for yy in [3.85, 1.95]:
+    blok(ax, 2, yy, 'D', w=0.8)
+    panah(ax, (2, yy+0.95), (2, yy+0.35))
+    panah(ax, (2, yy-0.35), (2, yy-0.95))
+jumlah(ax, 7.4, 2.9)
+panah(ax, (5.2, 2.9), (7.16, 2.9))
+garis(ax, [(5.2, 4.8), (7.4, 4.8)])
+panah(ax, (7.4, 4.8), (7.4, 3.14))
+garis(ax, [(5.2, 1.0), (7.4, 1.0)])
+panah(ax, (7.4, 1.0), (7.4, 2.66))
+panah(ax, (7.64, 2.9), (9.1, 2.9))
+teks(ax, 9.1, 3.28, r'$y[n]$')
+teks(ax, 5, 0.25, r'$y[n]=(x[n]+x[n-1]+x[n-2])/3$', ukuran=13)
+simpan(fig, 'diagram-nonrekursif')
 
-    for y, simbol, hasil in [(2.25, r"$c$", r"$w[n]=cv[n]$"),
-                              (0.8, r"$D$", r"$w[n]=v[n-1]$")]:
-        teks(ax, 3.1, y, r"$v[n]$", 14)
-        panah(ax, 3.65, y, 4.4, y)
-        kotak(ax, 5, y, 1.2, 0.7, simbol)
-        panah(ax, 5.6, y, 6.5, y)
-        teks(ax, 6.75, y, hasil, 14, ha="left")
-    simpan(fig, "blok-dasar")
+# Satu delay pada masukan dan satu delay pada jalur umpan balik.
+fig, ax = kanvas(10, 6.2, 'Realisasi rekursif dengan umpan balik tertunda')
+panah(ax, (0.6, 3), (2, 3))
+teks(ax, 0.65, 3.4, r'$x[n]$')
+titik(ax, 2, 3)
+panah(ax, (2, 3), (3.2, 3))
+blok(ax, 3.8, 3, '0.5')
+jumlah(ax, 7.1, 3)
+panah(ax, (4.4, 3), (6.86, 3))
+garis(ax, [(2, 3), (2, 1.4)])
+panah(ax, (2, 1.4), (2.6, 1.4))
+blok(ax, 3.2, 1.4, 'D')
+panah(ax, (3.8, 1.4), (4.4, 1.4))
+teks(ax, 4.1, 0.95, r'$x[n-1]$')
+blok(ax, 5, 1.4, '0.5')
+garis(ax, [(5.6, 1.4), (7.1, 1.4)])
+panah(ax, (7.1, 1.4), (7.1, 2.76))
+panah(ax, (7.34, 3), (9.4, 3))
+teks(ax, 9.35, 3.4, r'$y[n]$')
+titik(ax, 8.3, 3)
+garis(ax, [(8.3, 3), (8.3, 4.8)])
+panah(ax, (8.3, 4.8), (7.0, 4.8))
+blok(ax, 6.4, 4.8, 'D')
+panah(ax, (5.8, 4.8), (5.1, 4.8))
+teks(ax, 5.45, 5.2, r'$y[n-1]$')
+blok(ax, 4.5, 4.8, '0.25')
+garis(ax, [(3.9, 4.8), (3.2, 4.8), (3.2, 4), (7.1, 4)])
+panah(ax, (7.1, 4), (7.1, 3.24))
+teks(ax, 5, 0.35, r'$y[n]=0.25y[n-1]+0.5x[n]+0.5x[n-1]$', ukuran=13)
+simpan(fig, 'diagram-rekursif')
 
-
-def gambar_nonrekursif():
-    fig, ax = kanvas(10, 5.2)
-    teks(ax, 0.2, 4.0, r"$x[n]$", 15, ha="left")
-    panah(ax, 0.85, 4, 1.5, 4)
-    panah(ax, 1.5, 4, 2.55, 4)
-    kotak(ax, 3.1, 4, 1.1, 0.7, r"$D$")
-    panah(ax, 3.65, 4, 4.6, 4)
-    panah(ax, 4.6, 4, 5.65, 4)
-    kotak(ax, 6.2, 4, 1.1, 0.7, r"$D$")
-    panah(ax, 6.75, 4, 7.7, 4)
-
-    for x, nama in [(1.5, r"$x[n]$"), (4.6, r"$x[n-1]$"), (7.7, r"$x[n-2]$")]:
-        simpul(ax, x, 4)
-        teks(ax, x, 4.65, nama, 15)
-        panah(ax, x, 4, x, 2.85)
-        kotak(ax, x, 2.45, 1.0, 0.8, r"$1/3$")
-
-    garis(ax, [(1.5, 2.05), (1.5, 1.1)])
-    panah(ax, 1.5, 1.1, 4.35, 1.1)
-    panah(ax, 4.6, 2.05, 4.6, 1.35)
-    garis(ax, [(7.7, 2.05), (7.7, 1.1)])
-    panah(ax, 7.7, 1.1, 4.85, 1.1)
-    penjumlah(ax, 4.6, 1.1)
-    garis(ax, [(4.6, 0.85), (4.6, 0.35)])
-    panah(ax, 4.6, 0.35, 8.6, 0.35)
-    teks(ax, 8.8, 0.35, r"$y[n]$", 15, ha="left")
-    simpan(fig, "diagram-nonrekursif")
-
-
-def gambar_rekursif():
-    fig, ax = kanvas(10, 4.3)
-    teks(ax, 0.2, 3.2, r"$x[n]$", 15, ha="left")
-    panah(ax, 0.95, 3.2, 1.85, 3.2)
-    kotak(ax, 2.4, 3.2, 1.1, 0.8, r"$b$")
-    panah(ax, 2.95, 3.2, 4.45, 3.2)
-    penjumlah(ax, 4.7, 3.2)
-    panah(ax, 4.95, 3.2, 8.5, 3.2)
-    simpul(ax, 7.6, 3.2)
-    teks(ax, 8.8, 3.2, r"$y[n]$", 15)
-
-    garis(ax, [(7.6, 3.2), (7.6, 1.2)])
-    panah(ax, 7.6, 1.2, 7.0, 1.2)
-    kotak(ax, 6.45, 1.2, 1.1, 0.8, r"$D$")
-    panah(ax, 5.9, 1.2, 5.25, 1.2)
-    kotak(ax, 4.7, 1.2, 1.1, 0.8, r"$a$")
-    garis(ax, [(4.15, 1.2), (3.5, 1.2), (3.5, 2.1), (4.7, 2.1)])
-    panah(ax, 4.7, 2.1, 4.7, 2.95)
-    teks(ax, 5.52, 0.62, r"$y[n-1]$", 14)
-    teks(ax, 6.45, 0.14, r"Isi awal $D$: $y[-1]$", 12)
-    teks(ax, 5.5, 3.95, r"$y[n]=a\,y[n-1]+b\,x[n]$", 17)
-    simpan(fig, "diagram-rekursif")
-
-
-def gambar_memori():
-    fig, axes = plt.subplots(3, 1, figsize=(9, 6.6), sharex=True)
-    rel = np.arange(-3, 4)
-    data = np.array([0.4, 0.8, 1.1, 0.6, 0.9, 0.4, 0.7])
-    kasus = [([0], "Tanpa memori: hanya sampel sekarang", BIRU),
-             ([-2, -1, 0], "Rata-rata kausal: sekarang dan masa lalu", HIJAU),
-             ([-1, 0, 1], "Rata-rata simetris: memerlukan masa depan", JINGGA)]
-    for ax, (dipakai, nama, warna) in zip(axes, kasus):
-        ax.axvspan(-3.6, -0.12, color="#EFF5FA")
-        ax.axvspan(0.12, 3.6, color="#FCF2E9")
-        ax.axvline(0, color=GELAP, linestyle=":", linewidth=1.2)
-        ax.vlines(rel, 0, data, color="#C7CDD3", linewidth=2)
-        ax.scatter(rel, data, color="#C7CDD3", s=40, zorder=3)
-        pilih = np.isin(rel, dipakai)
-        ax.vlines(rel[pilih], 0, data[pilih], color=warna, linewidth=3)
-        ax.scatter(rel[pilih], data[pilih], color=warna, s=65, zorder=4)
-        ax.set_ylim(0, 1.65)
-        ax.set_xlim(-3.6, 3.6)
-        ax.set_yticks([])
-        ax.text(0.02, 0.92, nama, va="top", transform=ax.transAxes,
-                color=warna, fontsize=12)
-        ax.set_ylabel("x[k]")
-        ax.spines["left"].set_visible(False)
-    axes[-1].set_xticks(rel, [r"$n_*-3$", r"$n_*-2$", r"$n_*-1$", r"$n_*$",
-                              r"$n_*+1$", r"$n_*+2$", r"$n_*+3$"])
-    axes[-1].set_xlabel("Indeks sampel k; keluaran dihitung pada n*")
-    fig.tight_layout(h_pad=1.3)
-    simpan(fig, "memori-kausalitas")
-
-
-gambar_blok_dasar()
-gambar_nonrekursif()
-gambar_rekursif()
-gambar_memori()
+# Rantai ADC: empat fungsi, label sinyal ditempatkan di bawah tahapnya.
+fig, ax = kanvas(13, 3.7, 'Dari tegangan analog menuju kata biner')
+pos = [1.8, 4.9, 8.0, 11.1]
+nama = ['Pengondisian\n+ antialiasing', 'Sampling\n+ penahanan', 'Kuantisasi', 'Pengkodean']
+catatan = ['Waktu kontinu\nAmplitudo kontinu', 'Nilai pada nTs\nBelum dibulatkan', 'L = 2^B tingkat\nAmplitudo berhingga', 'B bit per sampel\nContoh: 101']
+for i, (xx, judul, label) in enumerate(zip(pos, nama, catatan)):
+    blok(ax, xx, 2.1, judul, w=2.35, h=0.9)
+    teks(ax, xx, 1.1, label, ukuran=11)
+    if i < 3:
+        panah(ax, (xx+1.2, 2.1), (pos[i+1]-1.2, 2.1))
+teks(ax, 6.5, 0.25, 'Sampling mendiskretkan waktu; kuantisasi mendiskretkan amplitudo.', ukuran=12)
+simpan(fig, 'alur-adc')
 
 demo = [
-    ("01_superposisi.py", "superposisi"),
-    ("02_invariansi_waktu.py", "invariansi-waktu"),
-    ("03_nonrekursif.py", "rata-rata-tiga-sampel"),
-    ("04_respons_dan_kondisi_awal.py", "dekomposisi-respons"),
-    ("05_stabilitas_orde_satu.py", "stabilitas-orde-satu"),
-    ("06_persamaan_selisih_umum.py", None),
-    ("07_sensor_temperatur.py", "sensor-temperatur"),
+    ('01_superposisi.py', 'superposisi'),
+    ('02_invariansi_waktu.py', 'invariansi-waktu'),
+    ('03_memori_kausalitas.py', 'memori-kausalitas'),
+    ('04_persamaan_selisih.py', 'persamaan-selisih'),
+    ('05_solusi_dan_kondisi_awal.py', 'kondisi-awal'),
+    ('06_sampling_aliasing.py', 'sampling-aliasing'),
+    ('07_sample_hold.py', 'sample-hold'),
+    ('08_kuantisasi_pcm.py', 'kuantisasi-pcm'),
+    ('09_sqnr.py', 'sqnr'),
+    ('10_companding.py', 'companding'),
 ]
-
 show_asli = plt.show
-for berkas, nama in demo:
-    def simpan_demo(*args, **kwargs):
-        for nomor in plt.get_fignums():
-            simpan(plt.figure(nomor), nama)
-
-    plt.show = simpan_demo
-    print(f"\nMenjalankan {berkas}")
-    runpy.run_path(str(Path(__file__).parent / berkas), run_name="__main__")
-plt.show = show_asli
-print(f"\nIlustrasi disimpan di {GAMBAR}")
+try:
+    for skrip, nama in demo:
+        def simpan_show(*args, nama=nama, **kwargs):
+            for nomor in plt.get_fignums():
+                simpan(plt.figure(nomor), nama)
+        plt.show = simpan_show
+        print('\nMenjalankan', skrip)
+        runpy.run_path(str(Path(__file__).parent / skrip), run_name='__main__')
+finally:
+    plt.show = show_asli
+print('\nSelesai: 14 SVG dan 14 PNG di', OUT)

@@ -1,202 +1,129 @@
-# Kuliah 2: Sinyal dan Sistem
+# Kuliah 2: Sistem, Sampling, dan Kuantisasi
 
 ## Tujuan pembelajaran
 
-Pada kuliah pertama, kita mempelajari cara menyatakan besaran fisis sebagai sinyal dan melakukan operasi dasar terhadap sinyal tersebut. Pada kuliah ini, kita menggunakan pengetahuan itu untuk memahami sistem yang mengubah sinyal masukan menjadi sinyal keluaran.
+Pada pertemuan pertama, kita mempelajari representasi sinyal dan operasi dasar terhadap sinyal. Pada pertemuan ini, pembahasan bergerak dari aturan yang mengolah sinyal menuju cara memperoleh data digital dari pengukuran analog.
 
-Setelah mengikuti kuliah ini, mahasiswa diharapkan mampu menghubungkan model matematis sistem dengan cara kerjanya dalam pengukuran. Kemampuan yang dituju dirangkum dalam daftar berikut.
+Urutan materi mengikuti bagian 2.1, 2.2, 3.1, 3.2, dan 3.3 pada buku D. Gunawan dan F. H. Juwono. Pembahasannya disusun sebagai satu alur: pengertian sistem, sifat sistem, komponen pembentuk sistem, persamaan selisih, lalu sampling, kuantisasi, dan pengkodean digital.
 
-- menjelaskan sistem sebagai pemetaan dari masukan menuju keluaran;
-- membedakan sistem waktu-kontinu dan waktu-diskret;
-- menguji linearitas melalui homogenitas, aditivitas, dan superposisi;
-- menguji invariansi waktu dengan membandingkan dua urutan operasi;
-- menentukan memori, kausalitas, invertibilitas, dan stabilitas BIBO;
-- mengenali sistem *linear time-invariant* (LTI) dan batas penggunaan istilah tersebut;
-- membaca serta menyusun diagram blok dengan penjumlah, pengali, dan penunda satu sampel;
-- mengubah persamaan selisih menjadi algoritma komputasi;
-- membedakan sistem rekursif dan nonrekursif;
-- menghitung pengaruh kondisi awal serta memisahkan respons masukan-nol dan respons keadaan-nol;
-- mengimplementasikan sistem waktu-diskret menggunakan NumPy dan Matplotlib;
-- menilai hubungan antara penghalusan sinyal, keterlambatan respons, dan kebutuhan penyimpanan data.
+Setelah mempelajari catatan ini, mahasiswa diharapkan dapat menjelaskan hubungan antara model matematis dan pelaksanaan pengolahan sinyal. Kemampuan khusus yang dituju dirangkum dalam daftar berikut.
+
+- Menyatakan sistem sebagai pemetaan masukan menjadi keluaran.
+- Menguji linearitas, invariansi waktu, memori, kausalitas, invertibilitas, dan stabilitas BIBO.
+- Menggunakan penjumlah, pengali, penunda, dan diagram blok untuk menyatakan operasi sistem.
+- Menyusun serta menghitung persamaan selisih rekursif dan nonrekursif.
+- Menentukan solusi homogen dan partikular serta menerapkan kondisi awal secara tepat.
+- Membedakan solusi partikular, respons masukan-nol, dan respons keadaan-nol.
+- Menghubungkan periode sampling, frekuensi sampling, dan frekuensi sinyal diskret.
+- Menjelaskan teorema sampling, aliasing, filter antialiasing, dan *sample-and-hold*.
+- Menghitung tingkat, langkah, dan galat kuantisasi serta kode biner suatu sampel.
+- Memahami asumsi dasar SQNR dan tujuan kuantisasi tidak seragam.
+- Memeriksa hasil hitungan melalui program Python yang menggunakan NumPy dan Matplotlib.
 
 ---
 
-## Aturan pengolahan sinyal
+## Pendahuluan: dari sinyal menuju sistem
 
-Misalkan sebuah sensor temperatur menghasilkan satu data setiap detik. Deretan data tersebut merupakan sinyal waktu-diskret, tetapi pembacaan sesaat dapat berfluktuasi akibat derau pengukuran.
+Sebuah sensor mengubah besaran fisis menjadi sinyal yang dapat diukur, misalnya temperatur menjadi tegangan. Sinyal tersebut kemudian dapat diperkuat, disaring, dicuplik, dan diubah menjadi bilangan yang diolah komputer.
 
-Jika tampilan temperatur langsung mengikuti setiap sampel, angka pada layar dapat berubah terlalu cepat. Kita dapat menghaluskan tampilannya dengan merata-ratakan beberapa pembacaan terakhir, tetapi tindakan ini juga membuat tampilan lebih lambat mengikuti perubahan temperatur yang sesungguhnya.
+Setiap tahap menjalankan aturan tertentu terhadap sinyal masukannya. Aturan yang menghubungkan masukan dan keluaran itulah yang kita sebut **sistem**, baik ketika diwujudkan sebagai perangkat fisis maupun sebagai program komputer.
 
-Persoalan tersebut memperlihatkan bahwa pengolahan sinyal selalu melibatkan suatu aturan. Aturan itu menerima sinyal masukan, menggunakan informasi yang tersedia, lalu menentukan sinyal keluaran.
+Misalkan sensitivitas sensor adalah $K=0.01\ \mathrm{V}/{}^\circ\mathrm{C}$ terhadap suatu temperatur acuan. Perubahan temperatur sebesar $30\ {}^\circ\mathrm{C}$ menghasilkan perubahan tegangan $K(30)=0.30\ \mathrm{V}$, lalu penguat dengan penguatan lima menghasilkan $1.50\ \mathrm{V}$.
 
-Sebagai contoh awal, misalkan masukan pada tiga waktu berturut-turut adalah $24$, $27$, dan $24$ dalam satuan derajat Celsius. Pada waktu pembacaan ketiga, rata-rata tiga sampel tersebut dihitung sebagai berikut.
+Setelah menjadi data diskret, tegangan dapat dihaluskan dengan merata-ratakan beberapa sampel terakhir. Sebagai contoh, tiga sampel $1.48$, $1.56$, dan $1.49\ \mathrm{V}$ memberikan rata-rata berikut.
 
 ```math
 y[2]=\frac{x[2]+x[1]+x[0]}{3}
-=\frac{24+27+24}{3}=25.
+=\frac{1.49+1.56+1.48}{3}=1.51\ \mathrm{V}.
 ```
 
-Nilai keluaran $25$ lebih dekat ke pembacaan di sekitar lonjakan daripada nilai $27$ yang muncul sesaat. Namun, hanya dari tiga angka ini kita belum dapat memastikan apakah lonjakan tersebut merupakan derau atau perubahan temperatur yang perlu dipertahankan.
+Hasil rata-rata lebih sedikit mengikuti lonjakan sesaat dibandingkan dengan penggunaan satu sampel saja. Namun, penghalusan juga dapat memperlambat respons terhadap perubahan yang benar-benar terjadi, sehingga sifat sistem perlu dipahami sebelum parameter pengolahannya dipilih.
 
-Karena itu, kita perlu memahami sifat aturan pengolahan sebelum menggunakannya. Pertanyaan yang akan kita jawab adalah bagaimana keluaran berubah ketika masukan diperbesar, digeser waktunya, atau diberikan kepada sistem yang masih menyimpan pengaruh pengukuran sebelumnya.
+### Sistem waktu-kontinu dan waktu-diskret
 
----
+Sistem waktu-kontinu menerima dan menghasilkan sinyal yang didefinisikan terhadap waktu kontinu. Sistem waktu-diskret menerima dan menghasilkan deretan nilai pada indeks bilangan bulat.
 
-## Sistem sebagai pemetaan masukan dan keluaran
-
-Sebuah **sistem** adalah aturan yang memetakan sinyal masukan menjadi sinyal keluaran. Aturan ini dapat diwujudkan oleh perangkat fisis, rangkaian elektronik, atau algoritma pada komputer.
-
-Kita menggunakan lambang $\mathcal{T}$ untuk menyatakan aturan tersebut. Notasi masukan-keluarannya diberikan oleh hubungan berikut.
+Kita menuliskan operator sistem sebagai $\mathcal{T}$. Hubungan masukan-keluaran untuk kedua jenis sistem dinyatakan sebagai berikut.
 
 ```math
-y(t)=\mathcal{T}\{x\}(t)
-\qquad\text{atau}\qquad
+y(t)=\mathcal{T}\{x\}(t),
+\qquad
 y[n]=\mathcal{T}\{x\}[n].
 ```
 
-Tanda kurung kurawal menegaskan bahwa sistem bekerja pada suatu sinyal, yang dapat mencakup nilai pada beberapa waktu. Oleh sebab itu, keluaran pada indeks $n$ tidak harus ditentukan hanya oleh $x[n]$.
+Operator tersebut dapat bekerja pada keseluruhan sinyal, sehingga keluaran sekarang tidak harus hanya menggunakan masukan sekarang. Sebagai contoh, $y[n]=2x[n]$ hanya menggunakan satu sampel, sedangkan $y[n]=(x[n]+x[n-1])/2$ menggunakan dua sampel dari waktu berbeda.
 
-### Sistem waktu-kontinu
+Sistem tidak harus mengubah nilai masukan menjadi nilai yang berbeda. Sistem identitas $y[n]=x[n]$ tetap merupakan sistem, karena aturan masukan-keluarannya terdefinisi dengan jelas.
 
-Pada sistem waktu-kontinu, masukan dan keluaran didefinisikan terhadap variabel waktu kontinu. Penguat ideal memberikan contoh sederhana karena keluaran setiap saat langsung sebanding dengan masukannya.
+### Model matematis dan batas pengamatan
 
-```math
-y(t)=Kx(t).
-```
+Dalam pengujian sifat sistem, kita umumnya menggunakan sinyal yang didefinisikan untuk seluruh $n\in\mathbb{Z}$. Dalam program, rekaman hanya memuat sejumlah sampel, sehingga nilai sebelum atau sesudah rekaman harus dinyatakan melalui asumsi tambahan.
 
-Jika $x(t)$ dan $y(t)$ sama-sama tegangan, penguatan $K$ tidak memiliki satuan. Untuk $K=4$ dan masukan $0.2\ \mathrm{V}$, keluarannya adalah $0.8\ \mathrm{V}$.
-
-Sistem fisis juga dapat menyimpan pengaruh masa lalu. Contohnya adalah model sensor orde satu dengan masukan $x(t)$ dan keluaran $y(t)$ dalam satuan yang sama.
-
-```math
-\tau\frac{dy(t)}{dt}+y(t)=x(t),
-\qquad \tau>0.
-```
-
-Parameter $\tau$ mempunyai satuan waktu dan mengatur kecepatan respons sensor. Untuk menentukan keluaran model ini, kita memerlukan masukan dan nilai awal keluaran pada waktu mulai pengamatan.
-
-### Sistem waktu-diskret
-
-Pada sistem waktu-diskret, aturan bekerja pada indeks bilangan bulat. Jika data berasal dari pencuplikan dengan periode $T_s$, selisih satu indeks berhubungan dengan selang waktu $T_s$.
-
-Beberapa aturan yang akan kita gunakan sepanjang kuliah ini dirangkum dalam tabel berikut. Nama sistem menggambarkan operasi matematisnya, sedangkan sifat lengkapnya masih perlu diuji.
-
-| Sistem | Aturan | Makna operasi |
-|---|---|---|
-| Penguat | $y[n]=2x[n]$ | Mengalikan amplitudo dengan dua |
-| Penunda | $y[n]=x[n-1]$ | Mengeluarkan sampel satu waktu sebelumnya |
-| Rata-rata dua sampel | $y[n]=(x[n]+x[n-1])/2$ | Menggabungkan sampel sekarang dan sebelumnya |
-| Selisih pertama | $y[n]=x[n]-x[n-1]$ | Menonjolkan perubahan antarsampel |
-| Penghalus rekursif | $y[n]=0.8y[n-1]+0.2x[n]$ | Menggabungkan keluaran sebelumnya dan masukan sekarang |
-
-### Domain sinyal dan riwayat yang digunakan
-
-Ketika menguji sifat sistem secara matematis, kita umumnya menganggap sinyal terdefinisi untuk seluruh indeks $n\in\mathbb{Z}$. Sebuah rekaman komputer hanya memuat sebagian indeks tersebut, sehingga nilai di luar rekaman harus dinyatakan sebagai asumsi tambahan.
-
-Dalam banyak contoh perhitungan, pemrosesan dimulai pada $n=0$ dan masukan sebelum itu dianggap nol. Asumsi $x[n]=0$ untuk $n<0$ harus dibedakan dari kondisi awal keluaran, sebab sistem yang menyimpan energi atau data masih dapat menghasilkan keluaran walaupun masukan sebelumnya dinyatakan nol.
+Jika pemrosesan dimulai pada $n=0$, kita dapat menetapkan $x[n]=0$ untuk $n<0$ atau memberikan riwayat masukan tertentu. Kondisi awal elemen penyimpanan juga perlu dinyatakan, sebab masukan yang sama dapat menghasilkan keluaran berbeda ketika keadaan awal sistem berbeda.
 
 ---
 
-## Linearitas, homogenitas, dan superposisi
+## Sifat dan klasifikasi sistem
 
-Kita sering menghadapi masukan yang merupakan penjumlahan beberapa komponen, misalnya sinyal pengukuran dan derau. Jika sistem linear, pengaruh setiap komponen dapat dihitung terpisah lalu dijumlahkan untuk memperoleh keluaran total.
+Sifat sistem menjawab beberapa pertanyaan yang berbeda tentang aturan pengolahan. Suatu sistem dapat linear tetapi berubah terhadap waktu, atau nonlinear tetapi stabil, sehingga setiap sifat harus diperiksa secara tersendiri.
 
-Sifat tersebut berlaku terhadap aturan sistem, bukan terhadap bentuk grafik sinyal masukannya. Sebuah sinusoid dapat menjadi masukan sistem linear maupun nonlinear, bergantung pada aturan yang memprosesnya.
+### Linearitas, homogenitas, dan superposisi
 
-### Homogenitas dan aditivitas
+Sistem linear memungkinkan pengaruh beberapa masukan dihitung terpisah lalu digabungkan. Hal ini berguna ketika sinyal pengukuran terdiri atas beberapa komponen, misalnya getaran mesin, gangguan periodik, dan derau.
 
-**Homogenitas** berarti penskalaan masukan menghasilkan penskalaan keluaran dengan faktor yang sama. Jika $\mathcal{T}\{x\}=y$, syarat homogenitas dinyatakan oleh hubungan berikut.
+#### Homogenitas
 
-```math
-\mathcal{T}\{\alpha x\}=\alpha\mathcal{T}\{x\}
-=\alpha y.
-```
-
-**Aditivitas** berarti keluaran akibat penjumlahan masukan sama dengan penjumlahan keluaran masing-masing masukan. Untuk dua sinyal $x_1$ dan $x_2$, syaratnya dinyatakan sebagai berikut.
+Homogenitas berarti pengalian masukan dengan suatu konstanta menghasilkan pengalian keluaran dengan konstanta yang sama. Untuk faktor skala $\alpha$, syaratnya dituliskan sebagai berikut.
 
 ```math
-\mathcal{T}\{x_1+x_2\}
-=\mathcal{T}\{x_1\}+\mathcal{T}\{x_2\}.
+\mathcal{T}\{\alpha x\}=\alpha\mathcal{T}\{x\}.
 ```
 
-Sistem disebut **linear** jika memenuhi kedua syarat tersebut untuk semua masukan yang diizinkan dan semua faktor skala pada ruang sinyal yang digunakan. Untuk sinyal real, faktor skala dapat berupa bilangan real; untuk linearitas pada ruang sinyal kompleks, faktor skalanya juga boleh kompleks.
+Penguat ideal $y[n]=3x[n]$ memenuhi syarat tersebut. Masukan yang digandakan menghasilkan keluaran yang juga digandakan, selama model penguat ideal masih berlaku.
 
-### Prinsip superposisi
+#### Aditivitas dan prinsip superposisi
 
-Homogenitas dan aditivitas dapat digabungkan menjadi satu pengujian. Bentuk gabungannya disebut prinsip superposisi.
+Aditivitas berarti keluaran akibat jumlah dua masukan sama dengan jumlah keluaran masing-masing masukan. Dengan menggabungkan aditivitas dan homogenitas, kita memperoleh prinsip superposisi berikut.
 
 ```math
 \boxed{
 \mathcal{T}\{\alpha x_1+\beta x_2\}
-=\alpha\mathcal{T}\{x_1\}
-+\beta\mathcal{T}\{x_2\}
+=\alpha\mathcal{T}\{x_1\}+\beta\mathcal{T}\{x_2\}
 }.
 ```
 
-Untuk membuktikan linearitas, kesamaan tersebut harus berlaku bagi masukan dan faktor skala yang umum. Untuk membuktikan ketidaklinearan, cukup ditemukan satu pilihan masukan atau faktor skala yang melanggarnya.
+Kesamaan tersebut harus berlaku untuk semua masukan dan semua konstanta yang diizinkan pada ruang sinyal yang digunakan. Untuk membuktikan ketidaklinearan, cukup ditemukan satu contoh yang melanggar kesamaan itu.
 
-#### Contoh: sistem linear dengan penundaan
+Dalam catatan ini, kata superposisi digunakan untuk bentuk gabungan tersebut. Penjumlahan tanpa faktor skala merupakan kasus khusus dengan $\alpha=\beta=1$, yang disebut aditivitas.
 
-Tinjau sistem $y[n]=2x[n]-\tfrac12x[n-1]$. Kita akan membandingkan pemrosesan masukan gabungan dengan penggabungan keluaran yang dihitung terpisah.
+#### Contoh: rata-rata tiga sampel
+
+Tinjau sistem $\mathcal{T}\{x\}[n]=(x[n]+x[n-1]+x[n-2])/3$. Kita mengganti masukannya dengan kombinasi umum $\alpha x_1+\beta x_2$ untuk menguji linearitas.
 
 ```math
 \begin{aligned}
 \mathcal{T}\{\alpha x_1+\beta x_2\}[n]
-&=2\bigl(\alpha x_1[n]+\beta x_2[n]\bigr)
--\frac12\bigl(\alpha x_1[n-1]+\beta x_2[n-1]\bigr)\\
-&=\alpha\left(2x_1[n]-\frac12x_1[n-1]\right)
-+\beta\left(2x_2[n]-\frac12x_2[n-1]\right)\\
-&=\alpha\mathcal{T}\{x_1\}[n]
-+\beta\mathcal{T}\{x_2\}[n].
+&=\frac13\sum_{k=0}^{2}
+\bigl(\alpha x_1[n-k]+\beta x_2[n-k]\bigr)\\
+&=\alpha\frac13\sum_{k=0}^{2}x_1[n-k]
++\beta\frac13\sum_{k=0}^{2}x_2[n-k]\\
+&=\alpha\mathcal{T}\{x_1\}[n]+\beta\mathcal{T}\{x_2\}[n].
 \end{aligned}
 ```
 
-Kesamaan ini tidak memerlukan bentuk khusus untuk $x_1$ dan $x_2$. Dengan demikian, sistem tersebut linear meskipun keluarannya menggunakan sampel masa lalu.
+Hasil ini berlaku tanpa memilih bentuk khusus bagi kedua masukan. Dengan demikian, rata-rata tiga sampel merupakan sistem linear jika perlakuan terhadap riwayat dan batas sinyal dilakukan secara konsisten.
 
-Sebagai pemeriksaan angka pada suatu indeks, ambil $x_1[n]=3$, $x_1[n-1]=1$, $x_2[n]=2$, dan $x_2[n-1]=-2$. Untuk $\alpha=2$ dan $\beta=-1$, kedua jalur perhitungan memberikan hasil berikut.
+#### Contoh: penguadratan dan offset
 
-```math
-\begin{aligned}
-y_1[n]&=2(3)-\tfrac12(1)=5.5,\\
-y_2[n]&=2(2)-\tfrac12(-2)=5,\\
-2y_1[n]-y_2[n]&=6,\\
-\mathcal{T}\{2x_1-x_2\}[n]
-&=2(2\cdot3-2)-\tfrac12(2\cdot1-(-2))=6.
-\end{aligned}
-```
+Sistem $y[n]=x^2[n]$ tidak homogen karena $\mathcal{T}\{2x\}=4x^2$, sedangkan $2\mathcal{T}\{x\}=2x^2$. Pada satu sampel dengan $x=3$, kedua hasil itu adalah $36$ dan $18$.
 
-#### Contoh: penguadratan merupakan operasi nonlinear
+Hubungan $y[n]=2x[n]+3$ juga tidak linear meskipun grafik keluaran terhadap masukan berbentuk garis lurus. Pemetaan ini disebut afin karena memiliki tambahan tetap, dan masukan nol memberikan keluaran tiga.
 
-Sekarang tinjau $y[n]=x^2[n]$ untuk sinyal real. Penggandaan masukan menghasilkan empat kali keluaran, sehingga homogenitas tidak terpenuhi.
+Setiap pemetaan linear harus memenuhi $\mathcal{T}\{0\}=0$. Syarat ini perlu tetapi belum cukup, sebab penguadratan memenuhi syarat tersebut walaupun tidak linear.
 
-```math
-\mathcal{T}\{2x\}[n]=4x^2[n]
-\ne 2x^2[n]=2\mathcal{T}\{x\}[n].
-```
+#### Eksperimen Python: dua jalur superposisi
 
-Aditivitas juga gagal karena kuadrat jumlah menghasilkan suku silang. Sebagai contoh, pada satu indeks dengan $x_1=1$ dan $x_2=2$, kedua jalur menghasilkan angka yang berbeda.
-
-```math
-\mathcal{T}\{x_1+x_2\}=3^2=9,
-\qquad
-\mathcal{T}\{x_1\}+\mathcal{T}\{x_2\}=1^2+2^2=5.
-```
-
-#### Contoh: penguatan dengan offset
-
-Hubungan kalibrasi $y[n]=2x[n]+3$ berbentuk garis lurus terhadap amplitudo masukan. Namun, pemetaan ini bersifat **afin** dan tidak memenuhi definisi sistem linear karena terdapat tambahan tetap yang tidak mengikuti penskalaan masukan.
-
-```math
-\mathcal{T}\{0\}[n]=3\ne0.
-```
-
-Setiap sistem linear harus memetakan masukan nol menjadi keluaran nol ketika keadaan awalnya juga nol. Kondisi ini merupakan syarat perlu, tetapi belum cukup, sebab sistem penguadratan juga memetakan nol menjadi nol.
-
-Dalam pengukuran, offset sering dapat dikurangi dengan mendefinisikan keluaran relatif terhadap titik kerja. Setelah pengurangan offset, pemetaan $\widetilde y[n]=y[n]-3=2x[n]$ menjadi linear terhadap $x[n]$.
-
-### Eksperimen Python: memeriksa superposisi
-
-Program berikut membandingkan kedua ruas syarat superposisi pada sistem linear dan sistem penguadratan. Semua data sebelum $n=0$ dianggap nol, dan angka galat yang dicetak adalah selisih maksimum kedua jalur untuk sampel yang dihitung.
+Program berikut membandingkan pemrosesan masukan gabungan dengan penggabungan keluaran yang dihitung terpisah. Data sebelum indeks nol dianggap nol, dan kedua jalur diperiksa pada sistem $2x[n]-0.5x[n-1]$ serta sistem penguadratan.
 
 ```python
 import numpy as np
@@ -244,79 +171,52 @@ fig.tight_layout()
 plt.show()
 ```
 
-Versi skrip terpisah tersedia di [01_superposisi.py](../Kode/pertemuan-02/01_superposisi.py). Galat sistem linear berada pada tingkat pembulatan komputer, sedangkan sistem penguadratan menghasilkan galat yang jelas berbeda dari nol.
+Skrip tersedia di [01_superposisi.py](../Kode/pertemuan-02/01_superposisi.py). Grafik berikut memperlihatkan kedua jalur yang berhimpit pada sistem linear dan berbeda pada sistem nonlinear.
 
-![Perbandingan dua jalur superposisi pada sistem linear dan nonlinear](../Gambar/pertemuan-02/superposisi.svg)
+![Pengujian superposisi pada sistem linear dan nonlinear](../Gambar/pertemuan-02/superposisi.svg)
 
-Pada panel pertama, kurva kedua jalur berhimpit karena aturan memenuhi superposisi. Pada panel kedua, perbedaan kurva memperlihatkan kegagalan superposisi untuk contoh masukan yang dipilih.
+Garis yang menghubungkan titik-titik hanya membantu pembacaan deretan sampel. Keberhasilan beberapa uji numerik belum membuktikan linearitas untuk semua masukan, sehingga pembuktian aljabar tetap diperlukan.
 
-Pemeriksaan numerik membantu menemukan kesalahan implementasi atau contoh penyangkal. Namun, keberhasilan pada sejumlah data belum membuktikan linearitas untuk seluruh kemungkinan masukan, sehingga pembuktian aljabar tetap diperlukan.
+### Invariansi waktu
 
----
+Sistem invarian terhadap waktu, atau *time-invariant*, memiliki aturan yang tidak berubah ketika titik asal waktu digeser. Jika suatu masukan ditunda, keluarannya cukup ditunda dengan jumlah yang sama tanpa perubahan bentuk lainnya.
 
-## Invariansi waktu
+Ambil $y[n]=\mathcal{T}\{x\}[n]$ dan bentuk masukan yang digeser $x_s[n]=x[n-n_0]$. Dua jalur pengujian yang perlu dibandingkan adalah sebagai berikut.
 
-Linearitas menjelaskan respons terhadap penggabungan dan penskalaan masukan. Kita sekarang mengajukan pertanyaan berbeda, yaitu apakah aturan sistem tetap sama ketika percobaan dijalankan lebih awal atau lebih lambat.
+```math
+y_A[n]=\mathcal{T}\{x_s\}[n],
+\qquad
+y_B[n]=y[n-n_0].
+```
 
-Sistem disebut **invarian terhadap waktu** atau *time-invariant* jika pergeseran masukan hanya menggeser keluaran dengan jumlah yang sama. Jika syarat ini gagal, sistem disebut *time-varying* atau berubah terhadap waktu.
+Sistem invarian waktu jika $y_A[n]=y_B[n]$ untuk semua masukan dan semua pergeseran bilangan bulat $n_0$. Pengujian waktu-kontinu menggunakan langkah yang sama dengan mengganti $n$ dan $n_0$ menjadi $t$ dan $t_0$.
 
-### Membandingkan dua urutan operasi
+#### Contoh: penundaan dan penguatan yang berubah
 
-Misalkan keluaran untuk masukan $x[n]$ adalah $y[n]$. Kita memilih pergeseran bilangan bulat $n_0$ dan membentuk masukan baru $x_s[n]=x[n-n_0]$.
-
-Pengujian dilakukan dengan menghitung dua keluaran berikut. Jalur pertama menggeser masukan sebelum pemrosesan, sedangkan jalur kedua memproses masukan asli sebelum menggeser keluarannya.
+Untuk rata-rata dua sampel, kedua jalur menghasilkan ekspresi yang sama. Perhitungan langsung memperlihatkan hubungan berikut.
 
 ```math
 \begin{aligned}
-y_A[n]&=\mathcal{T}\{x_s\}[n],\\
-y_B[n]&=y[n-n_0].
+y_A[n]&=\frac{x[n-n_0]+x[n-1-n_0]}{2},\\
+y_B[n]&=\frac{x[n-n_0]+x[n-n_0-1]}{2}.
 \end{aligned}
 ```
 
-Sistem invarian terhadap waktu jika $y_A[n]=y_B[n]$ untuk semua masukan, semua indeks, dan semua pergeseran yang diizinkan. Pada sistem waktu-kontinu, bentuk pengujiannya sama dengan mengganti indeks $n$ dan pergeseran $n_0$ menjadi waktu $t$ dan pergeseran $t_0$.
-
-#### Contoh: rata-rata dua sampel
-
-Tinjau sistem $y[n]=(x[n]+x[n-1])/2$. Setelah masukan digeser, keluaran jalur pertama diperoleh sebagai berikut.
+Untuk $y[n]=nx[n]$, indeks pada faktor penguatan harus diperlakukan sebagai bagian aturan sistem. Menggeser masukan saja tidak menggeser faktor tersebut, sedangkan menggeser keluaran menggeser seluruh ekspresinya.
 
 ```math
-y_A[n]=\frac{x[n-n_0]+x[n-1-n_0]}{2}.
-```
-
-Pada jalur kedua, kita mengganti setiap indeks keluaran dengan $n-n_0$. Hasilnya diberikan oleh hubungan berikut.
-
-```math
-y_B[n]=y[n-n_0]
-=\frac{x[n-n_0]+x[n-n_0-1]}{2}.
-```
-
-Kedua hasil sama karena $n-1-n_0=n-n_0-1$. Sistem ini invarian terhadap waktu, meskipun nilai keluarannya dapat berubah dari sampel ke sampel.
-
-#### Contoh: penguatan yang berubah terhadap indeks
-
-Tinjau sistem $y[n]=nx[n]$. Pada jalur pertama, indeks $n$ dalam aturan penguatan tetap merupakan waktu operasi sistem, sehingga hanya argumen masukan yang digeser.
-
-```math
-y_A[n]=n\,x[n-n_0].
-```
-
-Pada jalur kedua, yang digeser adalah seluruh ekspresi keluaran. Faktor yang mengalikan masukan ikut berubah menjadi $n-n_0$.
-
-```math
+y_A[n]=n\,x[n-n_0],
+\qquad
 y_B[n]=(n-n_0)x[n-n_0].
 ```
 
-Selisih kedua jalur adalah $n_0x[n-n_0]$, yang secara umum tidak nol. Karena itu, sistem tersebut berubah terhadap waktu, walaupun tetap linear terhadap masukannya.
+Kedua hasil secara umum berbeda, sehingga sistem tersebut berubah terhadap waktu atau *time-varying*. Namun, sistem ini tetap linear terhadap $x$, karena faktor $n$ tidak bergantung pada amplitudo masukannya.
 
-#### Contoh: sistem nonlinear yang invarian terhadap waktu
+Sistem nonlinear $y[n]=x^2[n]$ justru invarian waktu karena kedua jalur menghasilkan $x^2[n-n_0]$. Karena itu, invariansi waktu tidak boleh disimpulkan hanya dari linearitas atau ketidaklinearan.
 
-Sistem penguadratan $y[n]=x^2[n]$ memberikan $y_A[n]=x^2[n-n_0]$ dan $y_B[n]=x^2[n-n_0]$. Jadi, ketidaklinearan tidak menghalangi sebuah sistem untuk memiliki invariansi waktu.
+#### Eksperimen Python: urutan pergeseran dan pemrosesan
 
-Pengujian ini juga memperjelas bahwa *time-invariant* tidak berarti keluarannya konstan. Istilah tersebut berarti aturan masukan-keluarannya tidak bergantung pada pemilihan titik asal waktu.
-
-### Eksperimen Python: pergeseran sebelum dan sesudah sistem
-
-Program berikut menggunakan sinyal yang didefinisikan langsung sebagai fungsi indeks. Cara ini memungkinkan perhitungan $x[n-n_0]$ pada indeks negatif tanpa mencampurkan batas larik dengan definisi matematis sinyal.
+Program berikut mendefinisikan masukan sebagai fungsi indeks agar dapat dievaluasi pada indeks negatif maupun positif. Cara ini menghindari kekeliruan akibat menganggap batas larik sebagai batas matematis sinyal.
 
 ```python
 import numpy as np
@@ -368,1195 +268,1403 @@ fig.tight_layout()
 plt.show()
 ```
 
-Versi skrip terpisah tersedia di [02_invariansi_waktu.py](../Kode/pertemuan-02/02_invariansi_waktu.py). Kedua jalur berhimpit untuk rata-rata dua sampel, tetapi berbeda untuk penguatan yang sebanding dengan indeks.
+Skrip tersedia di [02_invariansi_waktu.py](../Kode/pertemuan-02/02_invariansi_waktu.py). Perhatikan bahwa kedua jalur pada sistem rata-rata berhimpit, sedangkan pada penguatan yang berubah terhadap indeks keduanya berbeda.
 
-![Pengujian invariansi waktu dengan dua urutan operasi](../Gambar/pertemuan-02/invariansi-waktu.svg)
+![Perbandingan dua jalur pengujian invariansi waktu](../Gambar/pertemuan-02/invariansi-waktu.svg)
 
-Pergeseran pada contoh ini tidak dilakukan dengan `np.roll`. Menurut [dokumentasi NumPy](https://numpy.org/doc/stable/reference/generated/numpy.roll.html), fungsi tersebut memindahkan elemen yang melewati ujung larik kembali ke ujung lainnya, sehingga operasinya merupakan pergeseran melingkar.
+Penundaan biasa pada rekaman dengan riwayat nol berbeda dari pergeseran melingkar. Fungsi `np.roll` melakukan pergeseran melingkar, sehingga elemen yang melewati satu ujung larik muncul kembali pada ujung lainnya.
 
-Untuk penundaan biasa pada rekaman berhingga, nilai pada bagian yang baru terbuka harus ditentukan dari riwayat sinyal atau asumsi pengisian yang dinyatakan. Menggunakan pergeseran melingkar tanpa alasan fisis dapat membuat sampel akhir rekaman muncul sebagai masa lalu pada awal rekaman.
+### Sistem dengan dan tanpa memori
 
----
+Sistem tanpa memori hanya menggunakan masukan pada waktu yang sama untuk menentukan keluaran sekarang. Penguat $y[n]=Kx[n]$ dan penguadratan $y[n]=x^2[n]$ sama-sama tanpa memori meskipun linearitasnya berbeda.
 
-## Memori dan kausalitas
+Sistem dengan memori menggunakan masukan pada waktu lain atau suatu keadaan internal yang menyimpan pengaruh masa lalu. Contoh paling sederhana adalah penunda $y[n]=x[n-1]$, yang memerlukan penyimpanan satu sampel.
 
-Pengujian sebelumnya belum menjelaskan sampel mana yang diperlukan untuk menghitung sebuah keluaran. Informasi ini menentukan kebutuhan penyimpanan dan apakah sistem dapat bekerja ketika data datang secara bertahap.
+Pada rangkaian ideal, resistor memenuhi $v(t)=Ri(t)$ sehingga hubungan arus-tegangannya tanpa memori. Kapasitor memenuhi hubungan berikut dan memerlukan informasi muatan atau tegangan awal.
 
-### Sistem tanpa memori dan dengan memori
+```math
+v(t)=v(t_0)+\frac{1}{C}\int_{t_0}^{t}i(\tau)\,d\tau.
+```
 
-Sistem **tanpa memori** menentukan keluaran pada waktu tertentu hanya dari nilai masukan pada waktu yang sama. Sebagai contoh, $y[n]=3x[n]$ dan $y[n]=x^2[n]$ sama-sama tanpa memori, meskipun sifat linearitasnya berbeda.
+Jika arus konstan $1\ \mathrm{mA}$ mengalir selama $2\ \mathrm{ms}$ pada kapasitor $10\ \mu\mathrm{F}$, kenaikan tegangannya adalah $0.2\ \mathrm{V}$. Tegangan akhir tetap bergantung pada tegangan awal, sehingga arus sekarang saja tidak cukup untuk menentukannya.
 
-Sistem **dengan memori** memerlukan masukan pada waktu lain atau keadaan yang menyimpan pengaruh masa lalu. Penunda $y[n]=x[n-1]$ memiliki memori karena keluaran sekarang memerlukan satu sampel sebelumnya.
+### Kausalitas
 
-Rata-rata tiga sampel $y[n]=(x[n]+x[n-1]+x[n-2])/3$ memerlukan dua sampel masa lalu. Dalam implementasi langsung, dua sampel itu dapat disimpan lalu diperbarui setiap kali masukan baru diterima.
+Sistem kausal menentukan keluaran sekarang menggunakan masukan sekarang, masukan masa lalu, dan keadaan awal yang telah diketahui. Sistem nonkausal memerlukan setidaknya satu masukan masa depan untuk menentukan suatu keluaran.
 
-Penghalus $y[n]=0.8y[n-1]+0.2x[n]$ juga memiliki memori. Meskipun hanya satu keluaran lama yang disimpan, nilai itu dapat merangkum pengaruh banyak masukan sebelumnya.
+Definisi yang teliti membandingkan dua masukan yang sama hingga indeks $n_*$. Dengan keadaan awal yang sama, sistem kausal harus menghasilkan keluaran yang sama pada $n_*$ meskipun kedua masukan berbeda setelah waktu itu.
 
-### Sistem kausal dan nonkausal
-
-Sistem **kausal** tidak memerlukan masukan masa depan untuk menentukan keluaran sekarang. Keluaran pada indeks $n_*$ boleh bergantung pada masukan dengan indeks $n\le n_*$ serta keadaan awal yang telah diketahui.
-
-Definisi yang lebih teliti menggunakan dua masukan yang sama hingga waktu tertentu. Jika $x_1[n]=x_2[n]$ untuk seluruh $n\le n_*$, maka sistem kausal dengan kondisi awal yang sama harus menghasilkan $y_1[n_*]=y_2[n_*]$.
-
-Sistem $y[n]=x[n+1]$ bersifat **nonkausal** karena memerlukan sampel berikutnya. Jika dua masukan sama hingga indeks $n_*$ tetapi berbeda pada $n_*+1$, keluaran keduanya pada $n_*$ dapat berbeda.
-
-| Aturan | Memori | Kausalitas | Alasan |
+| Aturan sistem | Memori | Kausalitas | Informasi yang diperlukan |
 |---|---|---|---|
-| $y[n]=2x[n]$ | Tanpa memori | Kausal | Hanya memakai masukan sekarang |
-| $y[n]=x^2[n]$ | Tanpa memori | Kausal | Operasi nonlinear tidak memerlukan masa depan |
-| $y[n]=x[n-2]$ | Dengan memori | Kausal | Memerlukan dua sampel sebelumnya |
-| $y[n]=x[n+1]$ | Dengan memori | Nonkausal | Memerlukan satu sampel berikutnya |
-| $y[n]=(x[n-1]+x[n]+x[n+1])/3$ | Dengan memori | Nonkausal | Memakai sampel masa lalu dan masa depan |
+| $y[n]=2x[n]$ | Tanpa memori | Kausal | Sampel sekarang |
+| $y[n]=x[n-2]$ | Dengan memori | Kausal | Dua sampel sebelumnya |
+| $y[n]=x[n+1]$ | Dengan memori | Nonkausal | Sampel berikutnya |
+| $y[n]=(x[n-1]+x[n]+x[n+1])/3$ | Dengan memori | Nonkausal | Sampel sebelum, sekarang, dan sesudah |
+| $y[n]=x[-n]$ pada seluruh $\mathbb{Z}$ | Dengan memori | Nonkausal | Untuk $n<0$, indeks $-n$ berada di masa depan |
 
-![Sampel yang diperlukan oleh sistem tanpa memori, rata-rata kausal, dan rata-rata simetris](../Gambar/pertemuan-02/memori-kausalitas.svg)
+#### Pengolahan langsung dan rekaman lengkap
 
-Titik berwarna pada gambar menunjukkan sampel yang diperlukan untuk menghitung keluaran pada $n_*$. Akses ke sisi kanan $n_*$ menunjukkan kebutuhan data masa depan terhadap waktu keluaran tersebut.
+Sistem nonkausal dapat digunakan untuk mengolah rekaman yang seluruh sampelnya sudah tersedia. Kausalitas membatasi ketersediaan informasi pada waktu keluaran diminta, bukan melarang perhitungan setelah pengukuran selesai.
 
-### Pengolahan langsung dan pengolahan rekaman
-
-Sistem nonkausal tetap dapat digunakan untuk menganalisis rekaman yang seluruh datanya sudah tersedia. Keterbatasannya muncul ketika keluaran diminta segera pada saat sampel terkait baru diterima.
-
-Misalkan sebuah rata-rata simetris didefinisikan sebagai $v[n]=(x[n-1]+x[n]+x[n+1])/3$. Nilai $v[n]$ baru dapat dihitung setelah $x[n+1]$ datang, sehingga penerapan langsungnya memerlukan waktu tunggu satu sampel.
-
-Jika kita menerima penundaan keluaran satu sampel dan mendefinisikan $y[n]=v[n-1]$, hubungan masukan-keluarannya berubah menjadi kausal. Pergantian indeks memberikan hubungan berikut.
+Misalkan $v[n]=(x[n-1]+x[n]+x[n+1])/3$ adalah rata-rata simetris. Nilai itu dapat dihitung setelah satu sampel berikutnya datang, sehingga sistem baru dengan keluaran tertunda $y[n]=v[n-1]$ menjadi kausal.
 
 ```math
-y[n]=v[n-1]
-=\frac{x[n-2]+x[n-1]+x[n]}{3}.
+y[n]=\frac{x[n-2]+x[n-1]+x[n]}{3}.
 ```
 
-Dalam sistem yang baru, keluaran pada $n$ merepresentasikan rata-rata yang berpusat pada $n-1$. Jadi, perubahan ini menyertakan keterlambatan pada informasi yang ditampilkan.
+Perubahan ini menyertakan keterlambatan satu sampel pada informasi yang ditampilkan. Keluaran pada indeks $n$ sekarang merepresentasikan rata-rata yang berpusat pada indeks $n-1$.
+
+#### Eksperimen Python: mengubah masa depan masukan
+
+Kedua masukan dalam program berikut sama sampai indeks tujuh dan berbeda mulai indeks delapan. Kita memeriksa apakah perubahan tersebut memengaruhi keluaran pada indeks tujuh untuk rata-rata kausal dan rata-rata simetris.
+
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+
+
+def kausal(x):
+    z = np.pad(x, (2, 0))
+    return (z[2:] + z[1:-1] + z[:-2]) / 3
+
+
+def terpusat(x):
+    z = np.pad(x, (1, 1))
+    return (z[:-2] + z[1:-1] + z[2:]) / 3
+
+
+n = np.arange(16)
+n0 = 7
+x1 = np.sin(0.4 * n)
+x2 = x1.copy()
+x2[n > n0] += 2.0
+
+fig, axes = plt.subplots(3, 1, figsize=(8, 8), sharex=True)
+axes[0].plot(n, x1, 'o-', label='Masukan 1')
+axes[0].plot(n, x2, 's--', label='Masukan 2')
+axes[0].set_title('Kedua masukan identik sampai n = 7')
+
+for ax, fungsi, nama in zip(axes[1:], [kausal, terpusat],
+                          ['Rata-rata kausal', 'Rata-rata terpusat']):
+    y1, y2 = fungsi(x1), fungsi(x2)
+    beda = np.flatnonzero(~np.isclose(y1, y2))
+    print(nama, ': keluaran pertama berbeda pada n =', beda[0])
+    ax.plot(n, y1, 'o-', label='Keluaran 1')
+    ax.plot(n, y2, 's--', label='Keluaran 2')
+    ax.set_title(nama)
+
+for ax in axes:
+    ax.axvline(n0, color='gray', linestyle=':', label='Batas n = 7')
+    ax.set_ylabel('Amplitudo')
+    ax.grid(alpha=0.3)
+    ax.legend(loc='upper left', fontsize=8)
+axes[-1].set_xlabel('Indeks n')
+fig.tight_layout()
+plt.show()
+```
+
+Skrip tersedia di [03_memori_kausalitas.py](../Kode/pertemuan-02/03_memori_kausalitas.py). Pada titik pengujian, keluaran rata-rata kausal tidak berubah, sedangkan rata-rata simetris sudah terpengaruh oleh sampel masa depan.
+
+![Pengaruh perubahan sampel masa depan terhadap dua sistem rata-rata](../Gambar/pertemuan-02/memori-kausalitas.svg)
+
+### Invertibilitas
+
+Sistem invertibel memungkinkan masukan dipulihkan secara unik dari keluarannya pada kelas masukan yang dinyatakan. Jika dua masukan berbeda menghasilkan keluaran yang sama, informasi telah hilang dan invers yang unik tidak tersedia pada kelas tersebut.
+
+Untuk $y[n]=Kx[n]$ dengan $K\ne0$, inversnya adalah $x[n]=y[n]/K$. Untuk penunda $y[n]=x[n-1]$ pada deretan dua sisi, inversnya adalah $x[n]=y[n+1]$, sehingga invers yang ada secara matematis belum tentu kausal.
+
+Sistem $y[n]=x^2[n]$ tidak invertibel pada seluruh sinyal real karena masukan satu dan minus satu memberikan keluaran yang sama. Jika masukannya dibatasi nonnegatif, invers $x[n]=\sqrt{y[n]}$ menjadi unik.
+
+#### Contoh: nilai awal dalam rekonstruksi selisih pertama
+
+Sistem $d[n]=x[n]-x[n-1]$ menghilangkan komponen konstan pada deretan dua sisi. Namun, jika $x[-1]$ diketahui dan pemulihan dimulai pada $n=0$, rekonstruksi berurutan dapat dilakukan.
+
+```math
+x[n]=x[n-1]+d[n]
+=x[-1]+\sum_{k=0}^{n}d[k].
+```
+
+Ambil $x[-1]=10$ dan deretan selisih $d[0]=2$, $d[1]=-1$, serta $d[2]=3$. Hasilnya adalah $x[0]=12$, $x[1]=11$, dan $x[2]=14$.
+
+Jika nilai awal dinaikkan menjadi $20$, hasil pemulihan menjadi $22$, $21$, dan $24$. Dengan demikian, invertibilitas harus dinilai bersama kelas sinyal dan informasi batas yang tersedia.
+
+### Stabilitas BIBO
+
+BIBO merupakan singkatan dari *bounded-input bounded-output*, yaitu masukan terbatas menghasilkan keluaran terbatas. Sistem stabil BIBO jika setiap masukan yang memiliki batas amplitudo berhingga menghasilkan keluaran yang juga memiliki batas amplitudo berhingga pada seluruh waktu pengamatan.
+
+Dalam notasi matematis, definisi tersebut dinyatakan sebagai implikasi berikut. Konstanta batas keluaran tidak boleh tumbuh tanpa batas ketika rentang waktu pengamatan diperpanjang.
+
+```math
+|x[n]|\le M_x<\infty
+\quad\Longrightarrow\quad
+|y[n]|\le M_y<\infty.
+```
+
+Untuk sistem dinamis, stabilitas BIBO sebagai pemetaan masukan-keluaran biasanya diperiksa dengan keadaan awal nol. Perilaku akibat keadaan awal tak nol tetap perlu diperiksa tersendiri ketika menilai suatu realisasi fisis.
+
+#### Contoh sistem stabil
+
+Jika $y[n]=3x[n]-2x[n-1]$, pertidaksamaan segitiga memberikan batas yang berlaku bagi setiap masukan terbatas. Besar batas tersebut dihitung sebagai berikut.
+
+```math
+|y[n]|\le3|x[n]|+2|x[n-1]|\le5M_x.
+```
+
+Untuk $M_x=2$, kita dapat mengambil $M_y=10$. Batas ini tidak menyatakan bahwa setiap masukan akan menghasilkan amplitudo sepuluh, tetapi menjamin keluaran tidak melampauinya.
+
+Sistem penguadratan juga stabil BIBO karena $|y[n]|\le M_x^2$. Jadi, stabilitas BIBO tidak mensyaratkan linearitas dan tidak berarti amplitudo keluaran harus lebih kecil daripada amplitudo masukan.
+
+#### Contoh sistem tidak stabil
+
+Akumulator dengan keadaan awal nol memenuhi $y[n]=y[n-1]+x[n]$ dan $y[-1]=0$. Untuk masukan unit step $x[n]=u[n]$, keluaran berturut-turut adalah $1,2,3,\ldots$, sehingga $y[n]=n+1$ pada $n\ge0$.
+
+Masukannya dibatasi satu, tetapi keluarannya terus bertambah tanpa batas. Satu contoh penyangkal ini cukup untuk membuktikan bahwa akumulator tersebut tidak stabil BIBO.
+
+Kestabilan tidak dapat dibuktikan hanya karena grafik selama beberapa puluh sampel tampak terbatas. Bukti stabilitas harus menjamin batas keluaran untuk semua waktu yang termasuk dalam definisi sistem.
+
+### Sistem linear time-invariant dan hubungan antarsifat
+
+Sistem **linear time-invariant**, disingkat LTI, memenuhi linearitas dan invariansi waktu sekaligus. Kausalitas, memori, invertibilitas, dan stabilitas tetap merupakan sifat tambahan yang tidak otomatis mengikuti singkatan tersebut.
+
+Tabel berikut merangkum beberapa sistem pada deretan real dua sisi. Invertibilitas dinilai tanpa informasi batas tambahan, sehingga hasilnya dapat berubah jika kelas masukan dipersempit.
+
+| Sistem | Linear | Invarian waktu | Kausal | Stabil BIBO | Invertibel |
+|---|:---:|:---:|:---:|:---:|:---:|
+| $2x[n]$ | Ya | Ya | Ya | Ya | Ya |
+| $2x[n]+3$ | Tidak | Ya | Ya | Ya | Ya |
+| $x^2[n]$ | Tidak | Ya | Ya | Ya | Tidak |
+| $nx[n]$ | Ya | Tidak | Ya | Tidak | Tidak |
+| $x[n+1]$ | Ya | Ya | Tidak | Ya | Ya |
+| $x[n]-x[n-1]$ | Ya | Ya | Ya | Ya | Tidak |
+
+Pada sistem $nx[n]$, nilai masukan di indeks nol selalu dikalikan nol, sehingga tidak dapat dipulihkan. Pada sistem selisih pertama, komponen konstan hilang, sesuai contoh rekonstruksi yang memerlukan nilai awal.
 
 ---
 
-## Invertibilitas
+## Komponen dasar sistem waktu-diskret
 
-Setelah mengetahui data yang diperlukan sistem, kita dapat menanyakan apakah masukan dapat ditemukan kembali dari keluarannya. Pertanyaan ini berkaitan dengan **invertibilitas**, yaitu ada atau tidaknya pemetaan balik yang menghasilkan masukan secara unik.
+Setelah mengetahui sifat suatu aturan, kita perlu menyatakan operasi yang harus dilakukan untuk menghitung keluarannya. Diagram blok membantu memperlihatkan aliran data, pengalian, penjumlahan, serta penyimpanan nilai antarsampel.
 
-Sistem invertibel pada suatu kelas masukan jika dua masukan berbeda dalam kelas tersebut tidak pernah menghasilkan keluaran yang sama. Jika inversnya dinyatakan dengan $\mathcal{T}^{-1}$, hubungan yang diinginkan dinyatakan sebagai berikut.
+### Penjumlah dan pengali
 
-```math
-\mathcal{T}^{-1}\{\mathcal{T}\{x\}\}=x.
-```
-
-### Contoh sistem invertibel
-
-Untuk $y[n]=Kx[n]$ dengan $K\ne0$, masukan diperoleh kembali dengan membagi keluaran oleh $K$. Sebagai contoh, penguat dengan $K=4$ mempunyai invers $x[n]=y[n]/4$.
-
-Penundaan $y[n]=x[n-1]$ juga invertibel jika seluruh deretan masukan dan keluaran tersedia. Inversnya adalah $x[n]=y[n+1]$, sehingga invers tersebut nonkausal terhadap waktu keluaran yang sedang digunakan.
-
-Contoh ini menunjukkan bahwa invertibel tidak otomatis berarti mempunyai invers yang kausal. Pada rekaman berhingga, kita juga perlu mengetahui sampel keluaran tambahan di batas akhir agar sampel masukan terakhir dapat dipulihkan.
-
-### Contoh hilangnya informasi
-
-Sistem $y[n]=x^2[n]$ tidak invertibel pada kelas seluruh sinyal real. Masukan $x_1[n]=1$ dan $x_2[n]=-1$ memberikan keluaran yang sama, sehingga informasi tanda hilang.
-
-Jika kelas masukan dibatasi menjadi $x[n]\ge0$ untuk semua $n$, akar nonnegatif memberikan invers yang unik. Dengan demikian, pernyataan invertibilitas perlu menyebutkan kelas masukan yang digunakan.
-
-### Contoh: selisih pertama dan nilai awal
-
-Untuk $y[n]=x[n]-x[n-1]$, penambahan konstanta yang sama ke seluruh masukan tidak mengubah keluaran. Pada deretan dua sisi tanpa informasi tambahan, sistem ini tidak invertibel karena tingkat dasar masukan hilang.
-
-Apabila pemrosesan dimulai pada $n=0$ dan nilai $x[-1]$ diketahui, masukan dapat dipulihkan secara berurutan. Kita memperoleh hubungan balik berikut.
+Penjumlah menggabungkan dua atau lebih sinyal pada indeks yang sama. Pengali konstanta mengubah amplitudo sebuah sinyal tanpa mengubah indeks waktunya.
 
 ```math
-\begin{aligned}
-x[0]&=y[0]+x[-1],\\
-x[1]&=y[1]+x[0],\\
-x[n]&=x[-1]+\sum_{k=0}^{n}y[k].
-\end{aligned}
+w[n]=v_1[n]+v_2[n],
+\qquad
+z[n]=Kv[n].
 ```
 
-Misalkan $x[-1]=10$ dan keluaran yang diterima adalah $y[0]=2$, $y[1]=-1$, serta $y[2]=3$. Rekonstruksi memberikan $x[0]=12$, $x[1]=11$, dan $x[2]=14$.
+Sebagai contoh, dua masukan bernilai $2$ dan $-0.5$ menghasilkan keluaran penjumlah $1.5$. Jika hasil tersebut masuk ke pengali $K=4$, keluarannya menjadi $6$.
 
-Jika nilai awal diganti menjadi $x[-1]=20$, keluaran selisih yang sama menghasilkan masukan $22$, $21$, dan $24$. Karena itu, nilai awal merupakan bagian informasi yang diperlukan untuk menjadikan rekonstruksi unik.
+Pengali sinyal mengalikan dua nilai sinyal pada indeks yang sama, yaitu $w[n]=v_1[n]v_2[n]$. Operasi ini berbeda dari pengali konstanta karena kedua faktornya dapat berubah terhadap waktu.
 
----
+Jika kedua faktor dipandang sebagai masukan bebas, pengali sinyal tidak linear terhadap pasangan masukan karena penskalaan keduanya menghasilkan faktor skala kuadrat. Jika salah satu faktor telah ditetapkan sebagai sinyal referensi $r[n]$, pemetaan $x[n]\mapsto r[n]x[n]$ linear terhadap $x$, tetapi umumnya berubah terhadap waktu jika $r[n]$ tidak konstan.
 
-## Stabilitas BIBO
+### Unit delay dan unit advance
 
-Sistem pengukuran sering menerima masukan yang amplitudonya dibatasi oleh rentang operasi. Kita ingin mengetahui apakah keluaran sistem juga tetap terbatas untuk setiap masukan semacam itu.
+Penunda satu sampel atau *unit delay* menghasilkan $w[n]=v[n-1]$. Penunda ini membutuhkan memori, karena nilai pada waktu sebelumnya harus disimpan sampai pembaruan berikutnya.
 
-Sifat ini disebut **stabilitas BIBO**, singkatan dari *bounded-input bounded-output*. Definisi ini berlaku untuk sistem linear maupun nonlinear, dan tidak mensyaratkan keluaran harus mengecil atau mencapai sebuah konstanta.
+Operator $D$ digunakan untuk menyatakan penundaan, sehingga $Dv[n]=v[n-1]$ dan $D^kv[n]=v[n-k]$. Simbol $z^{-1}$ yang sering muncul pada diagram berarti penundaan yang sama dan akan dihubungkan dengan transformasi Z pada pertemuan keenam.
 
-### Definisi masukan terbatas dan keluaran terbatas
+Operasi kebalikannya adalah pemaju satu sampel atau *unit advance*, yaitu $w[n]=v[n+1]$. Operasi ini nonkausal jika keluaran diminta pada saat $n$, karena sampel berikutnya belum tersedia.
 
-Masukan disebut terbatas jika terdapat konstanta berhingga $M_x$ yang membatasi magnitudonya pada semua waktu yang ditinjau. Dalam notasi diskret, syaratnya ditulis sebagai berikut.
+![Penjumlah, pengali konstanta, pengali sinyal, unit delay, dan unit advance](../Gambar/pertemuan-02/komponen-dasar.svg)
 
-```math
-|x[n]|\le M_x<\infty.
-```
+Setiap panah pada gambar menunjukkan arah pemakaian data. Titik percabangan pada diagram selanjutnya menyalin nilai ke beberapa jalur, bukan membagi amplitudo sinyal menjadi beberapa bagian.
 
-Sistem stabil BIBO jika setiap masukan terbatas menghasilkan keluaran dengan batas berhingga yang tidak bertambah tanpa batas ketika waktu pengamatan diperpanjang. Dengan kata lain, harus ada $M_y<\infty$ yang memenuhi pertidaksamaan berikut.
+### Diagram blok nonrekursif
 
-```math
-|y[n]|\le M_y
-\qquad\text{untuk seluruh indeks yang ditinjau}.
-```
-
-Ketika membahas sistem dinamis sebagai pemetaan dari masukan menuju keluaran, pengujian BIBO lazim dilakukan dengan keadaan awal nol. Pengaruh keadaan awal tak nol perlu diperiksa pula dalam penerapan, dan akan dihitung secara terpisah setelah persamaan selisih diperkenalkan.
-
-### Membuktikan stabilitas dengan batas amplitudo
-
-Untuk sistem $y[n]=3x[n]$, batas masukan langsung memberikan batas keluaran. Dengan menggunakan magnitudo, kita memperoleh batas berikut.
-
-```math
-|y[n]|=3|x[n]|\le3M_x.
-```
-
-Rata-rata dua sampel juga stabil karena pertidaksamaan segitiga membatasi jumlahnya. Perhitungannya dituliskan sebagai berikut.
-
-```math
-|y[n]|
-=\left|\frac{x[n]+x[n-1]}{2}\right|
-\le\frac{|x[n]|+|x[n-1]|}{2}
-\le M_x.
-```
-
-Sistem nonlinear $y[n]=x^2[n]$ tetap stabil BIBO pada sinyal real. Batasnya adalah $|y[n]|\le M_x^2$, yang berhingga untuk setiap $M_x$ berhingga.
-
-Contoh terakhir memperlihatkan bahwa stabilitas dan linearitas merupakan sifat yang berbeda. Penguatan amplitudo yang besar juga belum berarti tidak stabil, selama penguatan tersebut tetap berhingga dan tidak menghasilkan keluaran tanpa batas dari masukan terbatas.
-
-### Membuktikan ketidakstabilan dengan satu masukan
-
-Sistem $y[n]=nx[n]$ tidak stabil BIBO pada rentang waktu yang tidak dibatasi. Masukan $x[n]=u[n]$ mempunyai magnitudo paling besar satu, tetapi menghasilkan $y[n]=nu[n]$ yang terus bertambah.
-
-Contoh lain adalah akumulator yang dimulai dari keadaan nol. Aturan akumulasinya menjumlahkan seluruh masukan yang diterima sejak $n=0$.
-
-```math
-y[n]=\sum_{k=0}^{n}x[k],
-\qquad n\ge0.
-```
-
-Untuk masukan $x[n]=u[n]$, terdapat $n+1$ buah suku bernilai satu dalam penjumlahan. Keluarannya diberikan oleh persamaan berikut.
-
-```math
-y[n]=n+1,
-\qquad n\ge0,
-```
-
-Akumulator ini tidak stabil BIBO karena satu masukan terbatas telah menghasilkan keluaran tidak terbatas. Fakta bahwa keluaran pada 10 atau 100 sampel pertama masih dapat disimpan komputer tidak mengubah kesimpulan matematis untuk waktu yang terus bertambah.
-
-### Stabilitas dan ketelitian pengukuran
-
-Stabil BIBO tidak berarti keluaran selalu mendekati sinyal yang ingin diukur. Sebuah penguat yang stabil masih dapat memperbesar derau, dan penghalus yang stabil dapat memperlambat perubahan yang justru ingin diamati.
-
-Demikian pula, pembulatan, batas angka, dan saturasi perangkat merupakan persoalan implementasi yang perlu dibedakan dari model ideal. Penilaian kegunaan sistem harus mempertimbangkan stabilitas sekaligus tujuan pengolahannya.
-
----
-
-## Sistem linear time-invariant
-
-Sebuah sistem disebut **linear time-invariant**, disingkat **LTI**, jika linear dan invarian terhadap waktu. Kedua sifat ini harus diuji secara terpisah karena salah satunya tidak menjamin yang lain.
-
-Sebagai contoh, $y[n]=2x[n]-\tfrac12x[n-1]$ adalah sistem LTI. Penguadratan bersifat invarian terhadap waktu tetapi nonlinear, sedangkan $y[n]=nx[n]$ linear tetapi berubah terhadap waktu.
-
-### Membandingkan beberapa sistem
-
-Tabel berikut menggunakan sinyal yang terdefinisi untuk seluruh indeks bilangan bulat. Pernyataan invertibilitas pada tabel berlaku untuk seluruh deretan real tanpa informasi batas tambahan.
-
-| Sistem | Linear | Invarian waktu | Tanpa memori | Kausal | Stabil BIBO | Invertibel |
-|---|:---:|:---:|:---:|:---:|:---:|:---:|
-| $2x[n]$ | Ya | Ya | Ya | Ya | Ya | Ya |
-| $2x[n]+3$ | Tidak | Ya | Ya | Ya | Ya | Ya |
-| $x^2[n]$ | Tidak | Ya | Ya | Ya | Ya | Tidak |
-| $nx[n]$ | Ya | Tidak | Ya | Ya | Tidak | Tidak |
-| $x[n-1]$ | Ya | Ya | Tidak | Ya | Ya | Ya |
-| $x[n+1]$ | Ya | Ya | Tidak | Tidak | Ya | Ya |
-| $x[n]-x[n-1]$ | Ya | Ya | Tidak | Ya | Ya | Tidak |
-
-Sistem $nx[n]$ tidak invertibel pada domain tersebut karena nilai $x[0]$ selalu dikalikan nol. Sistem selisih pertama kehilangan komponen konstan, sesuai pembahasan tentang perlunya informasi nilai awal.
-
-Tabel ini juga menunjukkan bahwa LTI tidak berarti otomatis kausal. Sebagai contoh, pemaju satu sampel $x[n+1]$ adalah LTI dan stabil BIBO, tetapi memerlukan masukan masa depan.
-
-### Mengapa sistem LTI berguna?
-
-Superposisi memungkinkan masukan yang rumit diuraikan menjadi komponen sederhana. Invariansi waktu memastikan bahwa respons terhadap komponen yang digeser dapat diperoleh dengan menggeser respons yang sudah diketahui.
-
-Gabungan kedua sifat tersebut menjadi dasar pembahasan respons impuls dan konvolusi pada pertemuan ketiga. Pada pertemuan ini, kita terlebih dahulu mempelajari bagaimana aturan sistem diwujudkan sebagai rangkaian operasi dan perhitungan berurutan.
-
----
-
-## Diagram blok sistem waktu-diskret
-
-Persamaan matematis menunjukkan hubungan antara masukan dan keluaran. Diagram blok menampilkan operasi yang perlu dilakukan serta data yang harus disimpan agar hubungan tersebut dapat dihitung.
-
-### Penjumlah, pengali, dan penunda satu sampel
-
-Tiga komponen dasar yang akan kita gunakan adalah penjumlah, pengali konstanta, dan penunda satu sampel. Cabang pada garis sinyal menyatakan penyalinan nilai ke beberapa jalur, bukan pembagian nilai sinyal.
-
-| Komponen | Hubungan masukan-keluaran | Fungsi dalam implementasi |
-|---|---|---|
-| Penjumlah | $w[n]=v_1[n]+v_2[n]$ | Menjumlahkan dua nilai pada indeks yang sama |
-| Pengali $c$ | $w[n]=cv[n]$ | Mengalikan nilai dengan koefisien |
-| Penunda satu sampel $D$ | $w[n]=v[n-1]$ | Menyimpan satu nilai hingga sampel berikutnya |
-
-![Tiga komponen dasar diagram blok waktu-diskret](../Gambar/pertemuan-02/blok-dasar.svg)
-
-Simbol $D$ pada gambar hanya menyatakan penundaan satu sampel. Notasi $z^{-1}$ sering dipakai untuk operasi yang sama, tetapi hubungan dengan transformasi Z akan dipelajari pada pertemuan ketujuh.
-
-#### Keadaan internal sebuah penunda
-
-Pada saat penghitungan sampel ke-$n$, keluaran penunda berisi nilai masukan penunda dari sampel ke-$(n-1)$. Setelah nilai lama digunakan, isi penyimpanan diperbarui dengan masukan penunda yang sekarang.
-
-Urutan pembaruan ini menentukan ketepatan hasil perhitungan. Jika nilai lama ditimpa sebelum digunakan, operasi yang dimaksudkan sebagai penundaan dapat berubah menjadi penggunaan sampel sekarang.
-
-### Diagram sistem nonrekursif
-
-Tinjau rata-rata tiga sampel berikut dengan asumsi nilai riwayat masukan tersedia. Ketiga kontribusi dapat dihitung menggunakan dua penunda dan tiga pengali bernilai $1/3$.
+Rata-rata tiga sampel dapat dibentuk dengan dua penunda dan tiga pengali konstanta. Masing-masing jalur membawa $x[n]$, $x[n-1]$, dan $x[n-2]$ ke penjumlah.
 
 ```math
 y[n]=\frac13x[n]+\frac13x[n-1]+\frac13x[n-2].
 ```
 
-![Diagram blok rata-rata tiga sampel dengan dua unit delay](../Gambar/pertemuan-02/diagram-nonrekursif.svg)
+![Diagram blok rata-rata tiga sampel](../Gambar/pertemuan-02/diagram-nonrekursif.svg)
 
-Setiap penunda menambah satu sampel keterlambatan pada jalur yang melewatinya. Ketiga nilai hasil perkalian dijumlahkan untuk menghasilkan keluaran pada indeks yang sama.
+Diagram ini tidak mengembalikan keluaran ke operasi sebelumnya. Keluaran dihitung hanya dari masukan sekarang dan masukan lama, sehingga bentuk implementasinya disebut nonrekursif.
 
-Diagram ini tidak mengembalikan keluaran ke masukan operasi sebelumnya. Karena hanya menggunakan masukan sekarang dan masukan lama, bentuk implementasinya disebut **nonrekursif**.
+### Diagram blok dengan umpan balik
 
-### Diagram sistem rekursif
-
-Sekarang tinjau sistem yang menggunakan keluaran sebelumnya. Untuk koefisien konstan $a$ dan $b$, hubungan rekursifnya dituliskan sebagai berikut.
+Contoh berikut menggabungkan masukan sekarang, satu masukan lama, dan satu keluaran lama. Koefisiennya dipilih sama dengan contoh diagram pada bagian 3.1 buku agar hubungan gambar dan persamaannya mudah dibandingkan.
 
 ```math
-y[n]=a\,y[n-1]+b\,x[n].
+y[n]=0.25y[n-1]+0.5x[n]+0.5x[n-1].
 ```
 
-![Diagram blok sistem rekursif orde satu dengan umpan balik melalui unit delay](../Gambar/pertemuan-02/diagram-rekursif.svg)
+![Diagram blok sistem dengan jalur maju dan umpan balik tertunda](../Gambar/pertemuan-02/diagram-rekursif.svg)
 
-Cabang umpan balik membawa keluaran melewati penunda sebelum digunakan lagi. Dengan demikian, pada waktu menghitung $y[n]$, nilai $y[n-1]$ sudah diketahui dan tidak perlu diperoleh dengan menebak keluaran sekarang.
+Umpan balik melewati penunda, sehingga $y[n-1]$ sudah diketahui ketika $y[n]$ dihitung. Isi awal kedua penunda adalah $x[-1]$ dan $y[-1]$ jika penghitungan dimulai pada $n=0$.
 
-Nilai awal isi penunda adalah $y[-1]$ jika penghitungan dimulai pada $n=0$. Tanpa nilai itu, persamaan rekursif belum menentukan keluaran pertama secara unik.
+Misalkan $x[-1]=y[-1]=0$, $x[0]=2$, dan $x[1]=0$. Keluaran pertama adalah $y[0]=1$, sedangkan keluaran berikutnya adalah $y[1]=0.25(1)+0.5(0)+0.5(2)=1.25$.
+
+Keluaran tetap ada ketika masukan sekarang sudah nol karena penunda masih menyimpan nilai lama. Pada setiap pembaruan, nilai lama harus digunakan terlebih dahulu sebelum isi penyimpanan diganti dengan nilai yang baru.
 
 ---
 
 ## Persamaan selisih
 
-Diagram blok sebelumnya dapat ditulis sebagai hubungan aljabar antara nilai sinyal pada indeks-indeks berbeda. Hubungan semacam ini disebut **persamaan selisih** atau *difference equation*.
+Diagram blok menunjukkan jalur aliran data, sedangkan persamaan selisih menyatakan hubungan antarsampel secara aljabar. Keduanya merupakan dua representasi dari aturan pengolahan yang sama, sehingga kita dapat berpindah dari gambar ke persamaan atau sebaliknya.
 
-Istilah tersebut tidak berarti setiap persamaan harus hanya berupa pengurangan dua sampel. Persamaan selisih merupakan padanan diskret dari hubungan dinamis yang pada sistem waktu-kontinu sering dinyatakan dengan persamaan diferensial.
+Persamaan selisih berperan dalam sistem waktu-diskret sebagaimana persamaan diferensial berperan dalam sistem waktu-kontinu. Perbedaannya adalah hubungan waktu pada persamaan selisih dinyatakan melalui pergeseran indeks, bukan turunan terhadap waktu kontinu.
 
-### Bentuk linear dengan koefisien konstan
+### Bentuk umum dan orde persamaan
 
-Bentuk yang banyak digunakan dalam pengolahan sinyal adalah persamaan selisih linear berkoefisien konstan. Dengan $a_0\ne0$, bentuk umumnya diberikan oleh persamaan berikut.
+Salah satu bentuk yang sering digunakan adalah persamaan selisih linear berkoefisien konstan. Dengan $a_0\ne0$, bentuk tersebut dapat dituliskan sebagai berikut.
 
 ```math
 \sum_{k=0}^{N}a_k y[n-k]
 =\sum_{k=0}^{M}b_k x[n-k].
 ```
 
-Koefisien $a_k$ dan $b_k$ tidak bergantung pada indeks $n$. Parameter $N$ menunjukkan keterlambatan keluaran terbesar dalam bentuk persamaan tersebut, sedangkan $M$ menunjukkan keterlambatan masukan terbesar.
+Koefisien $a_k$ dan $b_k$ menentukan pengaruh setiap sampel pada hubungan masukan-keluaran. Jika $a_N\ne0$ dan $N\ge1$, persamaan tersebut berorde $N$ terhadap keluaran dan umumnya membutuhkan $N$ nilai awal keluaran untuk dihitung maju.
 
-Untuk memperoleh bentuk yang siap dihitung, pisahkan suku $a_0y[n]$ dari keluaran-keluaran lama. Setelah membagi dengan $a_0$, kita mendapatkan bentuk berikut.
+Untuk implementasi, keluaran sekarang dipisahkan dari semua besaran yang sudah diketahui. Hasilnya adalah aturan komputasi berikut.
 
 ```math
 \boxed{
 y[n]=\frac{1}{a_0}
-\left(
-\sum_{k=0}^{M}b_kx[n-k]
--\sum_{k=1}^{N}a_ky[n-k]
-\right)
-}.
+\left(\sum_{k=0}^{M}b_kx[n-k]
+-\sum_{k=1}^{N}a_ky[n-k]\right).
+}
 ```
 
-Tanda minus pada penjumlahan keluaran lama berasal dari pemindahan ruas. Karena itu, jika persamaan awal ditulis sebagai $y[n]-0.5y[n-1]=x[n]$, larik koefisien keluaran adalah $a=[1,-0.5]$ dan bentuk rekursifnya memuat $+0.5y[n-1]$.
+Tanda negatif pada jumlah keluaran lama berasal dari pemindahan ruas. Karena itu, persamaan $y[n]-0.75y[n-1]+0.125y[n-2]=x[n]$ menggunakan kontribusi $+0.75y[n-1]$ dan $-0.125y[n-2]$ ketika dihitung maju.
 
-### Rekursif dan nonrekursif
+Untuk bentuk di atas, masukan hanya muncul pada indeks sekarang atau masa lalu. Dengan keadaan awal yang ditentukan tanpa menggunakan masukan masa depan, realisasi komputasinya bersifat kausal.
 
-Jika keluaran sekarang dihitung hanya dari masukan sekarang dan masukan lama, implementasinya nonrekursif. Bentuk penjumlahannya diberikan oleh persamaan berikut.
+### Sistem nonrekursif dan rekursif
+
+Sistem **nonrekursif** menghitung keluaran tanpa menggunakan keluaran sebelumnya. Dalam bentuk umum tadi, semua $a_k$ untuk $k\ge1$ bernilai nol, tetapi koefisien $a_0$ tetap tidak nol.
 
 ```math
-y[n]=\sum_{k=0}^{M}b_kx[n-k],
+y[n]=\frac{1}{a_0}\sum_{k=0}^{M}b_kx[n-k].
 ```
 
-Jika perhitungan menggunakan keluaran lama, implementasinya rekursif. Sebagai contoh, $y[n]=0.6y[n-1]+0.4x[n]$ hanya menyimpan satu keluaran lama tetapi dapat mempertahankan pengaruh masukan selama banyak sampel.
-
-Sistem nonrekursif dengan penjumlahan berhingga di atas memiliki respons impuls berhingga dan akan termasuk pembahasan FIR. Sistem rekursif sering memiliki respons impuls tak berhingga dan muncul dalam pembahasan IIR, tetapi istilah rekursif menjelaskan cara menghitung sehingga tidak selalu identik dengan respons impuls tak berhingga.
-
-Sebagai contoh, rata-rata $L$ sampel dapat diperbarui menggunakan bentuk rekursif berikut. Hubungan ini tetap menghitung rata-rata berhingga jika keadaan awalnya konsisten dengan definisi penjumlahan langsung.
+Sistem **rekursif** menggunakan paling sedikit satu keluaran lama dalam perhitungan keluaran sekarang. Kehadiran umpan balik membuat nilai keluaran membawa pengaruh keadaan dari langkah sebelumnya.
 
 ```math
-y[n]=y[n-1]+\frac{x[n]-x[n-L]}{L}.
+y[n]=0.8y[n-1]+0.2x[n].
 ```
 
-Untuk melihat asalnya, kurangi jumlah $L$ sampel pada indeks $n-1$ dari jumlah pada indeks $n$. Semua suku di tengah saling menghapus, sehingga hanya sampel baru $x[n]$ dan sampel yang keluar dari jendela, $x[n-L]$, yang tersisa.
+Nonrekursif tidak berarti tanpa memori, karena $y[n]=x[n]+x[n-1]$ tetap memerlukan penyimpanan masukan lama. Rekursif juga tidak otomatis berarti tidak stabil, karena kestabilan bergantung pada koefisien dan struktur hubungan tersebut.
 
-Kesalahan awal pada $y[n-1]$ tidak otomatis hilang dalam bentuk pembaruan tersebut. Contoh ini memperlihatkan mengapa persamaan, keadaan awal, dan makna keluaran perlu diperiksa bersama.
+Pada pertemuan berikutnya, bentuk nonrekursif dengan jumlah tap berhingga akan dikaitkan dengan respons impuls berhingga atau FIR. Namun, istilah rekursif menjelaskan cara menghitung, sehingga tidak boleh selalu disamakan dengan respons impuls tak berhingga tanpa memeriksa persamaan dan kemungkinan pembatalannya.
 
-### Kapan persamaan ini menentukan sistem LTI?
+### Kondisi awal dan keadaan diam awal
 
-Persamaan linear berkoefisien konstan memiliki aturan yang tidak berubah terhadap waktu. Untuk memperoleh pemetaan masukan-keluaran LTI, kita juga harus menetapkan aturan pemilihan solusi yang sesuai, misalnya realisasi kausal dengan keadaan awal diam sebelum masukan mulai bekerja.
+Jika penghitungan dimulai pada $n=0$, persamaan berorde $N$ membutuhkan riwayat $y[-1],\ldots,y[-N]$. Jika ruas masukan memuat penundaan, nilai $x[-1],\ldots,x[-M]$ juga harus diketahui atau diasumsikan.
 
-Koefisien konstan saja belum cukup untuk mengabaikan kondisi awal. Jika sebuah keadaan awal tak nol ditetapkan sama pada setiap percobaan, keluaran memuat kontribusi tambahan yang tidak mengikuti penskalaan masukan.
+**Keadaan diam awal** berarti elemen penyimpanan yang relevan mula-mula bernilai nol. Pada realisasi langsung dengan riwayat masukan dan keluaran, kita dapat menetapkan seluruh riwayat tersebut nol sebelum awal pengamatan.
 
----
+Sebagai contoh, persamaan $y[n]=0.5y[n-1]+x[n]$ menghasilkan $y[0]=1$ untuk $x[0]=1$ dan $y[-1]=0$. Masukan yang sama menghasilkan $y[0]=3$ jika $y[-1]=4$, sehingga persamaan tanpa kondisi awal belum menentukan keluaran secara unik.
 
-## Menghitung sistem nonrekursif
+Persamaan linear berkoefisien konstan dengan pemetaan keadaan-nol menghasilkan sistem LTI. Akan tetapi, jika keadaan awal tak nol dipertahankan sebagai tambahan tetap ketika masukan diubah, pemetaan dari masukan saja umumnya bersifat afin, bukan linear, karena masukan nol masih menghasilkan keluaran.
 
-Kita mulai dari rata-rata tiga sampel agar hubungan antara persamaan, tabel hitungan, dan program terlihat langsung. Masukan sebelum $n=0$ dianggap nol, sehingga kedua penunda mula-mula berisi nol.
+#### Contoh nonrekursif: rata-rata tiga sampel
 
-### Contoh hitungan: rata-rata tiga sampel
-
-Gunakan masukan $x[0]=3$, $x[1]=6$, $x[2]=0$, dan $x[3]=-3$. Semua sampel masukan lain dianggap nol, termasuk sampel dengan indeks negatif.
-
-```math
-y[n]=\frac{x[n]+x[n-1]+x[n-2]}{3}.
-```
-
-Dua keluaran pertama belum memuat tiga sampel masukan yang tidak nol. Dengan menggunakan riwayat nol yang telah ditetapkan, kita memperoleh hasil berikut.
-
-```math
-\begin{aligned}
-y[0]&=\frac{3+0+0}{3}=1,\\
-y[1]&=\frac{6+3+0}{3}=3,\\
-y[2]&=\frac{0+6+3}{3}=3,\\
-y[3]&=\frac{-3+0+6}{3}=1.
-\end{aligned}
-```
-
-Meskipun masukan sesudah $n=3$ sudah nol, sampel lama masih berada di dalam penunda. Kita harus melanjutkan penghitungan untuk melihat bagian akhir keluaran.
+Gunakan $y[n]=(x[n]+x[n-1]+x[n-2])/3$ dengan riwayat masukan nol. Untuk masukan pada tabel, perhitungan menunjukkan bahwa keluaran masih dapat muncul setelah masukan sekarang kembali nol.
 
 | $n$ | $x[n]$ | $x[n-1]$ | $x[n-2]$ | $y[n]$ |
 |---:|---:|---:|---:|---:|
 | 0 | 3 | 0 | 0 | 1 |
 | 1 | 6 | 3 | 0 | 3 |
 | 2 | 0 | 6 | 3 | 3 |
-| 3 | -3 | 0 | 6 | 1 |
-| 4 | 0 | -3 | 0 | -1 |
-| 5 | 0 | 0 | -3 | -1 |
+| 3 | −3 | 0 | 6 | 1 |
+| 4 | 0 | −3 | 0 | −1 |
+| 5 | 0 | 0 | −3 | −1 |
 | 6 | 0 | 0 | 0 | 0 |
 
-### Algoritma
+Pada $n=4$, misalnya, keluaran adalah $(0-3+0)/3=-1$. Sesudah dua sampel nol tambahan melewati penyimpanan, pengaruh masukan lama habis dan keluaran kembali nol.
 
-Untuk setiap indeks keluaran, kita mengumpulkan paling banyak tiga nilai masukan. Indeks negatif diberi nilai nol sesuai asumsi, sedangkan data di akhir diperpanjang dengan nol agar sisa pengaruh masukan terlihat.
+#### Contoh rekursif: perhitungan orde dua
 
-1. Siapkan masukan $x[0],\ldots,x[L-1]$ beserta sampel nol tambahan jika diperlukan.
-2. Untuk setiap $n=0,\ldots,L-1$, tetapkan jumlah sementara $s=0$.
-3. Untuk $k=0,1,2$, tambahkan $x[n-k]$ ke $s$ jika $n-k\ge0$.
-4. Tetapkan $y[n]=s/3$.
-5. Lanjutkan ke sampel berikutnya hingga seluruh keluaran yang diminta selesai dihitung.
+Tinjau persamaan berikut untuk $n\ge0$, dengan $y[-1]=1$ dan $y[-2]=0$. Masukannya adalah $x[n]=(1/2)^n$ pada interval penghitungan tersebut.
 
-### Eksperimen Python: rata-rata tiga sampel
+```math
+y[n]-\frac34y[n-1]+\frac18y[n-2]
+=\left(\frac12\right)^n.
+```
 
-Program berikut menerapkan penjumlahan secara langsung sehingga setiap suku pada persamaan dapat dikenali. Sampel nol tambahan disertakan secara eksplisit di dalam larik masukan.
+Aturan maju diperoleh dengan memindahkan kedua suku keluaran lama ke ruas kanan. Dengan mengganti indeks secara berurutan, kita mendapatkan tiga nilai awal berikut.
+
+```math
+\begin{aligned}
+y[0]&=1+\frac34(1)-\frac18(0)=\frac74=1.75,\\
+y[1]&=\frac12+\frac34\left(\frac74\right)-\frac18(1)
+=\frac{27}{16}=1.6875,\\
+y[2]&=\frac14+\frac34\left(\frac{27}{16}\right)
+-\frac18\left(\frac74\right)
+=\frac{83}{64}=1.296875.
+\end{aligned}
+```
+
+Perhitungan tidak dapat dilompati dengan menganggap semua keluaran lama nol. Nilai $y[-1]=1$ merupakan bagian dari masalah dan memengaruhi setiap langkah berikutnya.
+
+### Penyelesaian numerik dengan Python
+
+Program berikut mengimplementasikan bentuk umum tanpa fungsi filter siap pakai. Riwayat disimpan dari nilai paling baru ke paling lama, sehingga elemen pertama selalu mewakili indeks $n-1$.
 
 ```python
 import numpy as np
 import matplotlib.pyplot as plt
 
-# Nilai pada n < 0 dianggap nol.
-# Nol di akhir larik memperlihatkan sisa pengaruh masukan.
-x = np.array([3, 6, 0, -3, 0, 0, 0], dtype=float)
-n = np.arange(len(x))
-y = np.zeros(len(x))
 
-for i in range(len(x)):
-    jumlah = 0.0
-    for k in range(3):
-        if i - k >= 0:
-            jumlah = jumlah + x[i - k]
-    y[i] = jumlah / 3.0
+def persamaan_selisih(x, a, b, y_awal=None, x_awal=None):
+    x = np.asarray(x, dtype=float)
+    a = np.asarray(a, dtype=float)
+    b = np.asarray(b, dtype=float)
+    if a.ndim != 1 or b.ndim != 1 or len(a) == 0 or len(b) == 0:
+        raise ValueError('a dan b harus berupa vektor yang tidak kosong')
+    if a[0] == 0 or x.ndim != 1:
+        raise ValueError('a[0] harus tidak nol dan x harus berupa vektor')
+    ny, nx = len(a) - 1, len(b) - 1
+    yh = np.zeros(ny) if y_awal is None else np.array(y_awal, dtype=float)
+    xh = np.zeros(nx) if x_awal is None else np.array(x_awal, dtype=float)
+    if yh.shape != (ny,) or xh.shape != (nx,):
+        raise ValueError('Panjang riwayat tidak sesuai dengan koefisien')
+    y = np.zeros(len(x))
+    for n in range(len(x)):
+        maju = b[0] * x[n] + np.dot(b[1:], xh)
+        balik = np.dot(a[1:], yh)
+        y[n] = (maju - balik) / a[0]
+        if ny:
+            yh[1:] = yh[:-1].copy()
+            yh[0] = y[n]
+        if nx:
+            xh[1:] = xh[:-1].copy()
+            xh[0] = x[n]
+    return y
 
-print(" n      x[n]      y[n]")
-for i in range(len(x)):
-    print(f"{i:2d}  {x[i]:8.3f}  {y[i]:8.3f}")
 
-fig, axes = plt.subplots(2, 1, figsize=(6, 5), sharex=True)
-axes[0].stem(n, x, basefmt="k-")
-axes[0].set_ylabel("x[n]")
-axes[1].stem(n, y, linefmt="C1-", markerfmt="C1o", basefmt="k-")
-axes[1].set_ylabel("y[n]")
-axes[1].set_xlabel("Indeks n")
-for ax in axes:
-    ax.grid(True, alpha=0.3)
-    ax.set_xticks(n)
+n = np.arange(21)
+x = 0.5**n
+y = persamaan_selisih(x, [1, -0.75, 0.125], [1], y_awal=[1, 0])
+y_rumus = (1 + 2 * n) * 0.5**n + 0.75 * 0.25**n
+print('Tiga keluaran pertama:', y[:3])
+print('Galat maksimum:', np.max(np.abs(y - y_rumus)))
+assert np.allclose(y, y_rumus)
+
+fig, ax = plt.subplots(figsize=(8, 4))
+ax.plot(n, y, 'o', label='Iterasi persamaan selisih')
+ax.plot(n, y_rumus, '--', label='Solusi analitis')
+ax.set(xlabel='Indeks n', ylabel='Keluaran y[n]',
+       title='Orde dua dengan kondisi awal y[-1] = 1, y[-2] = 0')
+ax.grid(alpha=0.3)
+ax.legend()
 fig.tight_layout()
 plt.show()
 ```
 
-Versi skrip terpisah tersedia di [03_nonrekursif.py](../Kode/pertemuan-02/03_nonrekursif.py). Hasil yang dicetak harus sama dengan tabel hitungan tangan, termasuk keluaran pada saat masukan sudah kembali nol.
+![Keluaran persamaan selisih orde dua dan perbandingan dengan solusi analitis](../Gambar/pertemuan-02/persamaan-selisih.svg)
 
-![Masukan dan keluaran rata-rata tiga sampel](../Gambar/pertemuan-02/rata-rata-tiga-sampel.svg)
+Program mandiri tersedia di [04_persamaan_selisih.py](../Kode/pertemuan-02/04_persamaan_selisih.py). Nilai numeriknya akan dibandingkan dengan rumus analitis yang diturunkan pada bagian berikut, sehingga kedua pendekatan saling memeriksa.
 
-Pada program tersebut, indeks negatif tidak dibaca langsung dari larik. Dalam Python, `x[-1]` berarti elemen terakhir larik, sehingga pemakaian tanpa pemeriksaan batas akan mencampurkan akhir rekaman dengan riwayat sebelum pengukuran.
+### Solusi homogen dan persamaan karakteristik
 
-### Pengaruh pilihan pada awal rekaman
-
-Jika temperatur sebenarnya telah konstan sebelum pengamatan dimulai, mengisi riwayat dengan nol dapat menghasilkan penurunan tampilan yang tidak mewakili kondisi fisis. Riwayat yang lebih sesuai dapat diisi dengan nilai pengukuran pertama atau nilai awal yang diketahui, tetapi pilihan itu perlu dijelaskan.
-
-Pilihan lain adalah membagi dengan jumlah sampel yang sudah tersedia, misalnya satu sampel pada $n=0$ dan dua sampel pada $n=1$. Pilihan ini mengubah aturan sistem pada awal rekaman karena bobot bergantung pada posisi terhadap waktu mulai, sehingga tidak sama dengan rata-rata tiga sampel LTI dengan riwayat yang telah ditetapkan.
-
----
-
-## Menghitung sistem rekursif dan kondisi awal
-
-Pada sistem rekursif, keluaran yang sudah dihitung menjadi bagian data untuk langkah berikutnya. Karena itu, penghitungan harus berjalan sesuai urutan waktu dan memerlukan nilai awal untuk seluruh keluaran lama yang muncul dalam persamaan.
-
-### Contoh hitungan: sistem orde satu
-
-Tinjau persamaan berikut untuk $n\ge0$. Masukannya adalah $x[0]=x[1]=x[2]=2$, lalu $x[n]=0$ untuk $n\ge3$, dengan kondisi awal $y[-1]=1$.
+Solusi homogen diperoleh dengan meniadakan ruas pemaksa pada persamaan selisih. Untuk persamaan berkoefisien konstan, kita mencoba bentuk eksponensial $y_h[n]=Cr^n$ dan mencari nilai $r$ yang memungkinkan solusi tak nol.
 
 ```math
-y[n]=0.5y[n-1]+0.5x[n].
+a_0y_h[n]+a_1y_h[n-1]+\cdots+a_Ny_h[n-N]=0.
 ```
 
-Keluaran pertama menggunakan nilai awal yang telah diberikan. Keluaran-keluaran berikutnya menggunakan hasil langkah sebelumnya.
+Untuk akar tak nol, substitusi dan pembagian dengan $Cr^{n-N}$ memberikan persamaan karakteristik. Penanganan akar nol dapat dilakukan langsung melalui rekurensi tanpa membagi dengan pangkat nol.
+
+```math
+a_0r^N+a_1r^{N-1}+\cdots+a_N=0.
+```
+
+Jika terdapat $N$ akar berbeda $r_1,\ldots,r_N$, solusi homogen merupakan kombinasi semua mode akar. Konstanta dalam kombinasi tersebut selanjutnya ditentukan dari kondisi awal, bukan dari akar saja.
+
+```math
+y_h[n]=C_1r_1^n+C_2r_2^n+\cdots+C_Nr_N^n.
+```
+
+#### Contoh akar berbeda
+
+Ambil persamaan homogen yang berkorespondensi dengan contoh orde dua. Persamaan karakteristiknya dapat difaktorkan tanpa pendekatan numerik.
+
+```math
+r^2-\frac34r+\frac18
+=\left(r-\frac12\right)\left(r-\frac14\right)=0.
+```
+
+Dengan demikian, $y_h[n]=C_1(1/2)^n+C_2(1/4)^n$. Sebagai contoh terpisah, jika rekurensi homogen dijalankan untuk $n\ge2$ dengan $y[0]=2$ dan $y[1]=3/4$, kedua konstanta diperoleh dari persamaan berikut.
+
+```math
+C_1+C_2=2,
+\qquad
+\frac12C_1+\frac14C_2=\frac34.
+```
+
+Penyelesaiannya adalah $C_1=C_2=1$, sehingga $y[n]=(1/2)^n+(1/4)^n$. Kedua mode mengecil karena besar masing-masing akar kurang dari satu.
+
+#### Contoh akar berulang
+
+Jika suatu akar $r$ berulang $m$ kali, satu eksponensial saja tidak menyediakan cukup solusi yang bebas. Mode yang terkait dengan akar itu menjadi $(C_0+C_1n+\cdots+C_{m-1}n^{m-1})r^n$.
+
+Untuk $y[n]-y[n-1]+\tfrac14y[n-2]=0$, persamaan karakteristiknya adalah $(r-1/2)^2=0$. Dengan $y[0]=1$ dan $y[1]=1$, substitusi pada bentuk solusi menghasilkan hasil berikut.
+
+```math
+y[n]=(C_0+C_1n)\left(\frac12\right)^n,
+\qquad
+C_0=1,\quad \frac{1+C_1}{2}=1,
+\qquad
+y[n]=(1+n)\left(\frac12\right)^n.
+```
+
+Untuk akar kompleks berkonjugat $r=\rho e^{\pm j\theta}$ pada persamaan berkoefisien real, pasangan mode dapat digabungkan menjadi bentuk real. Hasilnya adalah $\rho^n(C\cos n\theta+D\sin n\theta)$, yang memperlihatkan osilasi beserta selubung amplitudonya.
+
+### Solusi partikular dan pengaruh bentuk masukan
+
+Solusi partikular $y_p[n]$ adalah satu solusi yang memenuhi persamaan lengkap dengan ruas pemaksa yang diberikan. Solusi umum kemudian ditulis sebagai $y[n]=y_h[n]+y_p[n]$, dan kondisi awal diterapkan pada jumlah tersebut.
+
+Metode koefisien tak tentu memilih bentuk percobaan yang sejenis dengan ruas pemaksa. Tabel berikut memberikan pilihan awal yang lazim, selama bentuk itu tidak bertumpang tindih dengan solusi homogen.
+
+| Ruas pemaksa | Bentuk percobaan solusi partikular |
+|---|---|
+| Konstanta $K$ | Konstanta $A$ |
+| Polinom berderajat $p$ | Polinom umum berderajat $p$ |
+| $Kc^n$ | $Ac^n$ |
+| $K\cos(\omega n)$ atau $K\sin(\omega n)$ | $A\cos(\omega n)+B\sin(\omega n)$ |
+| $c^n\cos(\omega n)$ atau $c^n\sin(\omega n)$ | $c^n[A\cos(\omega n)+B\sin(\omega n)]$ |
+
+Jika bentuk percobaan bertumpang tindih dengan mode homogen, bentuk tersebut dikalikan dengan $n^m$, dengan $m$ sesuai banyaknya pengulangan akar terkait. Langkah ini diperlukan agar bentuk percobaan tidak kembali menghasilkan nol ketika dimasukkan ke operator homogen.
+
+#### Contoh lengkap: masukan eksponensial yang berimpit dengan akar
+
+Kembali ke persamaan dengan masukan $(1/2)^n$ dan riwayat $y[-1]=1$, $y[-2]=0$. Karena $1/2$ merupakan akar karakteristik sederhana, bentuk $K(1/2)^n$ gagal dan harus diganti dengan $y_p[n]=Kn(1/2)^n$.
 
 ```math
 \begin{aligned}
-y[0]&=0.5(1)+0.5(2)=1.5,\\
-y[1]&=0.5(1.5)+0.5(2)=1.75,\\
-y[2]&=0.5(1.75)+0.5(2)=1.875,\\
-y[3]&=0.5(1.875)+0.5(0)=0.9375.
+y_p[n]-\frac34y_p[n-1]+\frac18y_p[n-2]
+&=K\left(\frac12\right)^n
+\left[n-\frac32(n-1)+\frac12(n-2)\right]\\
+&=\frac K2\left(\frac12\right)^n.
 \end{aligned}
 ```
 
-Keluaran pada $n=3$ tetap tidak nol meskipun masukan sekarang sudah nol. Nilai ini berasal dari informasi yang tersimpan pada keluaran sebelumnya.
+Penyamaan dengan ruas kanan memberikan $K=2$. Solusi umum sekarang memuat dua konstanta yang harus memenuhi kondisi awal semula.
 
-| $n$ | $x[n]$ | $y[n-1]$ | $y[n]$ |
-|---:|---:|---:|---:|
-| 0 | 2 | 1 | 1.5 |
-| 1 | 2 | 1.5 | 1.75 |
-| 2 | 2 | 1.75 | 1.875 |
-| 3 | 0 | 1.875 | 0.9375 |
-| 4 | 0 | 0.9375 | 0.46875 |
-| 5 | 0 | 0.46875 | 0.234375 |
+```math
+y[n]=(A+2n)\left(\frac12\right)^n+B\left(\frac14\right)^n.
+```
 
-### Mengapa kondisi awal diperlukan?
+Nilai rumus pada $n=-1$ dan $n=-2$ digunakan untuk menyambungkan solusi dengan riwayat yang diberikan. Substitusinya memberikan sistem persamaan berikut.
 
-Jika contoh yang sama dimulai dari $y[-1]=0$, keluaran pertama menjadi $1$ dan seluruh keluaran berikutnya ikut berubah. Dengan demikian, masukan yang sama belum menentukan keluaran secara unik sebelum keadaan awal sistem dinyatakan.
+```math
+2(A-2)+4B=1,
+\qquad
+4(A-4)+16B=0.
+```
 
-Untuk persamaan yang melibatkan $y[n-1]$ dan $y[n-2]$, kita umumnya memerlukan $y[-1]$ serta $y[-2]$. Jika ruas masukan juga melibatkan sampel sebelum $n=0$, nilai riwayat masukan tersebut juga harus diberikan atau ditetapkan melalui asumsi.
+Hasilnya adalah $A=1$ dan $B=3/4$. Jadi, solusi untuk $n\ge0$ dapat ditulis dalam bentuk tertutup berikut.
 
-Istilah **keadaan awal diam** berarti seluruh elemen penyimpanan yang relevan diisi nol sebelum masukan diterapkan. Pada model fisis, nilai ini biasanya dinyatakan terhadap suatu titik acuan, sehingga nol pada model tidak selalu berarti temperatur atau tegangan absolut sama dengan nol.
+```math
+\boxed{
+y[n]=(1+2n)\left(\frac12\right)^n
++\frac34\left(\frac14\right)^n.
+}
+```
 
-### Algoritma rekursif orde satu
+Substitusi $n=0,1,2$ menghasilkan $7/4$, $27/16$, dan $83/64$, sama dengan perhitungan maju. Faktor $n$ tidak mencegah peluruhan jangka panjang, karena eksponensial $(1/2)^n$ tetap mendominasi pertumbuhan faktor polinomial tersebut.
 
-Persamaan orde satu hanya memerlukan satu nilai keluaran lama untuk menghitung keluaran berikutnya. Variabel penyimpanan tersebut diperbarui sesudah keluaran sekarang selesai dihitung.
+#### Contoh solusi partikular sinusoidal
 
-1. Baca koefisien $a$, $b$, masukan $x[n]$, dan nilai awal $q=y[-1]$.
-2. Tetapkan `y_lama` sama dengan $q$.
-3. Untuk setiap indeks $n$, hitung $y[n]=a\,\mathsf{y\_lama}+b\,x[n]$.
-4. Setelah penghitungan itu, perbarui `y_lama` menjadi $y[n]$.
-5. Ulangi sampai seluruh sampel masukan selesai diproses.
+Sekarang gunakan ruas pemaksa $2\sin(\pi n/2)$ pada operator orde dua yang sama. Kita mencoba $y_p[n]=C\cos(\pi n/2)+D\sin(\pi n/2)$, karena pergeseran indeks pada sinusoid menghasilkan kombinasi sinus dan kosinus.
 
-Penyimpanan internal algoritma ini hanya memerlukan satu bilangan untuk keluaran lama. Jika semua hasil ingin digambar atau disimpan, kita tetap menyediakan larik keluaran sepanjang rekaman.
+Tuliskan $c_n=\cos(\pi n/2)$ dan $s_n=\sin(\pi n/2)$. Pergeseran satu dan dua sampel memberikan hubungan berikut.
 
----
+```math
+y_p[n-1]=Cs_n-Dc_n,
+\qquad
+y_p[n-2]=-Cc_n-Ds_n.
+```
 
-## Respons masukan-nol dan respons keadaan-nol
+Setelah suku kosinus dan sinus dikumpulkan, koefisiennya harus sama dengan ruas kanan. Kita memperoleh dua persamaan aljabar berikut.
 
-Keluaran sistem linear dinamis dapat berasal dari dua sumber, yaitu keadaan yang sudah tersimpan dan masukan yang diberikan selama pengamatan. Memisahkan keduanya membantu menjelaskan mengapa sistem masih memberikan keluaran setelah masukan dihentikan.
+```math
+\frac78C+\frac34D=0,
+\qquad
+-\frac34C+\frac78D=2.
+```
 
-**Respons masukan-nol** adalah keluaran akibat keadaan awal dengan masukan baru dibuat nol. **Respons keadaan-nol** adalah keluaran akibat masukan dengan seluruh keadaan awal dibuat nol.
+Penyelesaiannya adalah $C=-96/85$ dan $D=112/85$. Solusi lengkap masih harus ditambah $A(1/2)^n+B(1/4)^n$, dengan $A$ dan $B$ ditentukan setelah kondisi awal diberikan.
 
-### Menurunkan solusi sistem orde satu
+### Respons masukan-nol dan respons keadaan-nol
 
-Tinjau persamaan $y[n]=ay[n-1]+bx[n]$ untuk $n\ge0$, dengan kondisi awal $y[-1]=q$. Kita membuka rekursinya beberapa langkah agar pola kontribusi setiap masukan terlihat.
+Pembagian solusi menjadi homogen dan partikular berguna untuk menyelesaikan persamaan. Namun, pembagian tersebut berbeda dari pemisahan respons berdasarkan sumber pengaruh fisiknya, yaitu keadaan awal dan masukan luar.
+
+**Respons masukan-nol** diperoleh dengan meniadakan masukan tetapi mempertahankan keadaan awal. **Respons keadaan-nol** diperoleh dengan meniadakan keadaan awal tetapi mempertahankan masukan yang diberikan.
+
+Untuk sistem linear, kedua respons tersebut dapat dijumlahkan untuk memperoleh respons total. Pembagian ini memiliki makna kondisi awal yang tegas, sedangkan pilihan solusi partikular tidak unik karena dapat ditambah dengan suatu solusi homogen.
+
+Tinjau $y[n]=ay[n-1]+bx[n]$ untuk $n\ge0$, dengan $y[-1]=q$. Substitusi berulang memberikan bentuk berikut.
 
 ```math
 \begin{aligned}
 y[0]&=aq+bx[0],\\
-y[1]&=a\bigl(aq+bx[0]\bigr)+bx[1]
-=a^2q+abx[0]+bx[1],\\
-y[2]&=a\bigl(a^2q+abx[0]+bx[1]\bigr)+bx[2]\\
-&=a^3q+a^2bx[0]+abx[1]+bx[2].
+y[1]&=a^2q+abx[0]+bx[1],\\
+y[n]&=\underbrace{a^{n+1}q}_{\text{masukan-nol}}
++\underbrace{b\sum_{k=0}^{n}a^{n-k}x[k]}_{\text{keadaan-nol}}.
 \end{aligned}
 ```
 
-Pada setiap langkah, kontribusi lama dikalikan lagi dengan $a$, sedangkan masukan yang baru masuk memperoleh faktor $b$. Pola ini memberikan bentuk umum berikut.
+Ambil $a=1/2$, $b=1$, dan $x[n]=1$ untuk $n\ge0$. Respons keadaan-nolnya merupakan jumlah geometri, sehingga hasilnya dapat dihitung secara eksplisit.
 
 ```math
-\boxed{
-y[n]=a^{n+1}q
-+b\sum_{k=0}^{n}a^{n-k}x[k],
-\qquad n\ge0
-}.
+y_{\mathrm{KN}}[n]=2\left[1-\left(\frac12\right)^{n+1}\right],
+\qquad
+y_{\mathrm{MN}}[n]=q\left(\frac12\right)^{n+1}.
 ```
 
-Pangkat $n+1$ pada kontribusi awal muncul karena $q$ didefinisikan sebagai $y[-1]$. Jika kondisi awal diberikan pada indeks yang berbeda, pangkatnya harus disesuaikan dengan indeks tersebut.
+Solusi partikular konstan untuk masukan tersebut adalah $y_p[n]=2$. Solusi partikular ini bukan respons keadaan-nol, karena respons keadaan-nol juga mengandung suku sementara $-2(1/2)^{n+1}$ untuk memenuhi keadaan awal nol.
 
-#### Respons masukan-nol
-
-Dengan menetapkan $x[n]=0$ untuk seluruh $n\ge0$, penjumlahan akibat masukan hilang. Keluaran yang tersisa dituliskan sebagai berikut.
-
-```math
-\boxed{y_{\mathrm{mn}}[n]=a^{n+1}q}.
-```
-
-Untuk $|a|<1$, kontribusi keadaan awal semakin kecil ketika $n$ bertambah. Untuk $a$ negatif, tandanya berganti-ganti meskipun magnitudonya dapat tetap meluruh.
-
-#### Respons keadaan-nol
-
-Dengan menetapkan $q=0$, kontribusi keadaan awal hilang. Keluaran yang dihasilkan oleh masukan diberikan oleh penjumlahan berikut.
-
-```math
-\boxed{
-y_{\mathrm{kn}}[n]
-=b\sum_{k=0}^{n}a^{n-k}x[k]
-}.
-```
-
-Suku dengan $k=n$ adalah $bx[n]$ dan tidak mengalami pengalian tambahan oleh $a$. Suku-suku yang berasal dari waktu lebih lama mendapat pangkat $a$ yang lebih besar.
-
-#### Menjumlahkan kedua respons
-
-Karena persamaan sistem linear, kedua kontribusi dapat dijumlahkan. Keluaran totalnya memenuhi hubungan berikut.
-
-```math
-\boxed{y[n]=y_{\mathrm{mn}}[n]+y_{\mathrm{kn}}[n]}.
-```
-
-Untuk contoh sebelumnya, gunakan $a=b=0.5$, $q=1$, dan masukan yang bernilai dua pada tiga sampel awal. Kedua respons memberikan rincian berikut.
-
-| $n$ | $y_{\mathrm{mn}}[n]$ | $y_{\mathrm{kn}}[n]$ | $y[n]$ |
-|---:|---:|---:|---:|
-| 0 | 0.5 | 1 | 1.5 |
-| 1 | 0.25 | 1.5 | 1.75 |
-| 2 | 0.125 | 1.75 | 1.875 |
-| 3 | 0.0625 | 0.875 | 0.9375 |
-| 4 | 0.03125 | 0.4375 | 0.46875 |
-| 5 | 0.015625 | 0.21875 | 0.234375 |
-
-### Kondisi awal dan pengujian linearitas
-
-Misalkan keadaan awal $q\ne0$ dipertahankan sama pada setiap percobaan, sementara hanya masukan $x$ yang diubah. Pemetaan dari masukan menuju keluaran total kemudian memiliki kontribusi tetap $y_{\mathrm{mn}}$.
-
-Dengan menuliskan pemetaan keadaan-nol sebagai $\mathcal{L}$, keluaran total dapat dinyatakan sebagai $\mathcal{T}_q\{x\}=\mathcal{L}\{x\}+y_{\mathrm{mn}}$. Kedua ruas uji superposisi mengambil bentuk berikut.
-
-```math
-\begin{aligned}
-\mathcal{T}_q\{\alpha x_1+\beta x_2\}
-&=\alpha\mathcal{L}\{x_1\}
-+\beta\mathcal{L}\{x_2\}+y_{\mathrm{mn}},\\
-\alpha\mathcal{T}_q\{x_1\}
-+\beta\mathcal{T}_q\{x_2\}
-&=\alpha\mathcal{L}\{x_1\}
-+\beta\mathcal{L}\{x_2\}
-+(\alpha+\beta)y_{\mathrm{mn}}.
-\end{aligned}
-```
-
-Kedua hasil secara umum berbeda jika respons masukan-nol tidak nol. Persamaan dinamika tetap linear, tetapi pemetaan dari masukan saja menuju keluaran total dengan keadaan awal tetap tak nol bersifat afin.
-
-Superposisi dapat digunakan terhadap pasangan masukan dan keadaan awal jika keduanya digabungkan secara konsisten. Pada pengujian LTI sebagai pemetaan masukan-keluaran, kita biasanya menggunakan respons keadaan-nol dan menggeser seluruh percobaan beserta riwayat awalnya ketika menguji invariansi waktu.
-
-Mereset sistem pada indeks absolut tertentu dalam semua percobaan dapat memperkenalkan ketergantungan pada waktu mulai. Karena itu, kegagalan uji pergeseran pada potongan data tidak boleh langsung dianggap sebagai kegagalan invariansi waktu dari aturan dinamika dasarnya.
-
-### Eksperimen Python: memisahkan kedua respons
-
-Program berikut menjalankan sistem tiga kali dengan kombinasi masukan dan keadaan awal yang berbeda. Selisih antara keluaran total dan jumlah kedua respons kemudian dihitung untuk memeriksa kesesuaian implementasi.
+Jika $q=3$, respons total menjadi $y[n]=2+(1/2)^{n+1}$. Tiga nilai pertamanya adalah $2.5$, $2.25$, dan $2.125$, lalu keluaran mendekati dua.
 
 ```python
 import numpy as np
 import matplotlib.pyplot as plt
 
 
-def orde_satu(x, a, b, y_awal):
+def orde_satu(x, a, b, q):
     y = np.zeros(len(x))
-    y_lama = y_awal
-    for i in range(len(x)):
-        y[i] = a * y_lama + b * x[i]
-        y_lama = y[i]
-    return y
-
-
-x = np.array([2, 2, 2, 0, 0, 0, 0, 0], dtype=float)
-n = np.arange(len(x))
-a = 0.5
-b = 0.5
-q = 1.0
-
-y_total = orde_satu(x, a, b, q)
-y_mn = orde_satu(np.zeros(len(x)), a, b, q)
-y_kn = orde_satu(x, a, b, 0.0)
-galat = np.max(np.abs(y_total - y_mn - y_kn))
-
-print(" n    masukan-nol    keadaan-nol          total")
-for i in range(len(x)):
-    print(f"{i:2d}  {y_mn[i]:13.6f}  {y_kn[i]:13.6f}  {y_total[i]:13.6f}")
-print(f"Galat dekomposisi = {galat:.3e}")
-print("Galat respons masukan-nol =",
-      np.max(np.abs(y_mn - a**(n + 1) * q)))
-
-plt.figure(figsize=(7, 4.5))
-plt.plot(n, y_total, "o-", label="Respons total")
-plt.plot(n, y_mn, "s--", label="Respons masukan-nol")
-plt.plot(n, y_kn, "^--", label="Respons keadaan-nol")
-plt.plot(n, y_mn + y_kn, "kx", markersize=9, label="Jumlah kedua respons")
-plt.xlabel("Indeks n")
-plt.ylabel("Keluaran")
-plt.xticks(n)
-plt.grid(True, alpha=0.3)
-plt.legend()
-plt.tight_layout()
-plt.show()
-```
-
-Versi skrip terpisah tersedia di [04_respons_dan_kondisi_awal.py](../Kode/pertemuan-02/04_respons_dan_kondisi_awal.py). Hasil numeriknya dapat dibandingkan langsung dengan tabel dekomposisi dan bentuk analitik respons masukan-nol.
-
-![Dekomposisi keluaran menjadi respons masukan-nol dan keadaan-nol](../Gambar/pertemuan-02/dekomposisi-respons.svg)
-
-Pada gambar, keluaran total berada tepat pada jumlah kedua kontribusi. Setelah masukan berhenti, kontribusi akibat masukan maupun keadaan awal sama-sama meluruh karena nilai koefisien umpan balik mempunyai magnitudo lebih kecil dari satu.
-
----
-
-## Stabilitas dan waktu respons sistem rekursif orde satu
-
-Bentuk solusi yang baru diperoleh memungkinkan pengujian stabilitas tanpa menunggu pembahasan transformasi Z. Kita akan menggunakan batas deret geometri dan membedakan peluruhan keadaan awal dari respons terhadap masukan yang terus diberikan.
-
-### Syarat cukup dari batas deret geometri
-
-Ambil keadaan awal nol dan masukan dengan $|x[k]|\le M_x$. Untuk $y[n]=ay[n-1]+bx[n]$, pertidaksamaan segitiga memberikan batas berikut.
-
-```math
-\begin{aligned}
-|y[n]|
-&\le |b|\sum_{k=0}^{n}|a|^{n-k}|x[k]|\\
-&\le |b|M_x\sum_{m=0}^{n}|a|^m.
-\end{aligned}
-```
-
-Jika $|a|<1$, jumlah geometri tersebut dibatasi oleh jumlah hingga tak berhingga. Batas keluaran dapat dinyatakan sebagai berikut.
-
-```math
-\boxed{
-|y[n]|\le\frac{|b|M_x}{1-|a|}
-}.
-```
-
-Batas ini tidak bergantung pada panjang pengamatan. Jadi, sistem kausal orde satu tersebut stabil BIBO untuk $|a|<1$.
-
-Untuk keadaan awal berhingga $q$, ada tambahan batas $|a|^{n+1}|q|$. Ketika $|a|<1$, tambahan ini meluruh dan tetap terbatas, sehingga kondisi awal berhingga tidak menimbulkan pertumbuhan tanpa batas pada model orde satu ini.
-
-### Mengapa batas satu perlu diperiksa dengan teliti?
-
-Untuk $|a|>1$ dan $b\ne0$, masukan impuls diskret $x[n]=\delta[n]$ dengan keadaan awal nol menghasilkan $y[n]=ba^n$ pada $n\ge0$. Masukannya terbatas, tetapi magnitudo keluarannya tumbuh tanpa batas.
-
-Untuk $a=1$ dan $b=1$, masukan unit step menghasilkan akumulator $y[n]=n+1$. Dengan demikian, kasus $a=1$ juga tidak stabil BIBO meskipun respons masukan-nolnya hanya konstan.
-
-Kasus $a=-1$ memerlukan pilihan masukan yang sesuai untuk memperlihatkan pertumbuhan. Ambil $b=1$ dan $x[n]=(-1)^n u[n]$, lalu hitung keluarannya sebagai berikut.
-
-```math
-y[n]=\sum_{k=0}^{n}(-1)^{n-k}(-1)^k
-=(n+1)(-1)^n,
-\qquad n\ge0.
-```
-
-Magnitudonya kembali bertambah tanpa batas. Untuk koefisien real dan $b\ne0$, realisasi kausal orde satu ini dengan keadaan awal nol stabil BIBO tepat ketika $|a|<1$.
-
-Kasus khusus $b=0$ perlu dipisahkan karena masukan sama sekali tidak memengaruhi keluaran. Dengan keadaan awal nol, keluarannya selalu nol walaupun dinamika keadaan tak nol dapat tumbuh, sehingga stabilitas pemetaan masukan-keluaran tidak selalu menyatakan stabilitas keadaan internal.
-
-### Respons terhadap masukan konstan
-
-Untuk $x[n]=C$ pada $n\ge0$ dan $q=0$, solusi orde satu dapat ditulis menggunakan jumlah geometri berhingga. Dengan asumsi $a\ne1$, hasilnya diberikan oleh hubungan berikut.
-
-```math
-y[n]=bC\sum_{m=0}^{n}a^m
-=bC\frac{1-a^{n+1}}{1-a}.
-```
-
-Jika $|a|<1$, suku $a^{n+1}$ menuju nol. Keluaran kemudian mendekati nilai tetap berikut.
-
-```math
-y_\infty=\frac{bC}{1-a}.
-```
-
-Untuk memperoleh keluaran akhir yang sama dengan masukan konstan, kita dapat memilih $b=1-a$. Jika juga dipilih $0<a<1$, aturan ini menjadi rata-rata berbobot antara keluaran lama dan masukan sekarang.
-
-```math
-y[n]=a\,y[n-1]+(1-a)x[n].
-```
-
-Koefisien mendekati satu memberi bobot besar pada keluaran lama, sehingga hasil berubah lebih perlahan. Koefisien mendekati nol memberi bobot besar pada masukan sekarang, sehingga keluaran lebih cepat mengikuti perubahan sekaligus lebih mudah mengikuti fluktuasi.
-
-#### Contoh: jumlah sampel untuk mencapai 95 persen
-
-Untuk unit step, keadaan awal nol, dan $b=1-a$, responsnya adalah $y[n]=1-a^{n+1}$. Agar keluaran mencapai sekurang-kurangnya $95\%$ dari nilai akhirnya, kita menerapkan syarat berikut.
-
-```math
-a^{n+1}\le0.05
-\qquad\Longrightarrow\qquad
-n+1\ge\frac{\ln(0.05)}{\ln(a)},
-\qquad 0<a<1.
-```
-
-Untuk $a=0.8$, ruas kanan bernilai sekitar $13.425$, sehingga diperlukan sedikitnya 14 kali pembaruan. Pembaruan ke-14 menghasilkan $y[13]$, dengan $y[13]=1-0.8^{14}\approx0.9560$.
-
-Jika pembaruan pertama diberi indeks $n=0$, keluaran itu berada pada waktu $t=13T_s$ menurut cap waktu $t_n=nT_s$. Selang dari keadaan awal pada $t=-T_s$ hingga keluaran tersebut adalah $14T_s$, sehingga konvensi waktu perlu disebutkan ketika mengubah jumlah pembaruan menjadi durasi.
-
-### Eksperimen Python: keluaran yang terbatas dan yang terus tumbuh
-
-Program berikut memakai masukan unit step, $b=1$, dan beberapa nilai $a$. Untuk setiap nilai $a$, kondisi awal ditetapkan nol agar yang dibandingkan adalah respons terhadap masukan yang sama.
-
-```python
-import numpy as np
-import matplotlib.pyplot as plt
-
-n = np.arange(40)
-x = np.ones(len(n))
-fig, axes = plt.subplots(1, 2, figsize=(10, 4))
-
-for a in [0.5, 0.9, 1.0, 1.05]:
-    y = np.zeros(len(x))
-    y_lama = 0.0
-    for i in range(len(x)):
-        y[i] = a * y_lama + x[i]
-        y_lama = y[i]
-
-    if a < 1.0:
-        ax = axes[0]
-        ax.axhline(1.0 / (1.0 - a), color="gray", linestyle=":")
-    else:
-        ax = axes[1]
-    ax.plot(n, y, "o-", markersize=3, label=f"a = {a:g}")
-    print(f"a = {a:4.2f}, y[39] = {y[-1]:.6f}")
-
-for ax in axes:
-    ax.set_xlabel("Indeks n")
-    ax.set_ylabel("y[n]")
-    ax.grid(True, alpha=0.3)
-    ax.legend()
-
-axes[0].text(0.97, 0.08, "Garis titik: nilai akhir",
-             ha="right", transform=axes[0].transAxes)
-fig.tight_layout()
-plt.show()
-```
-
-Versi skrip terpisah tersedia di [05_stabilitas_orde_satu.py](../Kode/pertemuan-02/05_stabilitas_orde_satu.py). Dua kasus dengan $|a|<1$ mendekati batas yang berhingga, sedangkan kasus $a=1$ dan $a>1$ terus meningkat.
-
-![Respons unit step untuk beberapa koefisien umpan balik](../Gambar/pertemuan-02/stabilitas-orde-satu.svg)
-
-Grafik hanya memperlihatkan sejumlah sampel berhingga, sehingga kesimpulan stabilitas tetap didasarkan pada pembuktian sebelumnya. Pemilihan durasi yang terlalu pendek dapat menyamarkan pertumbuhan lambat ketika koefisien berada dekat batas satu.
-
----
-
-## Implementasi persamaan selisih umum dengan Python
-
-Setelah memahami orde satu, kita dapat menyusun program yang menerima beberapa koefisien masukan dan keluaran. Tujuannya adalah menerjemahkan penjumlahan dalam persamaan secara langsung agar hubungan antara rumus dan kode tetap mudah diperiksa.
-
-### Susunan koefisien dan riwayat
-
-Fungsi berikut menggunakan larik `b = [b0, b1, ..., bM]` dan `a = [a0, a1, ..., aN]`. Keduanya mengikuti bentuk persamaan $\sum_{k=0}^{N}a_ky[n-k]=\sum_{k=0}^{M}b_kx[n-k]$, sehingga tanda koefisien harus diambil dari bentuk ini.
-
-Riwayat masukan disusun sebagai `x_awal = [x[-1], x[-2], ..., x[-M]]`. Riwayat keluaran disusun sebagai `y_awal = [y[-1], y[-2], ..., y[-N]]`, dengan nilai yang paling dekat ke waktu mulai ditempatkan di awal larik.
-
-Jika riwayat tidak diberikan, program mengisinya dengan nol. Program ini menggunakan bilangan real dan mengembalikan keluaran sepanjang masukan yang disediakan, sehingga masukan perlu diperpanjang jika bagian akhir respons ingin diperiksa.
-
-### Algoritma
-
-Setiap sampel keluaran dihitung dari dua jumlah berbobot. Jumlah pertama berasal dari masukan, sedangkan jumlah kedua berasal dari keluaran lama dan dikurangkan sesuai bentuk persamaan.
-
-1. Periksa bahwa larik koefisien tidak kosong dan $a_0\ne0$.
-2. Tentukan $M$ dan $N$, lalu siapkan riwayat masukan serta keluaran.
-3. Untuk setiap $n$, tetapkan jumlah masukan dan jumlah keluaran lama sama dengan nol.
-4. Untuk setiap $k=0,\ldots,M$, ambil $x[n-k]$ dari larik masukan atau riwayat, lalu tambahkan $b_kx[n-k]$.
-5. Untuk setiap $k=1,\ldots,N$, ambil $y[n-k]$ dari hasil yang sudah dihitung atau riwayat, lalu tambahkan $a_ky[n-k]$.
-6. Hitung $y[n]$ sebagai selisih kedua jumlah dibagi $a_0$.
-7. Lanjutkan sampai seluruh indeks yang diminta selesai dihitung.
-
-### Contoh program dan pemeriksaan hitungan
-
-Contoh penggunaan fungsi mengambil persamaan $y[n]-0.5y[n-1]=x[n]+0.25x[n-1]$. Riwayatnya adalah $x[-1]=0$ dan $y[-1]=1$, sedangkan enam masukan yang diproses adalah $1$, $2$, $0$, $-1$, $0$, dan $0$.
-
-```math
-\begin{aligned}
-y[0]&=1+0.25(0)+0.5(1)=1.5,\\
-y[1]&=2+0.25(1)+0.5(1.5)=3,\\
-y[2]&=0+0.25(2)+0.5(3)=2,\\
-y[3]&=-1+0.25(0)+0.5(2)=0.
-\end{aligned}
-```
-
-```python
-import numpy as np
-
-
-def persamaan_selisih(x, b, a, x_awal=None, y_awal=None):
-    x = np.asarray(x, dtype=float)
-    b = np.asarray(b, dtype=float)
-    a = np.asarray(a, dtype=float)
-
-    if x.ndim != 1 or b.ndim != 1 or a.ndim != 1:
-        raise ValueError("Masukan dan koefisien harus berupa larik satu dimensi.")
-    if len(a) == 0 or len(b) == 0:
-        raise ValueError("Larik koefisien tidak boleh kosong.")
-    if a[0] == 0:
-        raise ValueError("Koefisien a[0] tidak boleh nol.")
-
-    M = len(b) - 1
-    N = len(a) - 1
-
-    if x_awal is None:
-        x_awal = np.zeros(M)
-    if y_awal is None:
-        y_awal = np.zeros(N)
-    x_awal = np.asarray(x_awal, dtype=float)
-    y_awal = np.asarray(y_awal, dtype=float)
-
-    if x_awal.ndim != 1 or y_awal.ndim != 1:
-        raise ValueError("Riwayat harus berupa larik satu dimensi.")
-    if len(x_awal) != M or len(y_awal) != N:
-        raise ValueError("Panjang riwayat harus sesuai dengan M dan N.")
-
-    y = np.zeros(len(x))
-
+    lama = float(q)
     for n in range(len(x)):
-        jumlah_x = 0.0
-        for k in range(M + 1):
-            if n - k >= 0:
-                nilai_x = x[n - k]
-            else:
-                nilai_x = x_awal[k - n - 1]
-            jumlah_x = jumlah_x + b[k] * nilai_x
-
-        jumlah_y = 0.0
-        for k in range(1, N + 1):
-            if n - k >= 0:
-                nilai_y = y[n - k]
-            else:
-                nilai_y = y_awal[k - n - 1]
-            jumlah_y = jumlah_y + a[k] * nilai_y
-
-        y[n] = (jumlah_x - jumlah_y) / a[0]
-
+        y[n] = a * lama + b * x[n]
+        lama = y[n]
     return y
 
 
-x = np.array([1, 2, 0, -1, 0, 0], dtype=float)
-b = [1.0, 0.25]
-a = [1.0, -0.5]
-y = persamaan_selisih(x, b, a, x_awal=[0.0], y_awal=[1.0])
+n = np.arange(13)
+a, b, q = 0.5, 1.0, 3.0
+x = np.ones(len(n))
+y_total = orde_satu(x, a, b, q)
+y_mn = q * a**(n + 1)
+y_kn = b * (1 - a**(n + 1)) / (1 - a)
+print('Tiga keluaran pertama:', y_total[:3])
+assert np.allclose(y_total, y_mn + y_kn)
+assert np.allclose(y_mn, orde_satu(np.zeros(len(n)), a, b, q))
+assert np.allclose(y_kn, orde_satu(x, a, b, 0))
 
-print(" n      x[n]       y[n]")
-for n in range(len(x)):
-    print(f"{n:2d}  {x[n]:8.3f}  {y[n]:9.4f}")
+fig, ax = plt.subplots(figsize=(8, 4.7))
+ax.plot(n, y_total, 'o-', label='Respons total, q = 3')
+ax.plot(n, y_mn, 's-', label='Respons masukan-nol')
+ax.plot(n, y_kn, '^-', label='Respons keadaan-nol')
+ax.axhline(2, color='gray', linestyle='--', label='Solusi partikular = 2')
+ax.set(xlabel='Indeks n', ylabel='Keluaran',
+       title='Respons keadaan-nol tidak sama dengan solusi partikular')
+ax.grid(alpha=0.3)
+ax.legend(loc='center right', fontsize=9)
+fig.tight_layout()
+plt.show()
 ```
 
-Versi skrip terpisah tersedia di [06_persamaan_selisih_umum.py](../Kode/pertemuan-02/06_persamaan_selisih_umum.py). Untuk masukan dan riwayat tersebut, keluaran lengkapnya adalah `[1.5, 3.0, 2.0, 0.0, -0.25, -0.125]`.
+![Dekomposisi respons total menjadi respons masukan-nol dan keadaan-nol](../Gambar/pertemuan-02/kondisi-awal.svg)
 
-### Beberapa kekeliruan yang perlu dihindari
+Program [05_solusi_dan_kondisi_awal.py](../Kode/pertemuan-02/05_solusi_dan_kondisi_awal.py) membandingkan rumus dan iterasi secara langsung. Garis solusi partikular ditampilkan terpisah untuk menegaskan bahwa ia tidak sama dengan kurva respons keadaan-nol pada awal pengamatan.
 
-Kekeliruan tanda pada koefisien keluaran akan mengubah umpan balik dan dapat mengubah stabilitas. Pemeriksaan dua atau tiga sampel pertama secara manual sering cukup untuk menemukan kesalahan ini sebelum rekaman panjang diproses.
+### Hubungan koefisien dengan stabilitas
 
-Kekeliruan lain adalah menganggap `y[-1]` di dalam larik Python sebagai kondisi awal matematis. Kode di atas mengambil kondisi awal dari `y_awal` secara terpisah, sehingga elemen terakhir larik hasil tidak pernah dipakai sebagai riwayat sebelum penghitungan dimulai.
+Untuk sistem orde satu $y[n]=ay[n-1]+bx[n]$ dalam keadaan awal nol, bentuk jumlah tadi memberikan cara langsung menguji BIBO. Jika $|x[n]|\le M_x$ dan $|a|<1$, batas keluaran memenuhi ketaksamaan berikut.
 
-Jika data diproses dalam beberapa potongan, keadaan akhir potongan pertama harus dibawa sebagai riwayat potongan berikutnya. Mengosongkan riwayat pada setiap potongan akan menyisipkan transien baru dan umumnya menghasilkan keluaran yang berbeda dari pemrosesan satu rekaman utuh.
+```math
+|y[n]|
+\le |b|M_x\sum_{k=0}^{n}|a|^{n-k}
+\le\frac{|b|M_x}{1-|a|}.
+```
+
+Sebagai contoh, $a=0.8$ dan $b=0.2$ memberikan batas $|y[n]|\le M_x$. Keadaan awal berhingga menambahkan suku $a^{n+1}q$ yang juga terbatas dan meluruh ketika $|a|<1$.
+
+Untuk $b\ne0$, nilai $|a|\ge1$ pada sistem orde satu tersebut tidak memberikan kestabilan BIBO keadaan-nol. Masukan impuls sudah menunjukkan pertumbuhan jika $|a|>1$, sedangkan untuk $a=1$ masukan konstan menghasilkan akumulasi dan untuk $a=-1$ masukan berganti tanda dapat menghasilkan pertumbuhan amplitudo.
+
+Kestabilan sistem berorde lebih tinggi akan dipelajari kembali melalui respons impuls dan transformasi Z. Pada tahap ini, yang penting adalah membedakan peluruhan keadaan awal, kestabilan BIBO, dan hasil simulasi berhingga, karena ketiganya bukan pernyataan yang identik.
 
 ---
 
-## Studi kasus: penghalusan pembacaan sensor temperatur
+## Konversi sinyal analog menjadi digital
 
-Kita kembali ke persoalan pengukuran pada awal kuliah. Sekarang kita memiliki alat untuk membandingkan dua penghalus berdasarkan kausalitas, memori, persamaan perhitungan, dan pengaruh kondisi awal.
+Persamaan selisih mengolah deretan bilangan, sedangkan banyak sumber informasi di dunia nyata menghasilkan tegangan yang berubah secara kontinu. Karena itu, sebelum pengolahan digital dapat dilakukan, diperlukan antarmuka yang mengubah sinyal analog menjadi representasi numerik.
 
-### Model data pengukuran
+Konversi analog-ke-digital mencakup tiga operasi konseptual: sampling, kuantisasi, dan pengkodean. Ketiganya mengubah aspek yang berbeda dari representasi sinyal, sehingga tidak boleh diperlakukan sebagai istilah yang saling menggantikan.
 
-Misalkan temperatur yang ingin diukur berubah perlahan, lalu mengalami kenaikan sebesar $2$ derajat Celsius pada sampel ke-80. Model sederhana untuk data terukur dapat dituliskan sebagai berikut.
+| Tahap | Operasi utama | Representasi setelah tahap tersebut |
+|---|---|---|
+| Pengondisian analog | Menyesuaikan penguatan dan membatasi pita frekuensi | Tegangan analog yang sesuai dengan rentang dan pita ADC |
+| Sampling | Mengambil nilai pada waktu tertentu | $x[n]=x_a(nT_s)$, waktu diskret tetapi amplitudo belum dibatasi ke sejumlah tingkat |
+| Kuantisasi | Memetakan amplitudo ke salah satu tingkat yang tersedia | $x_q[n]$ dengan himpunan amplitudo berhingga |
+| Pengkodean | Memberi label biner pada tingkat kuantisasi | Kata biner $B$ bit untuk setiap sampel |
+
+![Alur pengondisian analog, sampling dan penahanan, kuantisasi, serta pengkodean](../Gambar/pertemuan-02/alur-adc.svg)
+
+Dalam perangkat nyata, pembagian fungsi tersebut dapat berada di dalam satu cip ADC atau tersebar pada beberapa komponen. Diagram ini menjelaskan fungsi konseptualnya, bukan mengharuskan setiap tahap berupa perangkat yang terpisah.
+
+Filter antialiasing bekerja pada sinyal analog sebelum sampling. Penguat atau pelemah juga dapat diperlukan agar amplitudo memanfaatkan rentang ADC tanpa melewati batas masukannya.
+
+### Periode dan frekuensi sampling
+
+Pada sampling seragam, nilai sinyal diambil pada waktu $t=nT_s$ dengan selang tetap $T_s$. Besaran $T_s$ disebut periode sampling, sedangkan banyaknya pengambilan sampel per detik disebut frekuensi sampling $f_s$.
 
 ```math
-\begin{aligned}
-s[n]&=25+0.4\sin\left(\frac{2\pi n}{100}\right)+2u[n-80],\\
-x[n]&=s[n]+\eta[n].
-\end{aligned}
+\boxed{x[n]=x_a(nT_s)},
+\qquad
+\boxed{f_s=\frac{1}{T_s}}.
 ```
 
-Besaran $s[n]$ merupakan temperatur acuan dalam simulasi, sedangkan $\eta[n]$ merupakan derau yang kita tambahkan. Pada pengukuran sesungguhnya, temperatur acuan umumnya tidak diketahui persis dan tidak dapat langsung dikurangkan dari data.
+Periode sampling dinyatakan dalam sekon per sampel, sedangkan frekuensi sampling lazim dinyatakan dalam sampel per sekon atau hertz. Indeks $n$ sendiri tidak bersatuan waktu, sehingga grafik terhadap $n$ harus dibedakan dari grafik terhadap $t$.
 
-### Dua pilihan penghalus
-
-Pilihan pertama adalah rata-rata lima sampel yang menggunakan masukan sekarang dan empat masukan sebelumnya. Pilihan kedua adalah penghalus rekursif yang menggunakan keluaran sebelumnya.
+Untuk sinyal analog sinusoidal $x_a(t)=A\cos(2\pi f_0t+\phi)$, substitusi $t=nT_s$ menghasilkan bentuk diskret. Hubungan frekuensi analog dan frekuensi sudut diskretnya dinyatakan sebagai berikut.
 
 ```math
-\begin{aligned}
-y_{\mathrm{rata}}[n]&=\frac15\sum_{k=0}^{4}x[n-k],\\
-y_{\mathrm{rek}}[n]&=0.8y_{\mathrm{rek}}[n-1]+0.2x[n].
-\end{aligned}
+x[n]=A\cos\left(2\pi\frac{f_0}{f_s}n+\phi\right)
+=A\cos(\omega_0n+\phi),
+\qquad
+\omega_0=2\pi\frac{f_0}{f_s}.
 ```
 
-Kedua aturan kausal dan stabil, serta memiliki penguatan satu untuk masukan konstan setelah transien mereda. Aturan pertama menyimpan empat masukan lama, sedangkan aturan kedua menyimpan satu keluaran lama.
+Frekuensi $f_0$ bersatuan hertz, frekuensi sudut analog $\Omega_0=2\pi f_0$ bersatuan radian per sekon, dan $\omega_0$ bersatuan radian per sampel. Besaran $f_0/f_s$ juga sering digunakan sebagai frekuensi ternormalisasi dalam siklus per sampel.
 
-Untuk contoh ini, kita menganggap pembacaan sebelum awal rekaman berada pada $25$ derajat Celsius. Karena itu, riwayat masukan untuk rata-rata dan keluaran awal penghalus rekursif sama-sama diisi $25$, yang setara dengan inisialisasi nol jika variabel yang digunakan adalah penyimpangan terhadap $25$.
+#### Contoh menghitung sampel dan frekuensi diskret
 
-### Eksperimen Python: kelancaran keluaran dan keterlambatan
+Misalkan $x_a(t)=\cos(2\pi\cdot20t)$ disampling dengan $f_s=80\ \mathrm{Hz}$. Periode samplingnya adalah $T_s=1/80=0.0125\ \mathrm{s}=12.5\ \mathrm{ms}$, sehingga diperoleh hasil berikut.
 
-Program berikut membuat satu rekaman sintetis dan mengolahnya dengan kedua aturan. Bilangan acak dihasilkan menggunakan nilai awal generator yang tetap agar contoh dapat dijalankan ulang dengan data yang sama.
+```math
+\omega_0=2\pi\frac{20}{80}=\frac\pi2,
+\qquad
+x[n]=\cos\left(\frac\pi2n\right).
+```
+
+Sampel pada $n=0,1,2,3,4$ adalah $1,0,-1,0,1$. Satu periode sinusoid analog berlangsung selama $50\ \mathrm{ms}$ dan pada contoh ini mencakup empat interval sampling.
+
+Sampling ideal kadang digambarkan secara matematis dengan deretan impuls $x_s(t)=\sum_n x[n]\delta(t-nT_s)$. Model ini tetap merupakan objek waktu-kontinu berupa impuls berbobot, sedangkan deretan $x[n]$ adalah nilai numeriknya; batang pada grafik sampel tidak berarti ADC menghasilkan impuls dengan tinggi fisik tak berhingga.
+
+### Teorema sampling dan frekuensi Nyquist
+
+Teorema sampling menyatakan bahwa sinyal terbatas pita dapat ditentukan kembali dari sampel seragamnya jika frekuensi sampling cukup tinggi. Untuk sinyal pita dasar yang tidak memiliki komponen di atas $f_{\max}$, syarat aman yang digunakan di sini adalah $f_s>2f_{\max}$.
+
+```math
+\boxed{f_s>2f_{\max}}.
+```
+
+Pernyataan rekonstruksi tepat mengasumsikan pembatasan pita yang ideal, sampel tepat tanpa galat, dan informasi sampel yang memadai sepanjang waktu. Dalam praktik, filter tidak ideal, rekaman berhingga, derau, ketidakpastian waktu sampling, dan kuantisasi membuat rekonstruksi hanya mendekati model ideal tersebut.
+
+Istilah laju Nyquist dan frekuensi Nyquist sering tertukar karena keduanya mengandung faktor dua. Tabel berikut membedakan besaran yang ditentukan oleh sinyal dari besaran yang ditentukan oleh perangkat sampling.
+
+| Istilah | Rumus | Ditentukan oleh |
+|---|---|---|
+| Laju Nyquist sinyal | $2f_{\max}$ | Frekuensi tertinggi yang perlu dipertahankan |
+| Frekuensi Nyquist pencuplikan | $f_s/2$ | Frekuensi sampling yang dipilih |
+
+Sebagai contoh, sinyal dengan frekuensi tertinggi $4\ \mathrm{kHz}$ memiliki laju Nyquist $8\ \mathrm{kHz}$. Jika digunakan $f_s=10\ \mathrm{kHz}$, frekuensi Nyquist pencuplikan adalah $5\ \mathrm{kHz}$ dan periode samplingnya $0.1\ \mathrm{ms}$.
+
+#### Mengapa tidak selalu cukup tepat pada batas dua kali?
+
+Pada $f_s=2f_0$, sinusoid $x_a(t)=\sin(2\pi f_0t)$ menghasilkan $x[n]=\sin(\pi n)=0$ untuk setiap bilangan bulat $n$. Sinyal analog yang tidak nol tersebut menjadi tidak dapat dibedakan dari sinyal nol berdasarkan sampelnya saja.
+
+Karena fase pada frekuensi batas dapat menimbulkan kehilangan informasi, penggunaan tanda lebih besar menghindari persoalan komponen tepat di batas. Selain itu, sistem nyata memerlukan ruang transisi filter antialiasing, sehingga memilih frekuensi sampling hanya sedikit di atas batas teoritis belum tentu memadai.
+
+Aturan praktis seperti menggunakan $2.2f_{\max}$ dapat memberikan margin pada situasi tertentu, tetapi bukan teorema universal. Margin yang benar bergantung pada penolakan frekuensi di luar pita, bentuk filter analog, dan ketelitian yang dibutuhkan.
+
+#### Makna rekonstruksi ideal
+
+Dalam model ideal, informasi di antara titik sampel dapat dipulihkan dengan interpolasi sinc, bukan sekadar menghubungkan titik menggunakan garis lurus. Dengan fungsi sinc ternormalisasi, salah satu bentuk rumus rekonstruksinya adalah sebagai berikut.
+
+```math
+x_a(t)=\sum_{n=-\infty}^{\infty}x[n]\,
+\operatorname{sinc}\left(\frac{t-nT_s}{T_s}\right),
+\qquad
+\operatorname{sinc}(u)=
+\begin{cases}
+\dfrac{\sin(\pi u)}{\pi u},&u\ne0,\\[5pt]
+1,&u=0.
+\end{cases}
+```
+
+Pada $t=mT_s$, semua suku selain $n=m$ bernilai nol, sehingga rumus mengembalikan nilai sampel $x[m]$. Di antara titik sampling, setiap sampel menyumbang bagian kurva sinc dan penjumlahannya memulihkan sinyal terbatas pita sesuai asumsi teorema.
+
+Rumus tersebut memerlukan sampel ke kedua arah tanpa batas dan fungsi interpolasi yang juga tidak berhingga durasinya. Implementasi nyata menggunakan pendekatan berhingga dengan keterlambatan tertentu, sehingga model ideal ini perlu dibedakan dari rangkaian penahanan sampel yang akan dibahas sesudah aliasing.
+
+### Aliasing: frekuensi berbeda dengan sampel yang sama
+
+Aliasing terjadi ketika dua atau lebih sinyal analog yang berbeda menghasilkan deretan sampel yang sama. Akibatnya, komponen frekuensi tinggi dapat tampak sebagai komponen frekuensi yang lebih rendah pada data digital.
+
+Untuk eksponensial kompleks, penambahan kelipatan bulat $f_s$ tidak mengubah sampel. Hal ini mengikuti identitas berikut untuk setiap bilangan bulat $k$ dan $n$.
+
+```math
+e^{j2\pi(f_0+kf_s)n/f_s}
+=e^{j2\pi f_0n/f_s}e^{j2\pi kn}
+=e^{j2\pi f_0n/f_s}.
+```
+
+Pada kosinus real, pencerminan frekuensi juga dapat menghasilkan sampel yang sama karena kosinus merupakan fungsi genap. Untuk sinus atau sinusoid berfase sembarang, pencerminan tersebut perlu disertai penyesuaian fase atau tanda, sehingga kesamaan tidak boleh diasumsikan tanpa pemeriksaan.
+
+Frekuensi alias nonnegatif dalam interval $[0,f_s/2]$ dapat dihitung melalui pelipatan berikut. Operasi modulo digunakan untuk terlebih dahulu menempatkan frekuensi dalam interval $[-f_s/2,f_s/2)$.
+
+```math
+f_{\mathrm{alias}}
+=\left|\left((f_0+f_s/2)\bmod f_s\right)-f_s/2\right|.
+```
+
+#### Contoh aliasing pada sampling 100 Hz
+
+Sinyal kosinus $70\ \mathrm{Hz}$ yang disampling pada $100\ \mathrm{Hz}$ tidak memenuhi syarat pita dasar, karena frekuensi Nyquistnya hanya $50\ \mathrm{Hz}$. Sampelnya sama dengan kosinus $30\ \mathrm{Hz}$ seperti diperlihatkan oleh identitas berikut.
+
+```math
+\cos\left(2\pi\frac{70}{100}n\right)
+=\cos\left(2\pi n-2\pi\frac{30}{100}n\right)
+=\cos\left(2\pi\frac{30}{100}n\right).
+```
+
+Dengan frekuensi sampling yang sama, komponen $130\ \mathrm{Hz}$ juga terlipat menjadi $30\ \mathrm{Hz}$, sedangkan $60\ \mathrm{Hz}$ terlipat menjadi $40\ \mathrm{Hz}$. Komponen $20\ \mathrm{Hz}$ tetap berada pada $20\ \mathrm{Hz}$, tetapi tetap dapat tercampur dengan alias dari komponen analog lain jika komponen tersebut tidak disaring sebelum sampling.
 
 ```python
 import numpy as np
 import matplotlib.pyplot as plt
 
-n = np.arange(180)
-rng = np.random.default_rng(7)
-s = 25.0 + 0.4 * np.sin(2.0 * np.pi * n / 100.0)
-s = s + 2.0 * (n >= 80)
-derau = 0.35 * rng.standard_normal(len(n))
-x = s + derau
 
-# Empat sampel sebelum rekaman diasumsikan bernilai 25.
-L = 5
-y_rata = np.zeros(len(x))
-for i in range(len(x)):
-    jumlah = 0.0
-    for k in range(L):
-        if i - k >= 0:
-            jumlah = jumlah + x[i - k]
-        else:
-            jumlah = jumlah + 25.0
-    y_rata[i] = jumlah / L
+f0 = 70.0
+t = np.linspace(0, 0.1, 2001)
+analog = np.cos(2 * np.pi * f0 * t)
+fig, axes = plt.subplots(2, 1, figsize=(9, 6.5), sharex=True)
 
-# Keluaran awal rekursif juga diisi 25.
-a = 0.8
-y_rek = np.zeros(len(x))
-y_lama = 25.0
-for i in range(len(x)):
-    y_rek[i] = a * y_lama + (1.0 - a) * x[i]
-    y_lama = y_rek[i]
-
-fig, axes = plt.subplots(2, 1, figsize=(9, 7))
-for ax in axes:
-    ax.plot(n, x, color="0.7", linewidth=1, label="Data pengukuran")
-    ax.plot(n, s, "k--", linewidth=1.6, label="Temperatur acuan")
-    ax.plot(n, y_rata, linewidth=1.7, label="Rata-rata 5 sampel")
-    ax.plot(n, y_rek, linewidth=1.7, label="Rekursif, a = 0.8")
-    ax.axvline(80, color="0.4", linestyle=":")
-    ax.set_ylabel("Temperatur (derajat Celsius)")
-    ax.set_xlabel("Indeks n")
-    ax.grid(True, alpha=0.3)
-
-axes[0].legend(loc="upper left", ncol=2, fontsize=9)
-axes[1].set_xlim(65, 105)
+for ax, fs in zip(axes, [200.0, 100.0]):
+    n = np.arange(int(round(0.1 * fs)) + 1)
+    ts = n / fs
+    x = np.cos(2 * np.pi * f0 * ts)
+    ax.plot(t, analog, color='C0', label='Analog 70 Hz')
+    if fs == 100:
+        alias = np.cos(2 * np.pi * 30 * t)
+        ax.plot(t, alias, '--', color='C1', label='Analog 30 Hz')
+        galat = np.max(np.abs(x - np.cos(2 * np.pi * 30 * ts)))
+        print('Selisih sampel 70 Hz dan 30 Hz:', galat)
+        assert galat < 1e-12
+    ax.plot(ts, x, 'ko', markersize=5, label='Sampel')
+    ax.set_ylabel('Amplitudo')
+    ax.set_title(f'fs = {fs:g} Hz; frekuensi Nyquist = {fs / 2:g} Hz')
+    ax.grid(alpha=0.3)
+    ax.legend(loc='upper right', fontsize=8)
+axes[-1].set_xlabel('Waktu t (s)')
 fig.tight_layout()
 plt.show()
 ```
 
-Versi skrip terpisah tersedia di [07_sensor_temperatur.py](../Kode/pertemuan-02/07_sensor_temperatur.py). Panel kedua memperbesar bagian di sekitar perubahan temperatur agar keterlambatan penghalus lebih mudah dibandingkan.
+![Sampling yang memenuhi batas Nyquist dan aliasing kosinus 70 Hz menjadi 30 Hz](../Gambar/pertemuan-02/sampling-aliasing.svg)
 
-![Penghalusan rekaman temperatur dan respons di sekitar perubahan mendadak](../Gambar/pertemuan-02/sensor-temperatur.svg)
+Program [06_sampling_aliasing.py](../Kode/pertemuan-02/06_sampling_aliasing.py) membandingkan sampling pada $200\ \mathrm{Hz}$ dan $100\ \mathrm{Hz}$. Pada panel kedua, kedua kurva analog berbeda tetapi semua titik sampelnya berimpit, sehingga ambiguitasnya terlihat langsung.
 
-Kedua keluaran biasanya tampak lebih halus daripada data pengukuran yang berderau. Namun, keduanya memerlukan beberapa sampel untuk mengikuti perubahan mendadak, sehingga pengurangan fluktuasi perlu dinilai bersama keterlambatan yang ditimbulkan.
+#### Pencegahan aliasing
 
-### Menghubungkan persamaan dengan keputusan pengukuran
+Filter antialiasing harus mengurangi komponen yang dapat terlipat ke pita pengamatan sebelum sinyal dicuplik. Menambahkan filter digital sesudah sampling tidak dapat memisahkan dua komponen yang sudah menghasilkan sampel identik.
 
-Jika tujuan pengukuran adalah tampilan temperatur ruangan yang nyaman dibaca, respons yang agak lambat mungkin dapat diterima. Jika tujuannya mendeteksi perubahan cepat pada proses termal, penghalusan berlebihan dapat menunda informasi yang dibutuhkan.
+Menaikkan $f_s$ memperlebar daerah frekuensi yang dapat ditangani, tetapi meningkatkan laju data dan kebutuhan komputasi. Pilihan yang masuk akal menggabungkan batas pita sinyal, filter analog, dan kapasitas penyimpanan, bukan hanya memperbesar satu parameter tanpa memeriksa keseluruhan sistem.
 
-Memperbesar panjang rata-rata atau memperbesar $a$ pada penghalus rekursif umumnya memperpanjang ingatan sistem. Pilihan parameter harus mengikuti skala waktu fenomena, laju datangnya sampel, dan keterlambatan yang masih dapat diterima oleh pengguna data.
+### Pengayaan: sampling sinyal pita lewat
 
-Analisis pada kuliah ini dilakukan langsung dalam domain waktu. Penjelasan yang lebih rinci tentang komponen frekuensi yang dilemahkan atau dipertahankan akan diperoleh ketika kita mempelajari representasi Fourier dan filter digital.
+Syarat $f_s>2f_{\max}$ merupakan pilihan sederhana untuk sinyal pita dasar atau ketika letak spektrum tidak dimanfaatkan. Sinyal pita lewat yang hanya menempati $f_L\le |f|\le f_H$ dapat disampling lebih rendah melalui pemilihan interval $f_s$ yang mencegah salinan spektrumnya bertumpang tindih, dengan penjelasan tambahan tentang salinan spektrum pada Referensi 5.
+
+Dengan lebar pita $W=f_H-f_L$, salah satu keluarga interval sampling ideal adalah sebagai berikut. Bilangan bulat $m$ menyatakan pilihan penempatan salinan spektrum, bukan jumlah bit atau jumlah sampel.
+
+```math
+\frac{2f_H}{m}\le f_s\le\frac{2f_L}{m-1},
+\qquad
+1\le m\le\left\lfloor\frac{f_H}{W}\right\rfloor.
+```
+
+Untuk $m=1$, batas atas dipahami tidak membatasi, sehingga kembali diperoleh pilihan sampling di atas dua kali $f_H$. Batas pada $m$ berasal dari syarat interval tidak kosong, yaitu $f_H(m-1)\le mf_L$, yang setara dengan $mW\le f_H$.
+
+Sebagai contoh, pita $90$ sampai $100\ \mathrm{kHz}$ memiliki $W=10\ \mathrm{kHz}$. Pilihan $m=5$ memberikan interval $40\le f_s\le45\ \mathrm{kHz}$, sehingga $f_s=42\ \mathrm{kHz}$ merupakan salah satu pilihan ideal yang berada di dalam interval.
+
+Pada pilihan tersebut, pita positif dapat bergeser sebesar $2f_s=84\ \mathrm{kHz}$ menjadi $6$ sampai $16\ \mathrm{kHz}$. Hasilnya berada di bawah $f_s/2=21\ \mathrm{kHz}$ tanpa bertumpang tindih dengan pita negatif pasangannya.
+
+Tidak setiap nilai $f_s\ge2W$ otomatis aman, dan batas interval ideal sebaiknya diberi margin. Selain itu, rangkaian analog tetap harus mampu menerima frekuensi hingga $f_H$ dan memerlukan filter pita lewat yang sesuai, sehingga teknik ini bukan alasan untuk mengabaikan kemampuan masukan ADC.
+
+### Sample-and-hold
+
+ADC nyata memerlukan waktu tertentu untuk menyelesaikan konversi suatu nilai tegangan. Rangkaian *sample-and-hold* atau *track-and-hold* membantu menjaga tegangan yang dikonversi tetap mendekati nilai pada saat pengambilan sampel.
+
+Pada fase pelacakan, elemen penyimpan mengikuti tegangan masukan. Pada fase penahanan, tegangan disimpan sementara agar perubahan masukan berikutnya tidak terus mengubah nilai yang sedang dikonversi.
+
+Model penahanan ideal yang sederhana mempertahankan nilai sampel selama satu interval sampling. Hubungannya dinyatakan sebagai berikut.
+
+```math
+x_{\mathrm{hold}}(t)=x[n],
+\qquad nT_s\le t<(n+1)T_s.
+```
+
+Bentuk tangga ini masih merupakan tegangan analog terhadap waktu kontinu. Amplitudonya belum otomatis dikuantisasi, sehingga proses penahanan tidak sama dengan pembulatan ke tingkat digital.
+
+#### Contoh penahanan sampel
+
+Ambil $x_a(t)=\sin(2\pi\cdot5t)$ dengan $f_s=40\ \mathrm{Hz}$, sehingga $T_s=25\ \mathrm{ms}$. Sampel pertamanya adalah $0$, $\sqrt2/2$, $1$, dan $\sqrt2/2$ pada waktu $0$, $25$, $50$, dan $75\ \mathrm{ms}$.
+
+Model penahanan mempertahankan nol selama $0\le t<25\ \mathrm{ms}$ dan mempertahankan $\sqrt2/2$ selama $25\le t<50\ \mathrm{ms}$. Pada $t=37\ \mathrm{ms}$, nilai yang ditahan tetap $\sqrt2/2$, walaupun nilai sinusoid analog pada waktu itu berbeda.
+
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+
+
+fs, f0 = 40.0, 5.0
+ts = np.arange(13) / fs
+x = np.sin(2 * np.pi * f0 * ts)
+t = np.linspace(0, ts[-1], 3001)
+analog = np.sin(2 * np.pi * f0 * t)
+print('Empat sampel pertama:', x[:4])
+print('Nilai yang ditahan pada t = 0.037 s:', x[int(0.037 * fs)])
+
+fig, ax = plt.subplots(figsize=(9, 4.5))
+ax.plot(t, analog, label='Sinyal analog')
+ax.step(ts, x, where='post', linewidth=2, label='Penahanan orde nol')
+ax.plot(ts, x, 'ko', markersize=5, label='Nilai sampel')
+ax.set(xlabel='Waktu t (s)', ylabel='Amplitudo',
+       title='Sample-and-hold: f0 = 5 Hz, fs = 40 Hz')
+ax.grid(alpha=0.3)
+ax.legend(loc='lower left', fontsize=9)
+fig.tight_layout()
+plt.show()
+```
+
+![Perbandingan sinyal analog, titik sampling, dan model penahanan orde nol](../Gambar/pertemuan-02/sample-hold.svg)
+
+Program [07_sample_hold.py](../Kode/pertemuan-02/07_sample_hold.py) menggunakan tangga yang berubah tepat pada waktu sampel. Model ini juga dikenal sebagai penahanan orde nol, tetapi kurva tangga tersebut bukan rekonstruksi ideal sinyal terbatas pita.
+
+Pada perangkat nyata, tegangan tersimpan dapat sedikit turun selama penahanan, dan saat sampling dapat mengalami ketidakpastian waktu atau *jitter*. Karena itu, pemenuhan batas frekuensi sampling saja tidak menjamin seluruh galat akuisisi menjadi kecil.
 
 ---
 
-## Cek pemahaman
+## Kuantisasi dan pengkodean digital
 
-Jawablah pertanyaan berikut tanpa melihat kembali definisinya terlebih dahulu. Setelah itu, bandingkan alasan yang digunakan dengan pengujian matematis pada bagian sebelumnya.
+Sesudah sampling, kita mempunyai satu nilai amplitudo pada setiap indeks, tetapi nilai tersebut secara ideal masih dapat mengambil sembarang bilangan real. Komputer tidak dapat menyimpan seluruh kemungkinan itu dengan kata biner yang panjangnya berhingga, sehingga diperlukan kuantisasi.
 
-1. Mengapa bentuk grafik masukan tidak menentukan apakah sistem linear?
-2. Apa perbedaan homogenitas, aditivitas, dan superposisi?
-3. Mengapa $\mathcal{T}\{0\}=0$ belum cukup untuk membuktikan linearitas?
-4. Mengapa $y[n]=2x[n]+3$ tidak linear meskipun grafik $y$ terhadap $x$ berupa garis lurus?
-5. Apa dua jalur operasi yang harus dibandingkan untuk menguji invariansi waktu?
-6. Mengapa $y[n]=nx[n]$ linear tetapi berubah terhadap waktu?
-7. Dapatkah sistem nonlinear bersifat invarian terhadap waktu dan stabil BIBO?
-8. Apa perbedaan sistem bermemori dan sistem nonkausal?
-9. Mengapa rata-rata simetris memerlukan waktu tunggu ketika diterapkan pada data yang datang bertahap?
-10. Mengapa sebuah sistem yang invertibel dapat mempunyai invers nonkausal?
-11. Apa peran informasi $x[-1]$ ketika memulihkan masukan dari selisih pertamanya?
-12. Mengapa satu contoh masukan terbatas dengan keluaran tidak terbatas cukup untuk menolak stabilitas BIBO?
-13. Apakah sistem LTI selalu kausal atau stabil?
-14. Apa yang disimpan oleh penunda satu sampel pada awal penghitungan?
-15. Mengapa keadaan awal tak nol harus diperhatikan dalam pengujian superposisi?
-16. Apa perbedaan respons masukan-nol dan respons keadaan-nol?
-17. Mengapa rekursif tidak selalu berarti respons impuls tak berhingga?
-18. Mengapa program yang berjalan tanpa kesalahan belum menjamin bahwa asumsi waktu dan riwayatnya benar?
+Kuantisasi memetakan suatu interval amplitudo ke satu nilai perwakilan. Akibatnya, beberapa nilai masukan yang berbeda menghasilkan nilai keluaran yang sama, sehingga proses ini kehilangan informasi dan tidak invertibel pada himpunan masukan kontinu.
+
+### Jumlah tingkat dan langkah kuantisasi
+
+ADC dengan $B$ bit menyediakan paling banyak $L=2^B$ pola kode berbeda. Untuk kuantisator seragam, lebar interval kuantisasi sama pada seluruh rentang masukannya.
+
+Dalam catatan ini, kita menggunakan kuantisator seragam **mid-rise** dengan rentang nominal $[V_{\min},V_{\max})$. Ada $L$ interval dengan nilai perwakilan di titik tengah setiap interval, sehingga definisinya adalah sebagai berikut.
+
+```math
+L=2^B,
+\qquad
+\Delta=\frac{V_{\max}-V_{\min}}{L},
+\qquad
+q_k=V_{\min}+\left(k+\frac12\right)\Delta,
+\quad k=0,1,\ldots,L-1.
+```
+
+Nilai $\Delta$ disebut langkah kuantisasi, dan pada model ideal ini setara dengan ukuran satu LSB dalam satuan tegangan. Aturan pada tepat batas interval perlu dinyatakan agar hitungan manual dan program tidak berbeda akibat konvensi pembulatan.
+
+Kita memasukkan batas bawah suatu interval ke interval tersebut dan memetakan nilai di luar rentang ke tingkat terdekat pada ujung rentang. Dengan konvensi ini, indeks tingkat dan nilai keluarannya dihitung melalui rumus berikut.
+
+```math
+k[n]=\operatorname{clip}\left(
+\left\lfloor\frac{x[n]-V_{\min}}{\Delta}\right\rfloor,
+0,L-1\right),
+\qquad
+x_q[n]=V_{\min}+\left(k[n]+\frac12\right)\Delta.
+```
+
+Ada pula konvensi yang menempatkan nilai perwakilan tepat pada kedua ujung rentang, dengan jarak antartingkat $(V_{\max}-V_{\min})/(L-1)$. Konvensi tersebut tidak digunakan di sini, sehingga penyebut $L$ dan $L-1$ tidak boleh dicampur dalam satu perhitungan.
+
+Pada kuantisator mid-rise simetris dengan jumlah tingkat genap, nol merupakan batas antara dua tingkat dan bukan nilai keluaran. Kuantisator **mid-tread** menyediakan tingkat nol, tetapi pengaturan tingkat dan ambangnya harus didefinisikan kembali sebelum rumus diterapkan.
+
+#### Contoh kuantisator 3 bit
+
+Ambil $B=3$, $V_{\min}=-4\ \mathrm{V}$, dan $V_{\max}=4\ \mathrm{V}$. Jumlah tingkatnya $L=8$ dan langkahnya $\Delta=8/8=1\ \mathrm{V}$, sehingga tabel pemetaan nominalnya adalah sebagai berikut.
+
+| Interval masukan nominal (V) | Tingkat $q_k$ (V) | Indeks $k$ | Kode biner |
+|---|---:|---:|:---:|
+| $[-4,-3)$ | −3.5 | 0 | 000 |
+| $[-3,-2)$ | −2.5 | 1 | 001 |
+| $[-2,-1)$ | −1.5 | 2 | 010 |
+| $[-1,0)$ | −0.5 | 3 | 011 |
+| $[0,1)$ | 0.5 | 4 | 100 |
+| $[1,2)$ | 1.5 | 5 | 101 |
+| $[2,3)$ | 2.5 | 6 | 110 |
+| $[3,4)$ | 3.5 | 7 | 111 |
+
+Sebagai contoh, $x=1.3\ \mathrm{V}$ memberikan $k=\lfloor(1.3+4)/1\rfloor=5$. Nilai perwakilannya $x_q=1.5\ \mathrm{V}$ dan kode binernya `101`.
+
+Dengan mendefinisikan galat sebagai $e_q=x_q-x$, deretan sampel berikut memberikan hasil yang dapat diperiksa satu per satu. Perhatikan bahwa tanda galat menunjukkan apakah nilai perwakilan berada di atas atau di bawah masukan asli.
+
+| $x[n]$ (V) | $x_q[n]$ (V) | $e_q[n]$ (V) | $k[n]$ | Kode |
+|---:|---:|---:|---:|:---:|
+| 1.3 | 1.5 | 0.2 | 5 | 101 |
+| 3.6 | 3.5 | −0.1 | 7 | 111 |
+| 2.3 | 2.5 | 0.2 | 6 | 110 |
+| 0.7 | 0.5 | −0.2 | 4 | 100 |
+| −0.7 | −0.5 | 0.2 | 3 | 011 |
+| −2.4 | −2.5 | −0.1 | 1 | 001 |
+| −3.4 | −3.5 | −0.1 | 0 | 000 |
+
+### Galat kuantisasi dan kelebihan rentang
+
+Untuk nilai yang berada dalam rentang nominal kuantisator titik-tengah, jarak ke nilai perwakilan tidak melebihi setengah langkah. Dengan definisi galat tadi, batasnya dinyatakan sebagai berikut.
+
+```math
+e_q[n]=x_q[n]-x[n],
+\qquad
+\boxed{|e_q[n]|\le\frac{\Delta}{2}}.
+```
+
+Batas tersebut tidak berlaku secara umum ketika masukan melewati rentang dan mengalami saturasi atau *clipping*. Pada contoh 3 bit tadi, masukan $4.8\ \mathrm{V}$ dipetakan ke $3.5\ \mathrm{V}$, sehingga galatnya $-1.3\ \mathrm{V}$, lebih besar dari $\Delta/2=0.5\ \mathrm{V}$ dalam nilai mutlak.
+
+Karena itu, memperbesar jumlah bit tidak dapat menggantikan pemilihan rentang masukan yang benar. Sebaliknya, rentang yang terlalu lebar mengurangi ketelitian untuk sinyal kecil karena lebih sedikit tingkat yang benar-benar digunakan oleh sinyal tersebut.
+
+#### Contoh resolusi ADC dan kebutuhan jumlah bit
+
+Untuk ADC 12 bit dengan rentang $-10$ sampai $10\ \mathrm{V}$, terdapat $4096$ tingkat. Langkah dan batas galat ideal dalam rentang dihitung sebagai berikut.
+
+```math
+\Delta=\frac{20}{4096}\ \mathrm{V}
+=4.8828125\ \mathrm{mV},
+\qquad
+|e_q|\le2.44140625\ \mathrm{mV}.
+```
+
+Jika batas galat ideal yang dikehendaki adalah $\varepsilon$, syarat $\Delta/2\le\varepsilon$ dapat disusun ulang untuk menentukan jumlah bit. Pembulatan ke atas diperlukan karena jumlah bit harus berupa bilangan bulat.
+
+```math
+B\ge\left\lceil
+\log_2\left(\frac{V_{\max}-V_{\min}}{2\varepsilon}\right)
+\right\rceil.
+```
+
+Untuk rentang $20\ \mathrm{V}$ dan batas galat $2\ \mathrm{mV}$, diperoleh $B\ge\lceil\log_2 5000\rceil=13$. Angka ini hanya menyatakan kebutuhan kuantisasi ideal, bukan jaminan akurasi perangkat karena galat offset, penguatan, derau, dan ketidaklinieran belum diperhitungkan.
+
+### Demo kuantisasi dan kode PCM dengan Python
+
+Program berikut mengimplementasikan tabel 3 bit tadi serta menggambar karakteristik tangga dan galatnya. Operasi `floor` digunakan untuk pemilihan interval, sedangkan `clip` membatasi indeks agar selalu merupakan kode yang sah.
+
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+
+
+def kuantisasi(x, bit, vmin, vmax):
+    if not isinstance(bit, (int, np.integer)) or bit < 1 or vmax <= vmin:
+        raise ValueError('Bit harus positif dan vmax harus melebihi vmin')
+    x = np.asarray(x, dtype=float)
+    tingkat = 2**bit
+    delta = (vmax - vmin) / tingkat
+    indeks = np.floor((x - vmin) / delta)
+    kode = np.clip(indeks, 0, tingkat - 1).astype(int)
+    xq = vmin + (kode + 0.5) * delta
+    return kode, xq
+
+
+bit, vmin, vmax = 3, -4.0, 4.0
+delta = (vmax - vmin) / 2**bit
+x = np.array([1.3, 3.6, 2.3, 0.7, -0.7, -2.4, -3.4])
+kode, xq = kuantisasi(x, bit, vmin, vmax)
+galat = xq - x
+print('Masukan  Kuantisasi  Galat  Kode')
+for xi, qi, ei, ki in zip(x, xq, galat, kode):
+    print(f'{xi:7.1f} {qi:10.1f} {ei:6.1f}  {ki:0{bit}b}')
+assert np.max(np.abs(galat)) <= delta / 2
+
+fig, axes = plt.subplots(3, 1, figsize=(8, 8.5))
+uji = np.linspace(-5, 5, 2001)
+_, tangga = kuantisasi(uji, bit, vmin, vmax)
+axes[0].plot(uji, tangga, label='Kuantisator mid-rise')
+axes[0].plot(uji, uji, '--', color='gray', label='Identitas')
+axes[0].axvspan(-5, vmin, color='C1', alpha=0.15)
+axes[0].axvspan(vmax, 5, color='C1', alpha=0.15)
+axes[0].set(xlabel='Masukan (V)', ylabel='Keluaran (V)',
+            title='Rentang nominal -4 sampai 4 V; saturasi di luar rentang')
+n = np.arange(len(x))
+axes[1].plot(n, x, 'o-', label='Sampel asli')
+axes[1].plot(n, xq, 's--', label='Hasil kuantisasi')
+axes[1].set(xlabel='Indeks n', ylabel='Tegangan (V)')
+axes[2].stem(n, galat)
+axes[2].axhline(delta / 2, color='C1', linestyle='--', label='Batas ±Δ/2')
+axes[2].axhline(-delta / 2, color='C1', linestyle='--')
+axes[2].set(xlabel='Indeks n', ylabel='Galat (V)', ylim=(-0.65, 0.65))
+for ax in axes:
+    ax.grid(alpha=0.3)
+    ax.legend(fontsize=8)
+fig.tight_layout()
+plt.show()
+```
+
+![Karakteristik kuantisator, hasil kuantisasi sampel, dan galat dalam rentang](../Gambar/pertemuan-02/kuantisasi-pcm.svg)
+
+Program [08_kuantisasi_pcm.py](../Kode/pertemuan-02/08_kuantisasi_pcm.py) juga mencetak kode biner setiap sampel. Pada panel karakteristik, daerah di luar rentang menunjukkan saturasi, sedangkan batas setengah langkah pada panel galat hanya digunakan untuk sampel yang masih berada dalam rentang.
+
+### Model derau kuantisasi dan SQNR
+
+Galat kuantisasi sebenarnya merupakan akibat deterministik dari aturan pemetaan amplitudo. Untuk analisis tertentu, galat ini dapat didekati sebagai peubah acak seragam pada interval $[-\Delta/2,\Delta/2]$ jika sinyal menjelajahi cukup banyak tingkat dan hubungan galat dengan sinyal cukup lemah, sebagaimana juga dibahas dalam Referensi 4.
+
+Model tersebut bukan sifat universal setiap sinyal terkuantisasi. Sebagai contoh, masukan nol pada kuantisator mid-rise yang digunakan di sini selalu menghasilkan $+\Delta/2$, sehingga galatnya konstan dan tidak memiliki rata-rata nol.
+
+Jika asumsi seragam dan rata-rata nol layak digunakan, daya galat sama dengan variansnya. Integrasi distribusi seragam memberikan hasil berikut.
+
+```math
+P_q=\sigma_q^2
+=\frac{1}{\Delta}\int_{-\Delta/2}^{\Delta/2}e^2\,de
+=\frac{\Delta^2}{12}.
+```
+
+Rasio daya sinyal terhadap daya galat kuantisasi disebut *signal-to-quantization-noise ratio* atau SQNR. Besarannya dalam desibel dihitung menggunakan rasio daya, sehingga faktor pengalinya adalah sepuluh.
+
+```math
+\mathrm{SQNR}=10\log_{10}\left(\frac{P_x}{P_q}\right)\ \mathrm{dB}.
+```
+
+#### SQNR sinusoid skala penuh
+
+Sinusoid dengan amplitudo puncak $A$ memiliki daya rata-rata $A^2/2$. Jika rentang kuantisator simetris membentang dari $-A$ sampai $A$, maka $\Delta=2A/2^B$ dan pendekatan SQNR menjadi sebagai berikut.
+
+```math
+\begin{aligned}
+\mathrm{SQNR}
+&\approx10\log_{10}\left(
+\frac{A^2/2}{(2A/2^B)^2/12}\right)\\
+&=10\log_{10}\left(\frac32\,2^{2B}\right)\\
+&\approx6.0206B+1.7609\ \mathrm{dB}.
+\end{aligned}
+```
+
+Dengan model tersebut, sinusoid skala penuh menghasilkan sekitar $49.93\ \mathrm{dB}$ untuk 8 bit dan $74.01\ \mathrm{dB}$ untuk 12 bit. Penambahan satu bit meningkatkan SQNR ideal sekitar $6.02\ \mathrm{dB}$ selama asumsi dan rentang operasi tetap terpenuhi.
+
+Jika amplitudo sinusoid hanya $A_s$ sedangkan batas puncak rentang kuantisator adalah $A_{\mathrm{FS}}$, daya sinyal lebih kecil tanpa perubahan langkah kuantisasi. Koreksi amplitudonya diberikan oleh rumus berikut.
+
+```math
+\mathrm{SQNR}\approx6.0206B+1.7609
++20\log_{10}\left(\frac{A_s}{A_{\mathrm{FS}}}\right)\ \mathrm{dB}.
+```
+
+Pengurangan amplitudo menjadi sepersepuluh skala penuh menurunkan prediksi SQNR sebesar $20\ \mathrm{dB}$. Rumus tersebut tetap merupakan pendekatan, khususnya ketika hanya sedikit tingkat kuantisasi yang digunakan atau galat berkorelasi kuat dengan sinyal.
+
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+
+
+n = np.arange(100000)
+amplitudo, skala_penuh = 3.8, 4.0
+x = amplitudo * np.sin(2 * np.pi * np.sqrt(2) * n / 100)
+bits = np.array([3, 4, 6, 8, 10, 12])
+sqnr_ukur = []
+for bit in bits:
+    delta = 2 * skala_penuh / 2**bit
+    kode = np.floor((x + skala_penuh) / delta)
+    kode = np.clip(kode, 0, 2**bit - 1)
+    xq = -skala_penuh + (kode + 0.5) * delta
+    px = np.mean(x**2)
+    pe = np.mean((xq - x)**2)
+    sqnr = 10 * np.log10(px / pe)
+    sqnr_ukur.append(sqnr)
+    print(f'{bit:2d} bit: SQNR = {sqnr:.3f} dB')
+teori = 6.0206 * bits + 1.7609 + 20 * np.log10(amplitudo / skala_penuh)
+
+fig, ax = plt.subplots(figsize=(8, 4.5))
+ax.plot(bits, sqnr_ukur, 'o-', label='Pengukuran numerik')
+ax.plot(bits, teori, '--', label='Model galat seragam')
+ax.set(xlabel='Jumlah bit B', ylabel='SQNR (dB)',
+       title='Sinusoid dengan amplitudo 95% skala penuh', xticks=bits)
+ax.grid(alpha=0.3)
+ax.legend()
+fig.tight_layout()
+plt.show()
+```
+
+![SQNR hasil pengukuran numerik dibandingkan pendekatan teoretis](../Gambar/pertemuan-02/sqnr.svg)
+
+Program [09_sqnr.py](../Kode/pertemuan-02/09_sqnr.py) menggunakan banyak sampel dengan fase yang tersebar untuk mengurangi ketergantungan pada beberapa titik sinusoid saja. Selisih kecil dari garis teori adalah wajar karena model derau seragam bersifat pendekatan, terutama pada jumlah bit rendah.
+
+### Pengkodean digital dan laju data
+
+Kuantisasi menentukan tingkat amplitudo, sedangkan pengkodean memberi nama digital pada tingkat tersebut. Untuk kode biner alami dengan $B$ bit, indeks $k$ dinyatakan sebagai jumlah berbobot berikut.
+
+```math
+k=\sum_{r=0}^{B-1}c_r2^r,
+\qquad c_r\in\{0,1\}.
+```
+
+Bit berbobot terbesar disebut MSB dan bit berbobot terkecil disebut LSB. Sebagai contoh, `101` menyatakan indeks $1\cdot4+0\cdot2+1\cdot1=5$, yang pada tabel kuantisasi tadi berarti $1.5\ \mathrm{V}$, bukan tegangan $5\ \mathrm{V}$.
+
+Kode alami pada contoh rentang bipolar itu merupakan label berurutan dari tegangan paling rendah ke paling tinggi. Kode tersebut tidak sama dengan representasi bilangan bertanda komplemen dua, sehingga penerjemahan nilai ADC harus mengikuti format kode yang benar-benar digunakan.
+
+Rangkaian sampling, kuantisasi, dan penyajian setiap sampel sebagai kata biner disebut *pulse-code modulation* atau PCM. Pengkodean pada pembahasan ini belum mencakup pemampatan data atau penambahan kode koreksi kesalahan transmisi.
+
+Untuk satu kanal yang menghasilkan $B$ bit per sampel pada frekuensi $f_s$, laju data mentah adalah $R=Bf_s$. Jika ada $C$ kanal dengan parameter yang sama, laju total menjadi sebagai berikut.
+
+```math
+R=CBf_s\quad\text{bit per sekon}.
+```
+
+ADC satu kanal 12 bit pada $10\ \mathrm{kHz}$ menghasilkan $120{,}000$ bit per sekon atau $120\ \mathrm{kbit/s}$. Jika bit dikemas rapat, satu sekon membutuhkan $15{,}000$ byte, belum termasuk penanda waktu, header, atau metadata.
+
+Jika setiap sampel 12 bit justru disimpan dalam wadah 16 bit, kebutuhan penyimpanannya menjadi $20{,}000$ byte per sekon. Dengan demikian, laju informasi dari ADC dan ukuran berkas implementasi dapat berbeda meskipun data pengukurannya sama.
+
+Frekuensi sampling mengatur kerapatan pengamatan terhadap waktu, sedangkan jumlah bit mengatur kerapatan tingkat amplitudo. Menaikkan jumlah bit tidak menghilangkan aliasing, dan menaikkan frekuensi sampling saja tidak memperbaiki saturasi akibat rentang tegangan yang salah.
+
+### Kuantisasi tidak seragam dan companding
+
+Kuantisasi seragam memberikan ketelitian absolut yang sama pada seluruh rentang amplitudo. Untuk sinyal dengan banyak bagian beramplitudo kecil, tingkat yang lebih rapat di sekitar nol dapat memberikan ketelitian relatif yang lebih baik.
+
+Salah satu caranya adalah *companding*, yaitu kompresi amplitudo sebelum kuantisasi dan ekspansi amplitudo sesudah penerjemahan kode. Kuantisator dapat tetap seragam pada domain terkompresi, tetapi interval ekuivalennya menjadi tidak seragam pada domain amplitudo asli.
+
+Misalkan $u=x/A_{\mathrm{FS}}$ sehingga $-1\le u\le1$. Fungsi kompresi hukum $\mu$ didefinisikan sebagai berikut untuk $\mu>0$.
+
+```math
+F_\mu(u)=\operatorname{sgn}(u)
+\frac{\ln(1+\mu|u|)}{\ln(1+\mu)}.
+```
+
+Parameter $\mu=255$ merupakan contoh yang sering digunakan dalam pembahasan PCM suara. Fungsi inversnya mengembalikan domain amplitudo setelah nilai terkompresi diterjemahkan, tetapi tidak dapat menghapus informasi yang sudah hilang karena kuantisasi.
+
+```math
+F_\mu^{-1}(v)=\operatorname{sgn}(v)
+\frac{(1+\mu)^{|v|}-1}{\mu}.
+```
+
+Alternatifnya adalah hukum A dengan parameter $A>1$, yang memiliki bagian linear di dekat nol dan bagian logaritmik pada amplitudo lebih besar. Salah satu nilai contoh yang lazim adalah $A=87.6$.
+
+```math
+F_A(u)=\operatorname{sgn}(u)
+\begin{cases}
+\dfrac{A|u|}{1+\ln A},&0\le |u|\le 1/A,\\[6pt]
+\dfrac{1+\ln(A|u|)}{1+\ln A},&1/A<|u|\le1.
+\end{cases}
+```
+
+Di dekat nol, fungsi kompresi memperbesar perbedaan kecil sebelum nilai masuk ke kuantisator seragam. Setelah ekspansi, jarak tingkat ekuivalen di dekat nol menjadi kecil, tetapi jaraknya pada amplitudo besar menjadi lebih lebar.
+
+Sebagai contoh, $u=0.01$ pada hukum $\mu$ dengan $\mu=255$ dipetakan menjadi sekitar $0.2285$. Perubahan skala ini memberi lebih banyak tingkat pada sinyal lemah, tetapi bukan berarti kompresi tanpa kuantisasi menciptakan informasi baru.
+
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+
+
+def kompres_mu(x, mu=255.0):
+    return np.sign(x) * np.log1p(mu * np.abs(x)) / np.log1p(mu)
+
+
+def ekspansi_mu(v, mu=255.0):
+    return np.sign(v) * np.expm1(np.abs(v) * np.log1p(mu)) / mu
+
+
+def kompres_a(x, a=87.6):
+    x = np.asarray(x, dtype=float)
+    u = np.abs(x)
+    hasil = a * u / (1 + np.log(a))
+    besar = u > 1 / a
+    hasil[besar] = (1 + np.log(a * u[besar])) / (1 + np.log(a))
+    return np.sign(x) * hasil
+
+
+def kuantisasi_normal(x, bit=8):
+    delta = 2.0 / 2**bit
+    kode = np.clip(np.floor((x + 1) / delta), 0, 2**bit - 1)
+    return -1 + (kode + 0.5) * delta
+
+
+def sqnr(x, y):
+    return 10 * np.log10(np.mean(x**2) / np.mean((y - x)**2))
+
+
+u = np.linspace(-1, 1, 2001)
+assert np.allclose(ekspansi_mu(kompres_mu(u)), u)
+n = np.arange(10000)
+for amplitudo in [0.01, 0.1, 0.8]:
+    x = amplitudo * np.sin(2 * np.pi * np.sqrt(2) * n / 100)
+    seragam = kuantisasi_normal(x)
+    compand = ekspansi_mu(kuantisasi_normal(kompres_mu(x)))
+    print(f'A = {amplitudo}: seragam {sqnr(x, seragam):.2f} dB; '
+          f'companding {sqnr(x, compand):.2f} dB')
+
+np_plot = np.arange(120)
+x_lemah = 0.01 * np.sin(2 * np.pi * np_plot / 80)
+seragam = kuantisasi_normal(x_lemah)
+compand = ekspansi_mu(kuantisasi_normal(kompres_mu(x_lemah)))
+fig, axes = plt.subplots(2, 1, figsize=(8, 7))
+axes[0].plot(u, u, '--', color='gray', label='Tanpa kompresi')
+axes[0].plot(u, kompres_mu(u), label='Hukum mu, μ = 255')
+axes[0].plot(u, kompres_a(u), ':', linewidth=2, label='Hukum A, A = 87.6')
+axes[0].set(xlabel='Amplitudo ternormalisasi u', ylabel='Amplitudo terkompresi')
+axes[1].plot(np_plot, x_lemah, color='black', label='Asli, amplitudo 0.01')
+axes[1].step(np_plot, seragam, where='mid', label='Seragam 8 bit')
+axes[1].plot(np_plot, compand, '--', label='Hukum mu, 8 bit, lalu ekspansi')
+axes[1].set(xlabel='Indeks n', ylabel='Amplitudo',
+            title='Perbandingan pada sinyal lemah')
+for ax in axes:
+    ax.grid(alpha=0.3)
+    ax.legend(fontsize=8)
+fig.tight_layout()
+plt.show()
+```
+
+![Kurva kompresi hukum mu dan A serta perbandingan kuantisasi sinyal lemah](../Gambar/pertemuan-02/companding.svg)
+
+Program [10_companding.py](../Kode/pertemuan-02/10_companding.py) membandingkan kuantisasi seragam dengan kompresi hukum $\mu$, kuantisasi, dan ekspansi. Program ini merupakan model matematis companding, bukan implementasi pengemasan bit dari suatu standar telekomunikasi tertentu.
+
+Companding tidak selalu meningkatkan kualitas untuk semua amplitudo dan semua tujuan pengukuran. Untuk instrumentasi yang memerlukan ketelitian absolut seragam, kuantisasi seragam dapat lebih sesuai, sedangkan kuantisasi tidak seragam berguna ketika ketelitian relatif pada sinyal lemah lebih penting.
+
+---
+
+## Menggabungkan konsep dalam satu sistem akuisisi
+
+Sebagai penutup alur materi, tinjau pengukuran getaran yang menghasilkan tegangan $x_a(t)=0.5\cos(2\pi\cdot500t)+0.2\cos(2\pi\cdot1200t)\ \mathrm{V}$. Sinyal tersebut akan dicuplik, dikuantisasi, dikodekan, lalu dihaluskan menggunakan sistem rekursif.
+
+### Memilih parameter konversi
+
+Frekuensi tertinggi model sinyal adalah $1200\ \mathrm{Hz}$ dan amplitudo mutlaknya tidak melebihi $0.7\ \mathrm{V}$. Kita memilih $f_s=5000\ \mathrm{Hz}$ serta ADC 10 bit dengan rentang nominal $-1$ sampai $1\ \mathrm{V}$.
+
+```math
+T_s=\frac1{5000}=0.2\ \mathrm{ms},
+\qquad
+f_s/2=2500\ \mathrm{Hz},
+\qquad
+\Delta=\frac2{1024}=1.953125\ \mathrm{mV}.
+```
+
+Pilihan tersebut memenuhi syarat sampling untuk sinyal model dan menyediakan cadangan amplitudo sebelum saturasi. Filter analog tetap diperlukan untuk mengurangi komponen gangguan di luar pita, dengan daerah transisi yang mempertimbangkan batas antara pita sinyal dan frekuensi Nyquist.
+
+Batas galat kuantisasi idealnya adalah $0.9765625\ \mathrm{mV}$, sedangkan laju data satu kanalnya $10\cdot5000=50{,}000\ \mathrm{bit/s}$. Angka-angka ini menilai aspek yang berbeda, yaitu resolusi amplitudo dan kebutuhan transmisi.
+
+Pada $n=0$, masukan bernilai $0.7\ \mathrm{V}$, sehingga indeksnya adalah $\lfloor(0.7+1)/(2/1024)\rfloor=870$. Nilai perwakilan dan galat sampel pertamanya adalah sebagai berikut.
+
+```math
+x_q[0]=-1+\frac{870.5}{512}=0.7001953125\ \mathrm{V},
+\qquad
+e_q[0]=0.0001953125\ \mathrm{V}.
+```
+
+### Mengolah sampel dengan sistem rekursif
+
+Gunakan aturan $y[n]=0.75y[n-1]+0.25x_q[n]$ dengan $y[-1]=0$. Keluaran pertama adalah $y[0]=0.175048828125\ \mathrm{V}$, sedangkan keluaran berikutnya memadukan sampel baru dan keadaan yang tersimpan.
+
+Blok penghalus tersebut linear dalam keadaan awal nol, invarian waktu, kausal, memiliki memori, dan stabil karena faktor rekursinya bernilai $0.75$. Namun, keseluruhan rangkaian yang mencakup kuantisator tidak linear, sebab pembulatan amplitudo tidak memenuhi prinsip superposisi.
+
+Pemilihan penghalus juga memengaruhi kemampuan mengikuti perubahan sinyal, sehingga koefisien tidak hanya dipilih berdasarkan kestabilan. Analisis lebih lanjut tentang respons terhadap berbagai frekuensi akan dikembangkan setelah pembahasan konvolusi dan representasi Fourier pada pertemuan berikutnya.
 
 ---
 
 ## Latihan hitungan tangan
 
-Kerjakan latihan berikut dengan menuliskan langkah perhitungan dan alasan untuk setiap kesimpulan. Kecuali dinyatakan lain, gunakan sinyal real dan nyatakan secara eksplisit setiap asumsi tentang kondisi awal atau nilai di luar rekaman.
+Kerjakan sepuluh soal berikut dengan memperlihatkan langkah perhitungan dan alasan setiap kesimpulan. Gunakan konvensi kuantisator mid-rise pada catatan ini kecuali jika soal secara eksplisit menyatakan konvensi yang berbeda.
 
-### 1. Superposisi
+### 1. Linearitas dan invariansi waktu
 
-Periksa linearitas tiga sistem berikut menggunakan masukan dan faktor skala yang umum. Untuk sistem yang nonlinear, berikan pula satu contoh angka yang menunjukkan kegagalan superposisi.
+Tinjau tiga sistem $y_1[n]=2x[n]-x[n-2]$, $y_2[n]=x^2[n]$, dan $y_3[n]=(n+1)x[n]$. Tentukan linearitas dan invariansi waktu masing-masing sistem dengan pembuktian aljabar atau contoh penyangkal, bukan hanya berdasarkan bentuk persamaannya.
 
-```math
-\begin{aligned}
-\mathcal{T}_1\{x\}[n]&=3x[n]+2x[n-2],\\
-\mathcal{T}_2\{x\}[n]&=|x[n]|,\\
-\mathcal{T}_3\{x\}[n]&=x[n]+4.
-\end{aligned}
-```
+### 2. Memori, kausalitas, dan invertibilitas
 
-### 2. Invariansi waktu
+Tinjau $y_1[n]=3x[n]$, $y_2[n]=x[n-2]$, dan $y_3[n]=x[n]-x[n-1]$. Tentukan sifat memori dan kausalitas ketiganya, lalu tuliskan inversnya atau jelaskan informasi tambahan yang diperlukan agar invers dapat ditentukan.
 
-Gunakan pergeseran umum $n_0$ untuk menguji tiga sistem berikut pada seluruh indeks bilangan bulat. Tulis hasil jalur menggeser-memproses dan jalur memproses-menggeser sebelum mengambil kesimpulan.
+Untuk sistem ketiga, diketahui $x[-1]=4$ dan keluaran pada $n=0,1,2,3$ adalah $[2,-1,0,3]$. Hitung kembali empat sampel masukannya dan jelaskan mengapa tanpa $x[-1]$ jawabannya tidak unik.
 
-```math
-\begin{aligned}
-y_1[n]&=x[n-3]+x[n],\\
-y_2[n]&=\cos\left(\frac{\pi n}{4}\right)x[n],\\
-y_3[n]&=x[-n].
-\end{aligned}
-```
+### 3. Stabilitas BIBO
 
-### 3. Memori dan kausalitas
+Periksa kestabilan $y_1[n]=2x[n]+3x[n-1]$, $y_2[n]=x^2[n]$, dan $y_3[n]=\sum_{k=0}^{n}x[k]$ untuk $n\ge0$. Untuk sistem stabil, berikan batas keluaran dalam fungsi batas masukan $M_x$; untuk sistem tidak stabil, berikan satu masukan terbatas yang menghasilkan keluaran tak terbatas.
 
-Klasifikasikan sistem berikut sebagai tanpa memori atau dengan memori, lalu tentukan kausalitasnya. Untuk sistem nonkausal, tunjukkan indeks keluaran dan sampel masa depan yang diperlukan.
+### 4. Diagram blok dan perhitungan maju
 
-```math
-\begin{aligned}
-y_1[n]&=x^3[n],\\
-y_2[n]&=x[n]+x[n-4],\\
-y_3[n]&=x[n+2]-x[n],\\
-y_4[n]&=x[-n].
-\end{aligned}
-```
+Gambarkan realisasi $y[n]=0.5y[n-1]+x[n]-0.25x[n-1]$ menggunakan penjumlah, pengali konstanta, dan unit delay. Dengan $x[-1]=0$, $y[-1]=2$, serta $x[0],\ldots,x[4]=[1,2,0,-1,0]$, hitung $y[0]$ sampai $y[4]$ dan tuliskan isi setiap penunda setelah setiap langkah.
 
-### 4. Informasi yang hilang dan invers
+### 5. Solusi homogen, partikular, dan kondisi awal
 
-Tentukan invertibilitas $y[n]=5x[n]$, $y[n]=|x[n]|$, dan $y[n]=x[n-2]$ pada deretan real dua sisi. Jika invers ada, tuliskan bentuknya dan periksa apakah invers tersebut kausal.
+Selesaikan $y[n]-y[n-1]+0.25y[n-2]=1$ untuk $n\ge0$ dengan $y[-1]=y[-2]=0$. Tentukan akar karakteristik, bentuk solusi homogen, satu solusi partikular, dan konstanta solusi total, lalu cocokkan tiga keluaran pertama dengan iterasi langsung.
 
-Untuk $y[n]=x[n]-x[n-1]$, pulihkan $x[0]$ sampai $x[3]$ dari keluaran $[2,-3,1,4]$ dengan $x[-1]=7$. Jelaskan perubahan hasil jika nilai awal masukan dinaikkan sebesar lima.
+### 6. Sampling dan aliasing
 
-### 5. Batas keluaran
+Sinyal analog adalah $x_a(t)=2\cos(2\pi\cdot120t)+\sin(2\pi\cdot380t)$ dan disampling pada $f_s=500\ \mathrm{Hz}$. Hitung $T_s$, frekuensi Nyquist, frekuensi sudut diskret setiap komponen, serta frekuensi alias nonnegatifnya dengan memperhatikan perubahan tanda pada komponen sinus.
 
-Misalkan $|x[n]|\le2$ untuk semua $n$. Tentukan batas keluaran yang berlaku untuk setiap masukan tersebut pada sistem berikut dan simpulkan stabilitasnya.
+Tentukan pula laju Nyquist sinyal analog semula dan usulkan satu frekuensi sampling yang memenuhi syarat pita dasar. Jelaskan mengapa penyaringan digital setelah sampling tidak dapat mengembalikan identitas frekuensi yang sudah ambigu tanpa informasi tambahan.
 
-```math
-\begin{aligned}
-y_1[n]&=4x[n]-3x[n-1],\\
-y_2[n]&=x^2[n]+1,\\
-y_3[n]&=\frac{x[n]+x[n-1]+x[n-2]+x[n-3]}{4}.
-\end{aligned}
-```
+### 7. Sample-and-hold
 
-### 6. Rata-rata tiga sampel
+Sinyal $x_a(t)=2\sin(2\pi\cdot10t)$ disampling pada $f_s=80\ \mathrm{Hz}$. Hitung lima sampel pertama, gambarkan model penahanan orde nol sampai $t=5T_s$, dan tentukan nilai yang ditahan pada $t=18\ \mathrm{ms}$ serta $t=44\ \mathrm{ms}$.
 
-Gunakan $x[0]=6$, $x[1]=3$, $x[2]=-3$, $x[3]=0$, dan masukan nol pada indeks lainnya. Hitung keluaran $y[n]=(x[n]+x[n-1]+x[n-2])/3$ untuk $n=0$ sampai $6$, lalu gambar masukan dan keluarannya.
+### 8. Tingkat kuantisasi, galat, dan kode
 
-### 7. Persamaan dari diagram blok
+Gunakan ADC mid-rise 3 bit dengan rentang $[-4,4)\ \mathrm{V}$ untuk mengkuantisasi $[-4,-3.2,-0.1,0,1.9,3.9,4.8]\ \mathrm{V}$. Buat tabel yang memuat indeks tingkat, nilai perwakilan, galat $x_q-x$, dan kode biner, lalu tandai sampel yang mengalami kelebihan rentang dan periksa batas $\Delta/2$.
 
-Sebuah diagram memiliki tiga cabang masukan dengan pengali $0.5$, $-0.25$, dan $0.75$, masing-masing sesudah nol, satu, dan dua penunda. Ketiga cabang dijumlahkan, lalu ditambah umpan balik $0.4y[n-1]$; tuliskan persamaan selisihnya dan gambarkan diagram bloknya.
+### 9. Resolusi, SQNR, dan kebutuhan penyimpanan
 
-Tuliskan pula larik `a` dan `b` yang sesuai dengan fungsi persamaan selisih umum. Nyatakan semua nilai riwayat yang diperlukan jika penghitungan dimulai pada $n=0$.
+Sebuah sistem menggunakan ADC 12 bit, rentang $[-5,5)\ \mathrm{V}$, dua kanal, dan frekuensi sampling $16\ \mathrm{kHz}$ per kanal. Hitung langkah kuantisasi, batas galat ideal, perkiraan SQNR sinusoid dengan amplitudo puncak $2.5\ \mathrm{V}$, dan kebutuhan penyimpanan selama 10 sekon jika bit dikemas rapat maupun jika setiap sampel disimpan dalam 16 bit.
 
-### 8. Rekursi orde satu
+### 10. Perancangan sederhana akuisisi dan penghalusan
 
-Gunakan persamaan $y[n]=0.75y[n-1]+0.25x[n]$ dengan $y[-1]=4$. Untuk $x[n]=8$ pada $n\ge0$, hitung lima keluaran pertama dan bandingkan arahnya dengan nilai keadaan tetap yang diperkirakan dari persamaan.
+Sensor menghasilkan tegangan dengan frekuensi tertinggi $1.5\ \mathrm{kHz}$ dan amplitudo pada rentang $[-2,2]\ \mathrm{V}$. Pilih $f_s$ dari $\{2,4,8\}\ \mathrm{kHz}$ serta jumlah bit dari $\{8,10,12\}$ untuk ADC rentang $[-2.5,2.5)\ \mathrm{V}$ agar syarat sampling terpenuhi dan galat kuantisasi ideal tidak melebihi $3\ \mathrm{mV}$, kemudian hitung laju data minimum di antara pilihan yang memenuhi syarat.
 
-### 9. Dekomposisi respons
-
-Tinjau $y[n]=0.5y[n-1]+x[n]$ dengan $y[-1]=2$ dan $x[n]=u[n]$. Turunkan bentuk $y_{\mathrm{mn}}[n]$, $y_{\mathrm{kn}}[n]$, serta $y[n]$, kemudian periksa hasilnya secara manual untuk $n=0,1,2$.
-
-### 10. Persamaan orde dua
-
-Hitung $y[0]$ sampai $y[4]$ untuk persamaan berikut dengan $y[-1]=1$ dan $y[-2]=0$. Gunakan masukan impuls diskret dan perlihatkan kedua suku keluaran lama pada setiap langkah.
-
-```math
-y[n]-0.6y[n-1]+0.08y[n-2]=x[n],
-\qquad x[n]=\delta[n].
-```
-
-### 11. Batas stabilitas
-
-Untuk $y[n]=ay[n-1]+x[n]$ dengan keadaan awal nol, tinjau $a=0.8$, $a=-0.8$, $a=1$, $a=-1$, dan $a=1.1$. Buktikan stabilitas dengan batas keluaran untuk kasus yang stabil, dan pilih masukan terbatas yang menunjukkan pertumbuhan tanpa batas untuk kasus lainnya.
-
-### 12. Waktu respons
-
-Gunakan penghalus $y[n]=ay[n-1]+(1-a)x[n]$ dengan keadaan awal nol dan masukan unit step. Tentukan jumlah pembaruan minimum untuk mencapai $95\%$ nilai akhir pada $a=0.5$, $a=0.8$, dan $a=0.95$.
-
-Jika setiap pembaruan terpisah oleh $T_s=0.1\ \mathrm{s}$, nyatakan pula durasi dari keadaan awal pada $n=-1$ sampai keluaran yang memenuhi kriteria. Bedakan durasi itu dari cap waktu keluaran jika sampel pertama diberi waktu $t=0$.
-
-### 13. Kondisi awal dan superposisi
-
-Ambil sistem $y[n]=0.5y[n-1]+x[n]$ dengan nilai awal tetap $y[-1]=2$. Hitung keluaran untuk masukan nol dan gunakan hasilnya untuk menjelaskan mengapa pemetaan dari masukan menuju keluaran total tidak linear.
-
-Ulangi argumen tersebut apabila kondisi awal ikut dikalikan dengan faktor skala yang sama dengan masukannya. Jelaskan mengapa perlakuan bersama terhadap masukan dan keadaan awal memulihkan homogenitas persamaan dinamika.
-
-### 14. Pembaruan rata-rata dan konsistensi keadaan
-
-Turunkan hubungan $y[n]=y[n-1]+(x[n]-x[n-4])/4$ dari definisi rata-rata empat sampel. Kemudian tunjukkan apa yang terjadi jika nilai awal keluaran pada implementasi pembaruan mengandung kesalahan tetap $\varepsilon$ dibandingkan dengan nilai awal yang konsisten.
+Setelah konversi, gunakan $y[n]=0.6y[n-1]+0.4x_q[n]$ dengan keadaan awal nol. Buktikan kestabilan blok penghalus tersebut dan jelaskan fungsi filter antialiasing yang tetap diperlukan sebelum sampling.
 
 ---
 
 ## Latihan pemrograman
 
-Latihan berikut bertujuan menghubungkan sifat matematis dengan keluaran program yang dapat diperiksa. Sertakan penjelasan singkat tentang asumsi batas rekaman, kondisi awal, dan makna hasil untuk setiap program yang dibuat.
+Kerjakan paling banyak sepuluh tugas berikut menggunakan NumPy dan Matplotlib. Setiap jawaban perlu menyertakan program yang dapat dijalankan, grafik berlabel dan bersatuan jika relevan, serta penjelasan hasil dalam sedikitnya dua kalimat.
 
-### 1. Pengujian superposisi numerik
+### 1. Penguji superposisi
 
-Buat fungsi yang membandingkan $\mathcal{T}\{\alpha x_1+\beta x_2\}$ dengan $\alpha\mathcal{T}\{x_1\}+\beta\mathcal{T}\{x_2\}$ dan mengembalikan galat maksimum. Uji pada sistem linear, penguadratan, dan sistem dengan offset menggunakan beberapa pasangan masukan serta beberapa faktor skala.
+Buat fungsi yang membandingkan $\mathcal{T}\{\alpha x_1+\beta x_2\}$ dengan $\alpha\mathcal{T}\{x_1\}+\beta\mathcal{T}\{x_2\}$ untuk sistem $2x[n]-x[n-1]$, $x^2[n]$, dan $x[n]+1$. Gunakan beberapa pasangan sinyal dengan pembangkit acak yang diberi seed, tampilkan galat maksimum, dan jelaskan mengapa hasil numerik yang mendukung linearitas belum merupakan pembuktian untuk semua masukan.
 
-Gunakan nilai awal generator acak yang tetap jika masukan dibuat secara acak. Jelaskan mengapa galat kecil pada sejumlah percobaan tidak dapat menggantikan bukti aljabar.
+### 2. Penguji invariansi waktu
 
-### 2. Pergeseran biasa dan pergeseran melingkar
+Bandingkan dua urutan operasi pergeseran dan pemrosesan untuk $y[n]=x[n]+x[n-2]$ serta $y[n]=\cos(0.2n)x[n]$. Gunakan fungsi sinyal yang terdefinisi untuk semua indeks pengujian, hindari pergeseran melingkar, dan tunjukkan hasil untuk sedikitnya tiga nilai pergeseran.
 
-Buat fungsi penundaan larik yang mengisi bagian awal dengan nol dan bandingkan hasilnya dengan `np.roll`. Gunakan larik `[1, 2, 3, 4, 5]` dengan penundaan dua sampel, lalu jelaskan asal perbedaan kedua hasil.
+### 3. Eksperimen kausalitas dan memori
 
-### 3. Eksperimen invariansi waktu
+Buat dua masukan yang sama sampai indeks $n_0=10$ tetapi berbeda sesudahnya, lalu olah dengan rata-rata kausal tiga sampel dan rata-rata terpusat tiga sampel. Gambarkan masukan serta kedua pasangan keluaran, identifikasi indeks pertama terjadinya perbedaan keluaran, dan hubungkan hasilnya dengan definisi kausalitas serta memori.
 
-Uji rata-rata tiga sampel, $y[n]=nx[n]$, dan $y[n]=x^2[n]$ dengan metode dua jalur. Gunakan fungsi masukan yang dapat dievaluasi pada indeks apa pun atau sediakan riwayat yang cukup agar pemotongan larik tidak menghasilkan kesimpulan palsu.
+### 4. Simulator persamaan selisih umum
 
-### 4. Rata-rata dengan beberapa panjang jendela
+Implementasikan fungsi yang menerima koefisien $a$, $b$, masukan, dan riwayat awal tanpa menggunakan fungsi filter siap pakai. Uji fungsi tersebut pada soal hitungan tangan nomor 4 dan 5, lalu tambahkan pemeriksaan bahwa $a_0$ tidak nol dan panjang riwayat sesuai dengan kebutuhan persamaan.
 
-Terapkan rata-rata kausal dengan panjang $L=3$, $5$, dan $11$ pada rekaman sintetis yang sama. Bandingkan fluktuasi keluaran serta jumlah sampel yang dibutuhkan untuk mengikuti perubahan unit step.
+### 5. Kondisi awal dan solusi analitis
 
-### 5. Memeriksa solusi analitik orde satu
+Untuk $y[n]=0.7y[n-1]+0.3x[n]$ dengan masukan tangga satuan, bandingkan keadaan awal $y[-1]\in\{0,2,-2\}$. Tampilkan respons masukan-nol, keadaan-nol, dan total, kemudian periksa dengan `np.allclose` bahwa hasil iterasi sama dengan rumus analitis pada seluruh sampel yang dihitung.
 
-Bandingkan hasil rekursi dengan $y[n]=a^{n+1}q+b\sum_{k=0}^{n}a^{n-k}x[k]$ untuk beberapa nilai $a$, $b$, dan $q$. Cetak galat maksimum serta jelaskan bagian solusi yang berubah ketika hanya kondisi awal yang diganti.
+### 6. Galeri aliasing
 
-### 6. Menggunakan fungsi persamaan selisih umum
+Sampling kosinus dengan frekuensi $20$, $70$, $130$, dan $170\ \mathrm{Hz}$ pada $f_s=100\ \mathrm{Hz}$. Hitung frekuensi alias menggunakan rumus pelipatan, tampilkan kurva analog dan sampelnya, lalu kelompokkan sinyal yang menghasilkan deretan sampel identik untuk fase awal nol.
 
-Gunakan fungsi pada catatan untuk menyelesaikan latihan hitungan tangan tentang persamaan orde dua. Bandingkan lima sampel pertamanya dengan hitungan manual, lalu lanjutkan perhitungan dengan masukan nol sampai $n=50$ untuk melihat sisa responsnya.
+### 7. Sample-and-hold dan galat bentuk tangga
 
-### 7. Pemrosesan data dalam beberapa potongan
+Bandingkan penahanan orde nol untuk sinusoid $5\ \mathrm{Hz}$ pada $f_s=20$, $40$, dan $100\ \mathrm{Hz}$. Hitung galat kuadrat rata-rata antara kurva tangga dan sinusoid pada kisi waktu rapat, serta jelaskan mengapa galat ini bukan galat kuantisasi dan tidak berarti teorema sampling gagal.
 
-Proses sebuah rekaman 200 sampel menggunakan penghalus orde satu, pertama sebagai satu larik utuh dan kemudian sebagai dua potongan masing-masing 100 sampel. Pada pemrosesan bertahap, gunakan keluaran terakhir potongan pertama sebagai kondisi awal potongan kedua.
+### 8. Kuantisator dan saturasi
 
-Bandingkan hasil gabungan dengan hasil pemrosesan utuh menggunakan galat maksimum. Ulangi dengan mereset kondisi awal potongan kedua ke nol dan jelaskan transien yang muncul di sekitar sambungan.
+Buat kuantisator mid-rise yang dapat diatur jumlah bit dan rentangnya, lalu uji untuk 2, 4, dan 8 bit. Periksa galat maksimum pada masukan dalam rentang, tambahkan masukan di luar rentang untuk menunjukkan saturasi, dan cetak kata biner dengan panjang tepat $B$ bit termasuk nol di depan.
 
-### 8. Stabilitas dan lama pengamatan
+### 9. Pengujian SQNR dan companding
 
-Bandingkan sistem $y[n]=ay[n-1]+x[n]$ untuk $a=0.99$, $1.00$, dan $1.01$ dengan masukan unit step serta keadaan awal nol. Buat grafik untuk 30, 100, dan 500 sampel, lalu hubungkan perubahan tampilannya dengan rumus jumlah geometri.
+Bandingkan kuantisasi seragam 8 bit dengan model companding hukum $\mu$ untuk sinusoid dengan amplitudo puncak $0.01$, $0.1$, dan $0.8$ pada rentang ternormalisasi $[-1,1)$. Ukur SQNR setelah ekspansi, gambarkan perbandingannya, dan jelaskan pertukaran ketelitian antara amplitudo kecil dan besar tanpa mengasumsikan bahwa companding selalu lebih baik.
 
-### 9. Penghalusan temperatur
+### 10. Simulasi rantai akuisisi lengkap
 
-Ubah studi kasus temperatur dengan mencoba $a=0.5$, $0.8$, dan $0.95$ serta tiga tingkat amplitudo derau. Jelaskan parameter mana yang sesuai untuk tampilan lambat dan mana yang lebih sesuai untuk mengikuti perubahan cepat berdasarkan kurva yang dihasilkan.
-
-### 10. Dua implementasi rata-rata
-
-Implementasikan rata-rata empat sampel menggunakan penjumlahan langsung dan pembaruan rekursif. Gunakan riwayat awal yang sama dan periksa apakah kedua hasil berhimpit, lalu sengaja ubah keadaan awal versi rekursif untuk mempelajari kesalahan tetap yang muncul.
+Simulasikan studi kasus getaran pada bagian sebelumnya, mulai dari pembangkitan sampel, kuantisasi 10 bit, pengkodean biner, hingga penghalusan $y[n]=0.75y[n-1]+0.25x_q[n]$. Bandingkan pengolahan seluruh rekaman dengan pengolahan per blok sambil meneruskan keadaan terakhir, lalu tunjukkan bahwa hasilnya sama ketika riwayat tidak direset di setiap batas blok.
 
 ---
 
 ## Rangkuman
 
-Sistem merupakan aturan yang memetakan sinyal masukan menjadi sinyal keluaran. Untuk memahami kegunaannya, kita perlu memeriksa cara aturan itu menggabungkan amplitudo, menggunakan waktu, menyimpan riwayat, dan mempertahankan atau menghilangkan informasi.
+Sistem menyatakan aturan yang menghubungkan sinyal masukan dan keluaran, dan sifatnya perlu diuji satu per satu. Linearitas, invariansi waktu, memori, kausalitas, invertibilitas, serta stabilitas menjawab pertanyaan yang berbeda dan tidak dapat disimpulkan hanya dari satu label seperti linear atau rekursif.
 
-- Linearitas mensyaratkan homogenitas dan aditivitas. Keduanya dirangkum oleh prinsip superposisi.
-- Invariansi waktu diuji dengan membandingkan pergeseran sebelum dan sesudah pemrosesan. Keluaran boleh berubah terhadap waktu meskipun aturannya invarian.
-- Sistem tanpa memori hanya menggunakan masukan pada waktu yang sama. Sistem bermemori memerlukan nilai pada waktu lain atau keadaan yang menyimpan pengaruh masa lalu.
-- Kausalitas melarang ketergantungan pada masukan masa depan. Sistem nonkausal tetap dapat berguna ketika seluruh rekaman tersedia atau keterlambatan tambahan diizinkan.
-- Invertibilitas bergantung pada keunikan pemetaan dan kelas masukan. Informasi batas atau nilai awal dapat menentukan apakah rekonstruksi dapat dilakukan.
-- Stabilitas BIBO berarti setiap masukan terbatas menghasilkan keluaran terbatas. Sifat ini berbeda dari linearitas dan dari ketepatan hasil pengukuran.
-- Sistem LTI memenuhi linearitas dan invariansi waktu sekaligus. Kausalitas, stabilitas, dan invertibilitas tetap perlu dinilai secara terpisah.
-- Penjumlah, pengali, dan penunda membentuk diagram blok waktu-diskret. Isi penunda merupakan bagian keadaan internal yang harus diinisialisasi.
-- Persamaan selisih menyatakan hubungan sinyal pada indeks berbeda. Bentuk eksplisitnya menentukan urutan perhitungan dan kebutuhan riwayat.
-- Respons total sistem linear dapat diuraikan menjadi respons masukan-nol dan keadaan-nol. Keadaan awal tetap tak nol membuat pemetaan dari masukan saja menuju keluaran total umumnya bersifat afin.
-- Untuk realisasi kausal $y[n]=ay[n-1]+bx[n]$ dengan koefisien real dan $b\ne0$, stabilitas BIBO keadaan-nol memerlukan dan dicukupi oleh $|a|<1$. Penghalusan dengan $b=1-a$ mempertahankan masukan konstan setelah transien mereda.
-- Penghalusan mengurangi fluktuasi tertentu tetapi dapat memperlambat respons. Pemilihan parameter harus mengikuti skala waktu fenomena dan kebutuhan pengguna data.
+Penjumlah, pengali, dan penunda membentuk realisasi dasar sistem waktu-diskret. Diagram blok dapat diterjemahkan menjadi persamaan selisih, tetapi keluaran baru terdefinisi secara lengkap setelah masukan, kondisi awal, dan konvensi indeks dinyatakan.
 
-Pada pertemuan ketiga, kita akan menggunakan impuls diskret untuk membangun representasi masukan yang lebih umum. Dari linearitas dan invariansi waktu, kita akan menurunkan hubungan antara respons impuls, konvolusi, dan keluaran sistem, kemudian mempelajari korelasi untuk membandingkan dua sinyal.
+Persamaan selisih dapat diselesaikan melalui iterasi atau melalui gabungan solusi homogen dan partikular. Pemisahan tersebut perlu dibedakan dari respons masukan-nol dan keadaan-nol, karena solusi partikular belum tentu memenuhi keadaan awal nol.
+
+Sampling membuat waktu menjadi diskret, kuantisasi membatasi kemungkinan amplitudo, dan pengkodean memberi label digital pada tingkat yang terpilih. Aliasing terkait dengan ketidakunikan informasi frekuensi setelah sampling, sedangkan galat kuantisasi terkait dengan kehilangan ketelitian amplitudo setelah pemetaan ke tingkat berhingga.
+
+Perancangan sistem akuisisi memerlukan pemilihan bersama atas filter analog, frekuensi sampling, rentang tegangan, jumlah bit, dan aturan pengolahan digital. Pada pertemuan berikutnya, hubungan masukan-keluaran sistem LTI akan diperdalam melalui respons impuls, konvolusi, korelasi, dan interkoneksi sistem.
 
 ---
 
 ## Referensi
 
-Daftar berikut menyediakan bacaan lanjutan yang sejalan dengan pustaka mata kuliah. Untuk kuliah ini, utamakan pembahasan sifat sistem, persamaan selisih, dan implementasi rekursif sebelum beralih ke analisis dalam domain frekuensi.
+Urutan pokok materi mengikuti cuplikan buku yang disertakan untuk penyusunan catatan ini, khususnya bagian 2.1, 2.2, 3.1, 3.2, dan 3.3. Penjelasan, ilustrasi, serta program ditulis ulang sebagai bahan kuliah, dengan konvensi indeks dan kuantisasi dinyatakan secara eksplisit agar dapat diuji kembali.
 
-1. D. Gunawan dan F. H. Juwono, *Pengolahan Sinyal Digital*.
-2. A. V. Oppenheim dan R. W. Schafer, *Discrete-Time Signal Processing*.
-3. S. W. Smith, *The Scientist and Engineer's Guide to Digital Signal Processing*, [Bab 5: Linear Systems](https://www.dspguide.com/ch5.htm) dan [Bab 19: Recursive Filters](https://www.dspguide.com/ch19.htm).
-4. NumPy, [dokumentasi `numpy.roll`](https://numpy.org/doc/stable/reference/generated/numpy.roll.html), untuk membedakan pergeseran melingkar dari penundaan dengan riwayat yang ditentukan.
+1. D. Gunawan dan F. H. Juwono, *Dasar Pengolahan Sinyal Digital*, cuplikan Bab 2 dan Bab 3 pada berkas `bab-buku-02-03.pdf`; bagian 2.1 Pendahuluan, 2.2 Klasifikasi Sistem, 3.1 Komponen Dasar Sistem, 3.2 Persamaan Selisih, dan 3.3 Konversi Sinyal Analog ke Digital.
+2. [Silabus pada README repositori signal-processing](https://github.com/artnugraha/signal-processing/blob/main/README.md), acuan cakupan pertemuan dan kesinambungan antarkuliah.
+3. [Catatan Kuliah Pertemuan 1](https://github.com/artnugraha/signal-processing/blob/main/Catatan-Kuliah/pertemuan-01.md), acuan hierarki judul, penggunaan blok matematika, dan pola penyajian contoh serta latihan.
+4. Walt Kester, [MT-001: Taking the Mystery out of the Infamous Formula, SNR = 6.02N + 1.76dB](https://www.analog.com/media/en/training-seminars/tutorials/MT-001.pdf), Analog Devices; rujukan tambahan untuk asumsi model derau kuantisasi dan batas penggunaan rumus SQNR.
+5. Analog Devices, [Basics of Band-Limited Sampling and Aliasing](https://www.analog.com/en/resources/technical-articles/basics-of-bandlimited-sampling-and-aliasing.html); rujukan tambahan untuk hubungan sampling, salinan spektrum, dan sinyal pita lewat.
 
+Seluruh contoh Python pada catatan ini menggunakan NumPy dan Matplotlib, tanpa ketergantungan pada SciPy. Berkas mandiri tersedia di direktori `Kode/pertemuan-02`, sedangkan setiap ilustrasi disertakan dalam format SVG dan PNG di direktori `Gambar/pertemuan-02`.
