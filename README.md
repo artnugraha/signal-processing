@@ -18,7 +18,7 @@ Pustaka `scipy` hanya digunakan pada beberapa bagian tertentu ketika diperlukan.
 | No. | Topik | Link Catatan Kuliah |
 |---:|---|---|
 | 1 | 📈 Pengantar Pengolahan Sinyal dan Representasi Sinyal | [Materi 1](Catatan-Kuliah/pertemuan-01.md) |
-| 2 | ⚙️ Sifat dan Klasifikasi Sistem, Komponen Dasar Sistem, Persamaan Selisih, Sampling dan Kuantisasi | Menyusul |
+| 2 | ⚙️ Sistem, Sampling, dan Kuantisasi | [Materi 2](Catatan-Kuliah/pertemuan-02.md) |
 | 3 | 🧩 Konvolusi, Korelasi, dan Interkoneksi Sistem LTI | Menyusul |
 | 4 | 🌊 Representasi Fourier: FS, FT, dan DTFT | Menyusul |
 | 5 | ⚡ DFT, FFT, dan Analisis Spektrum Numerik | Menyusul |
