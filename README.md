@@ -1,6 +1,6 @@
 # Pengolahan Sinyal
 
-Repositori ini berisi materi kuliah **Pengolahan Sinyal** untuk mahasiswa **Teknik Fisika** dengan bobot **3 SKS**. Materi inti disusun untuk 12 pertemuan dari 16 pekan perkuliahan. Tiga pekan dialokasikan untuk UTS, UAS, dan tugas besar, sedangkan satu pekan lainnya dapat digunakan untuk review, presentasi, atau penyesuaian jadwal. Setiap pertemuan kuliah berlangsung sekitar 3 jam, dengan penekanan pada pemahaman konsep, formulasi matematis, contoh hitungan tangan, visualisasi, dan implementasi komputasi menggunakan Python.
+Repositori ini berisi materi kuliah **Pengolahan Sinyal** untuk mahasiswa **Teknik Fisika** dengan bobot **3 SKS**. Materi inti disusun untuk 11 pertemuan dalam satu semester. Pekan lainnya dapat dialokasikan untuk UTS, UAS, tugas besar, serta kegiatan akademik lain sesuai kalender perkuliahan. Setiap pertemuan kuliah berlangsung sekitar 3 jam, dengan penekanan pada pemahaman konsep, formulasi matematis, contoh hitungan tangan, visualisasi, dan implementasi komputasi menggunakan Python.
 
 Implementasi komputasi diupayakan menggunakan pustaka Python sesedikit mungkin. Sebagian besar contoh program dalam kuliah ini hanya memanggil dua pustaka utama untuk komputasi dengan Python.
 
@@ -18,17 +18,16 @@ Pustaka `scipy` hanya digunakan pada beberapa bagian tertentu ketika diperlukan.
 | No. | Topik | Link Catatan Kuliah |
 |---:|---|---|
 | 1 | 📈 Pengantar Pengolahan Sinyal dan Representasi Sinyal | [Materi 1](Catatan-Kuliah/pertemuan-01.md) |
-| 2 | ⚙️ Sinyal dan Sistem | [Materi 2](Catatan-Kuliah/pertemuan-02.md) |
-| 3 | 🧩 Respons Impuls, Konvolusi, dan Korelasi | Menyusul |
-| 4 | 🎚️ Sampling, Kuantisasi, ADC, dan DAC | Menyusul |
-| 5 | 🌊 Representasi Fourier: FS, FT, dan DTFT | Menyusul |
-| 6 | ⚡ DFT, FFT, dan Analisis Spektrum Numerik | Menyusul |
-| 7 | 🌀 Transformasi Z, Fungsi Sistem, dan Pole-Zero | Menyusul |
-| 8 | 🧱 Filter Digital FIR | Menyusul |
-| 9 | 🔄 Filter Digital IIR | Menyusul |
-| 10 | 📊 Analisis Spektral Sinyal Pengukuran dan Sinyal Tidak Stasioner | Menyusul |
-| 11 | 🎵 Sistem Pengolahan Sinyal Audio | Menyusul |
-| 12 | 🖼️ Sistem Pengolahan Citra sebagai Sinyal Dua Dimensi | Menyusul |
+| 2 | ⚙️ Sifat dan Klasifikasi Sistem, Komponen Dasar Sistem, Persamaan Selisih, Sampling dan Kuantisasi | Menyusul |
+| 3 | 🧩 Konvolusi, Korelasi, dan Interkoneksi Sistem LTI | Menyusul |
+| 4 | 🌊 Representasi Fourier: FS, FT, dan DTFT | Menyusul |
+| 5 | ⚡ DFT, FFT, dan Analisis Spektrum Numerik | Menyusul |
+| 6 | 🌀 Transformasi Z, Fungsi Sistem, dan Pole-Zero | Menyusul |
+| 7 | 🧱 Filter Digital FIR | Menyusul |
+| 8 | 🔄 Filter Digital IIR | Menyusul |
+| 9 | 📊 Analisis Spektral Sinyal Pengukuran dan Sinyal Tidak Stasioner | Menyusul |
+| 10 | 🎵 Sistem Pengolahan Sinyal Audio | Menyusul |
+| 11 | 🖼️ Sistem Pengolahan Citra sebagai Sinyal Dua Dimensi | Menyusul |
 
 ---
 
@@ -65,61 +64,27 @@ Prinsip utama dalam penggunaan kode adalah memahami algoritma terlebih dahulu se
 - operasi dasar pada sinyal;
 - pengantar akuisisi dan pengolahan sinyal digital.
 
-### 2. Sistem, Sistem LTI Waktu-Diskret, dan Persamaan Selisih
+### 2. Sifat dan Klasifikasi Sistem, Komponen Dasar Sistem, Persamaan Selisih, Sampling dan Kuantisasi
 
-- sistem sebagai transformasi dari masukan menjadi keluaran;
-- sistem waktu-kontinu dan waktu-diskret;
-- linearitas;
-- prinsip superposisi dan homogenitas;
-- sistem *time-invariant* dan *time-varying*;
-- sistem dengan dan tanpa memori;
-- kausalitas;
-- invertibilitas;
-- stabilitas BIBO;
-- sistem *linear time-invariant*;
-- diagram blok sistem waktu-diskret;
-- penjumlah, pengali, dan *unit delay*;
+- sifat dan klasifikasi sistem;
+- komponen dasar sistem;
 - persamaan selisih;
-- sistem rekursif dan nonrekursif;
-- kondisi awal;
-- respons masukan-nol dan respons keadaan-nol;
-- implementasi persamaan selisih dengan Python.
+- konversi sinyal analog ke digital;
+- sampling;
+- kuantisasi.
 
-### 3. Respons Impuls, Konvolusi, dan Korelasi
+Pokok bahasan yang dicakup meliputi linearitas, invariansi waktu, sistem dengan dan tanpa memori, kausalitas, invertibilitas, stabilitas, penjumlah, pengali, *unit delay*, diagram blok sistem, sistem rekursif dan nonrekursif, kondisi awal, periode dan frekuensi sampling, teorema sampling, aliasing, *sample-and-hold*, tingkat kuantisasi, galat kuantisasi, dan pengkodean digital.
 
-- impuls diskret sebagai komponen penyusun sinyal;
-- representasi sinyal menggunakan impuls;
-- respons impuls sistem LTI;
-- hubungan masukan, respons impuls, dan keluaran sistem;
-- definisi konvolusi waktu-diskret;
-- interpretasi *flip, shift, multiply, sum*;
-- sifat-sifat konvolusi;
-- hubungan konvolusi dengan sistem LTI;
-- interkoneksi seri dan paralel sistem LTI;
-- hubungan antara persamaan selisih dan respons impuls;
-- konvolusi waktu-kontinu sebagai pengayaan;
-- autokorelasi;
-- korelasi silang;
-- estimasi pergeseran waktu menggunakan korelasi.
+### 3. Konvolusi, Korelasi, dan Interkoneksi Sistem LTI
 
-### 4. Sampling, Kuantisasi, ADC, dan DAC
+- konvolusi dan korelasi;
+- interkoneksi sistem LTI;
+- rangkuman operasi sinyal dan notasinya;
+- konvolusi sinyal kontinu.
 
-- proses sampling;
-- periode sampling dan frekuensi sampling;
-- teorema sampling;
-- *Nyquist rate* dan *Nyquist frequency*;
-- aliasing;
-- *sample-and-hold*;
-- filter anti-aliasing;
-- kuantisasi dan *quantization error*;
-- resolusi ADC;
-- SQNR;
-- PCM dan pengantar *companding*;
-- DAC;
-- *zero-order hold*;
-- rekonstruksi sinyal analog.
+Pokok bahasan yang dicakup meliputi konvolusi waktu-diskret, respons impuls dan hubungan masukan-keluaran sistem LTI, interpretasi operasi konvolusi, sifat-sifat konvolusi, autokorelasi, korelasi silang, hubungan seri dan paralel sistem LTI, serta konvolusi pada sinyal waktu-kontinu.
 
-### 5. Representasi Fourier: FS, FT, dan DTFT
+### 4. Representasi Fourier: FS, FT, dan DTFT
 
 - motivasi analisis domain frekuensi;
 - sinusoid kompleks;
@@ -133,7 +98,7 @@ Prinsip utama dalam penggunaan kode adalah memahami algoritma terlebih dahulu se
 - konvolusi dalam domain frekuensi;
 - respons frekuensi sistem LTI.
 
-### 6. DFT, FFT, dan Analisis Spektrum Numerik
+### 5. DFT, FFT, dan Analisis Spektrum Numerik
 
 - Discrete Fourier Transform;
 - invers DFT;
@@ -148,7 +113,7 @@ Prinsip utama dalam penggunaan kode adalah memahami algoritma terlebih dahulu se
 - *zero padding*;
 - konvolusi linear dan konvolusi sirkular.
 
-### 7. Transformasi Z, Fungsi Sistem, dan Pole-Zero
+### 6. Transformasi Z, Fungsi Sistem, dan Pole-Zero
 
 - definisi transformasi Z;
 - *region of convergence*;
@@ -163,7 +128,7 @@ Prinsip utama dalam penggunaan kode adalah memahami algoritma terlebih dahulu se
 - lingkaran satuan;
 - transformasi Z satu sisi sebagai pengayaan.
 
-### 8. Filter Digital FIR
+### 7. Filter Digital FIR
 
 - pengertian filter digital;
 - low-pass, high-pass, band-pass, dan band-stop;
@@ -178,7 +143,7 @@ Prinsip utama dalam penggunaan kode adalah memahami algoritma terlebih dahulu se
 - metode sampling frekuensi;
 - pengantar metode Parks-McClellan.
 
-### 9. Filter Digital IIR
+### 8. Filter Digital IIR
 
 - Infinite Impulse Response;
 - perbandingan FIR dan IIR;
@@ -194,7 +159,7 @@ Prinsip utama dalam penggunaan kode adalah memahami algoritma terlebih dahulu se
 - stabilitas filter IIR;
 - implementasi filter orde satu dan orde dua.
 
-### 10. Analisis Spektral Sinyal Pengukuran dan Sinyal Tidak Stasioner
+### 9. Analisis Spektral Sinyal Pengukuran dan Sinyal Tidak Stasioner
 
 - sinyal pengukuran dan derau;
 - mean, variance, RMS, dan SNR;
@@ -208,7 +173,7 @@ Prinsip utama dalam penggunaan kode adalah memahami algoritma terlebih dahulu se
 - resolusi waktu dan frekuensi;
 - spectrogram.
 
-### 11. Sistem Pengolahan Sinyal Audio
+### 10. Sistem Pengolahan Sinyal Audio
 
 - audio sebagai sinyal tekanan;
 - sampling rate dan bit depth;
@@ -224,7 +189,7 @@ Prinsip utama dalam penggunaan kode adalah memahami algoritma terlebih dahulu se
 - resampling sederhana;
 - alur pengolahan berkas WAV.
 
-### 12. Sistem Pengolahan Citra sebagai Sinyal Dua Dimensi
+### 11. Sistem Pengolahan Citra sebagai Sinyal Dua Dimensi
 
 - citra sebagai sinyal dua dimensi;
 - citra grayscale dan RGB;
