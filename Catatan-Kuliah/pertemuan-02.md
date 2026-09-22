@@ -55,7 +55,7 @@ Sistem tidak harus mengubah nilai masukan menjadi nilai yang berbeda. Sistem ide
 
 ### Model matematis dan batas pengamatan
 
-Dalam pengujian sifat sistem, kita umumnya menggunakan sinyal yang didefinisikan untuk seluruh $n\in\mathbb{Z}$. Dalam program, rekaman hanya memuat sejumlah sampel, sehingga nilai sebelum atau sesudah rekaman harus dinyatakan melalui asumsi tambahan.
+Dalam pengujian sifat sistem, kita umumnya menggunakan sinyal yang didefinisikan untuk seluruh $n\in\mathbb{Z}$. Dalam program, rekaman ("*record*") hanya memuat sejumlah sampel, sehingga nilai sebelum atau sesudah rekaman harus dinyatakan melalui asumsi tambahan.
 
 Jika pemrosesan dimulai pada $n=0$, kita dapat menetapkan $x[n]=0$ untuk $n<0$ atau memberikan riwayat masukan tertentu. Kondisi awal elemen penyimpanan juga perlu dinyatakan, karena masukan yang sama dapat menghasilkan keluaran berbeda ketika keadaan awal sistem berbeda.
 
@@ -550,7 +550,7 @@ y[n]=0.8y[n-1]+0.2x[n].
 
 Nonrekursif tidak berarti tanpa memori, karena $y[n]=x[n]+x[n-1]$ tetap memerlukan penyimpanan masukan lama. Rekursif juga tidak otomatis berarti tidak stabil, karena kestabilan bergantung pada koefisien dan struktur hubungan tersebut.
 
-Pada pertemuan berikutnya, bentuk nonrekursif dengan jumlah tap berhingga akan dikaitkan dengan respons impuls berhingga atau FIR. Namun, istilah rekursif menjelaskan cara menghitung, sehingga tidak boleh selalu disamakan dengan respons impuls tak berhingga tanpa memeriksa persamaan dan kemungkinan pembatalannya.
+Pada pertemuan mendatang, bentuk nonrekursif dengan jumlah tap berhingga akan dikaitkan dengan respons impuls berhingga atau *finite impulse response* (FIR). Namun, istilah rekursif menjelaskan cara menghitung, sehingga tidak boleh selalu disamakan dengan respons impuls tak berhingga tanpa memeriksa persamaan dan kemungkinan pembatalannya.
 
 ### Kondisi awal dan keadaan diam awal
 
@@ -659,11 +659,11 @@ plt.show()
 
 ![Keluaran persamaan selisih orde dua dan perbandingan dengan solusi analitis](../Gambar/pertemuan-02/persamaan-selisih.svg)
 
-Program mandiri tersedia di [04_persamaan_selisih.py](../Kode/pertemuan-02/04_persamaan_selisih.py). Nilai numeriknya akan dibandingkan dengan rumus analitis yang diturunkan pada bagian berikut, sehingga kedua pendekatan saling memeriksa.
+Program lengkap tersedia juga di [04_persamaan_selisih.py](../Kode/pertemuan-02/04_persamaan_selisih.py). Nilai numeriknya akan dibandingkan dengan rumus analitis yang diturunkan pada bagian berikut, sehingga kedua pendekatan saling menguji satu sama lain.
 
 ### Solusi homogen dan persamaan karakteristik
 
-Solusi homogen diperoleh dengan meniadakan ruas pemaksa pada persamaan selisih. Untuk persamaan berkoefisien konstan, kita mencoba bentuk eksponensial $y_h[n]=Cr^n$ dan mencari nilai $r$ yang memungkinkan solusi tak nol.
+Solusi homogen diperoleh dengan meniadakan suku penggerak (*forcing term* atau *forcing function*) pada persamaan selisih. Untuk persamaan berkoefisien konstan, kita mencoba bentuk eksponensial $y_h[n]=Cr^n$ dan mencari nilai $r$ yang memungkinkan solusi tak nol.
 
 ```math
 a_0y_h[n]+a_1y_h[n-1]+\cdots+a_Ny_h[n-N]=0.
@@ -718,11 +718,11 @@ Untuk akar kompleks berkonjugat $r=\rho e^{\pm j\theta}$ pada persamaan berkoefi
 
 ### Solusi partikular dan pengaruh bentuk masukan
 
-Solusi partikular $y_p[n]$ adalah satu solusi yang memenuhi persamaan lengkap dengan ruas pemaksa yang diberikan. Solusi umum kemudian ditulis sebagai $y[n]=y_h[n]+y_p[n]$, dan kondisi awal diterapkan pada jumlah tersebut.
+Solusi partikular $y_p[n]$ adalah satu solusi yang memenuhi persamaan lengkap dengan suku penggerak yang diberikan. Solusi umum kemudian ditulis sebagai $y[n]=y_h[n]+y_p[n]$, dan kondisi awal diterapkan pada jumlah tersebut.
 
-Metode koefisien tak tentu memilih bentuk percobaan yang sejenis dengan ruas pemaksa. Tabel berikut memberikan pilihan awal yang lazim, selama bentuk itu tidak bertumpang tindih dengan solusi homogen.
+Metode koefisien tak tentu memilih bentuk percobaan yang sejenis dengan suku penggeark. Tabel berikut memberikan pilihan awal yang lazim, selama bentuk itu tidak bertumpang tindih dengan solusi homogen.
 
-| Ruas pemaksa | Bentuk percobaan solusi partikular |
+| Suku penggerak | Bentuk percobaan solusi partikular |
 |---|---|
 | Konstanta $K$ | Konstanta $A$ |
 | Polinom berderajat $p$ | Polinom umum berderajat $p$ |
@@ -751,7 +751,7 @@ Penyamaan dengan ruas kanan memberikan $K=2$. Solusi umum sekarang memuat dua ko
 y[n]=(A+2n)\left(\frac12\right)^n+B\left(\frac14\right)^n.
 ```
 
-Nilai rumus pada $n=-1$ dan $n=-2$ digunakan untuk menyambungkan solusi dengan riwayat yang diberikan. Substitusinya memberikan sistem persamaan berikut.
+Nilai rumus pada $n=-1$ dan $n=-2$ digunakan untuk menghubungkan solusi dengan riwayat yang diberikan. Substitusinya memberikan sistem persamaan berikut.
 
 ```math
 2(A-2)+4B=1,
@@ -972,9 +972,9 @@ Dalam model ideal, informasi di antara titik sampel dapat dipulihkan dengan inte
 
 ```math
 x_a(t)=\sum_{n=-\infty}^{\infty}x[n]\,
-\operatorname{sinc}\left(\frac{t-nT_s}{T_s}\right),
+\mathrm{sinc}\left(\frac{t-nT_s}{T_s}\right),
 \qquad
-\operatorname{sinc}(u)=
+\mathrm{sinc}(u)=
 \begin{cases}
 \dfrac{\sin(\pi u)}{\pi u},&u\ne0,\\[5pt]
 1,&u=0.
@@ -1159,7 +1159,7 @@ Nilai $\Delta$ disebut langkah kuantisasi, dan pada model ideal ini setara denga
 Kita memasukkan batas bawah suatu interval ke interval tersebut dan memetakan nilai di luar rentang ke tingkat terdekat pada ujung rentang. Dengan konvensi ini, indeks tingkat dan nilai keluarannya dihitung melalui rumus berikut.
 
 ```math
-k[n]=\operatorname{clip}\left(
+k[n]=\mathrm{clip}\left(
 \left\lfloor\frac{x[n]-V_{\min}}{\Delta}\right\rfloor,
 0,L-1\right),
 \qquad
@@ -1411,21 +1411,21 @@ Salah satu caranya adalah *companding*, yaitu kompresi amplitudo sebelum kuantis
 Misalkan $u=x/A_{\mathrm{FS}}$ sehingga $-1\le u\le1$. Fungsi kompresi hukum $\mu$ didefinisikan sebagai berikut untuk $\mu>0$.
 
 ```math
-F_\mu(u)=\operatorname{sgn}(u)
+F_\mu(u)=\mathrm{sgn}(u)
 \frac{\ln(1+\mu|u|)}{\ln(1+\mu)}.
 ```
 
 Parameter $\mu=255$ merupakan contoh yang sering digunakan dalam pembahasan PCM suara. Fungsi inversnya mengembalikan domain amplitudo setelah nilai terkompresi diterjemahkan, tetapi tidak dapat menghapus informasi yang sudah hilang karena kuantisasi.
 
 ```math
-F_\mu^{-1}(v)=\operatorname{sgn}(v)
+F_\mu^{-1}(v)=\mathrm{sgn}(v)
 \frac{(1+\mu)^{|v|}-1}{\mu}.
 ```
 
 Alternatifnya adalah hukum A dengan parameter $A>1$, yang memiliki bagian linear di dekat nol dan bagian logaritmik pada amplitudo lebih besar. Salah satu nilai contoh yang lazim adalah $A=87.6$.
 
 ```math
-F_A(u)=\operatorname{sgn}(u)
+F_A(u)=\mathrm{sgn}(u)
 \begin{cases}
 \dfrac{A|u|}{1+\ln A},&0\le |u|\le 1/A,\\[6pt]
 \dfrac{1+\ln(A|u|)}{1+\ln A},&1/A<|u|\le1.
@@ -1659,12 +1659,8 @@ Perancangan sistem akuisisi memerlukan pemilihan bersama atas filter analog, fre
 
 ## Referensi
 
-Urutan pokok materi mengikuti cuplikan buku yang disertakan untuk penyusunan catatan ini, khususnya bagian 2.1, 2.2, 3.1, 3.2, dan 3.3. Penjelasan, ilustrasi, serta program ditulis ulang sebagai bahan kuliah, dengan konvensi indeks dan kuantisasi dinyatakan secara eksplisit agar dapat diuji kembali.
+1. D. Gunawan dan F. H. Juwono, *Dasar Pengolahan Sinyal Digital*.
+2. Walt Kester, [MT-001: Taking the Mystery out of the Infamous Formula, SNR = 6.02N + 1.76dB](https://www.analog.com/media/en/training-seminars/tutorials/MT-001.pdf), Analog Devices; rujukan tambahan untuk asumsi model derau kuantisasi dan batas penggunaan rumus SQNR.
+3. Analog Devices, [Basics of Band-Limited Sampling and Aliasing](https://www.analog.com/en/resources/technical-articles/basics-of-bandlimited-sampling-and-aliasing.html); rujukan tambahan untuk hubungan sampling, salinan spektrum, dan sinyal pita lewat.
 
-1. D. Gunawan dan F. H. Juwono, *Dasar Pengolahan Sinyal Digital*, cuplikan Bab 2 dan Bab 3 pada berkas `bab-buku-02-03.pdf`; bagian 2.1 Pendahuluan, 2.2 Klasifikasi Sistem, 3.1 Komponen Dasar Sistem, 3.2 Persamaan Selisih, dan 3.3 Konversi Sinyal Analog ke Digital.
-2. [Silabus pada README repositori signal-processing](https://github.com/artnugraha/signal-processing/blob/main/README.md), acuan cakupan pertemuan dan kesinambungan antarkuliah.
-3. [Catatan Kuliah Pertemuan 1](https://github.com/artnugraha/signal-processing/blob/main/Catatan-Kuliah/pertemuan-01.md), acuan hierarki judul, penggunaan blok matematika, dan pola penyajian contoh serta latihan.
-4. Walt Kester, [MT-001: Taking the Mystery out of the Infamous Formula, SNR = 6.02N + 1.76dB](https://www.analog.com/media/en/training-seminars/tutorials/MT-001.pdf), Analog Devices; rujukan tambahan untuk asumsi model derau kuantisasi dan batas penggunaan rumus SQNR.
-5. Analog Devices, [Basics of Band-Limited Sampling and Aliasing](https://www.analog.com/en/resources/technical-articles/basics-of-bandlimited-sampling-and-aliasing.html); rujukan tambahan untuk hubungan sampling, salinan spektrum, dan sinyal pita lewat.
-
-Seluruh contoh Python pada catatan ini menggunakan NumPy dan Matplotlib, tanpa ketergantungan pada SciPy. Berkas mandiri tersedia di direktori `Kode/pertemuan-02`, sedangkan setiap ilustrasi disertakan dalam format SVG dan PNG di direktori `Gambar/pertemuan-02`.
+Seluruh contoh Python pada catatan ini menggunakan NumPy dan Matplotlib, tanpa ketergantungan pada SciPy. Berkas terpisah tersedia di direktori `Kode/pertemuan-02`, sedangkan setiap ilustrasi disertakan dalam format SVG dan PNG di direktori `Gambar/pertemuan-02`.
