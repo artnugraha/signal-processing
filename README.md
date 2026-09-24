@@ -1,21 +1,21 @@
 # Pengolahan Sinyal
 
-Repositori ini berisi materi kuliah **Pengolahan Sinyal** untuk mahasiswa **Teknik Fisika** dengan bobot **3 SKS**. Materi inti disusun untuk 11 pertemuan dalam satu semester. Pekan lainnya dapat dialokasikan untuk UTS, UAS, tugas besar, serta kegiatan akademik lain sesuai kalender perkuliahan. Setiap pertemuan kuliah berlangsung sekitar 3 jam, dengan penekanan pada pemahaman konsep, formulasi matematis, contoh hitungan tangan, visualisasi, dan implementasi komputasi menggunakan Python.
+Repositori ini berisi materi pembelajaran **Pengolahan Sinyal** yang ditulis secara khusus untuk mahasiswa **Fisika/Teknik Fisika**. Materi pembelajaran disusun untuk kisaran 11-12 pertemuan dalam satu semester dengan durasi setiap pertemuan sekitar 3 jam. Penekanan materi pembelajaran adalah pada pemahaman konsep, formulasi matematis/hitungan tangan, visualisasi, dan implementasi komputasi menggunakan Python.
 
-Implementasi komputasi diupayakan menggunakan pustaka Python sesedikit mungkin. Sebagian besar contoh program dalam kuliah ini hanya memanggil dua pustaka utama untuk komputasi dengan Python.
+Implementasi komputasi diupayakan menggunakan pustaka Python sesedikit mungkin. Sebagian besar contoh program dalam repositori ini hanya memanggil dua pustaka utama untuk komputasi dengan Python.
 
 ```python
 import numpy as np
 import matplotlib.pyplot as plt
 ```
 
-Pustaka `scipy` hanya digunakan pada beberapa bagian tertentu ketika diperlukan.
+Pustaka `scipy` akan digunakan pada beberapa bagian tertentu ketika diperlukan.
 
 ---
 
 ## Daftar materi
 
-| No. | Topik | Link Catatan Kuliah |
+| No. | Topik | Link Catatan Materi |
 |---:|---|---|
 | 1 | 📈 Pengantar Pengolahan Sinyal dan Representasi Sinyal | [Materi 1](Catatan-Kuliah/pertemuan-01.md) |
 | 2 | ⚙️ Sistem, Sampling, dan Kuantisasi | [Materi 2](Catatan-Kuliah/pertemuan-02.md) |
@@ -33,7 +33,7 @@ Pustaka `scipy` hanya digunakan pada beberapa bagian tertentu ketika diperlukan.
 
 ## Media pembelajaran
 
-Media utama yang digunakan dalam mata kuliah ini adalah:
+Media utama yang digunakan dalam pembelajaran ini adalah:
 
 - catatan kuliah dalam format Markdown yang dapat dibaca langsung melalui GitHub;
 - ilustrasi konseptual dalam format SVG atau PNG;
@@ -49,7 +49,7 @@ Prinsip utama dalam penggunaan kode adalah memahami algoritma terlebih dahulu se
 
 ---
 
-## Silabus kuliah
+## Silabus Materi
 
 ### 1. Pengantar Pengolahan Sinyal dan Representasi Sinyal
 
