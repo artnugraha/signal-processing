@@ -92,7 +92,7 @@ y[n]
 \tag{2}
 ```
 
-Pada salah satu buku acuan, konvolusi dilambangkan dengan simbol berbentuk lingkaran bersilang. Dalam catatan ini kita memakai tanda bintang $*$ karena notasi tersebut umum digunakan dalam literatur dan perangkat lunak.
+Pada salah satu buku acuan (Gunawan-Juwono), konvolusi dilambangkan dengan simbol berbentuk lingkaran bersilang. Dalam catatan ini kita memakai tanda bintang $*$ karena notasi tersebut umum digunakan dalam literatur dan perangkat lunak.
 
 ```math
 y[n]=x[n]*h[n].
@@ -110,7 +110,7 @@ Hubungan tersebut menjelaskan mengapa $h[n]$ disebut respons impuls. Impuls tida
 
 ### Langkah grafis konvolusi
 
-Penjumlahan konvolusi dapat dibaca sebagai prosedur **lipat(cermin)–geser–kali–jumlah**. Variabel $k$ adalah indeks semu yang dijumlahkan, sedangkan $n$ adalah indeks keluaran yang sedang dihitung.
+Penjumlahan konvolusi dapat dibaca sebagai prosedur **lipat(cerminkan)–geser–kali–jumlah**. Variabel $k$ adalah indeks semu yang dijumlahkan, sedangkan $n$ adalah indeks keluaran yang sedang dihitung.
 
 1. Substitusikan $n=k$ pada kedua sinyal sehingga diperoleh $x[k]$ dan $h[k]$.
 2. Lipat $h[k]$ terhadap $k=0$ sehingga diperoleh $h[-k]$.
@@ -356,7 +356,7 @@ Konvolusi menjumlahkan hasil kali antara satu sinyal dan versi terlipat serta te
 
 ### Korelasi silang tanpa pergeseran
 
-Untuk dua barisan real $x_1[n]$ dan $x_2[n]$ yang masing-masing mempunyai $N$ sampel, buku mendefinisikan korelasi silang tanpa pergeseran sebagai rata-rata hasil kali pasangan sampel. Definisi awal tersebut diberikan oleh persamaan berikut.
+Untuk dua barisan real $x_1[n]$ dan $x_2[n]$ yang masing-masing mempunyai $N$ sampel, kita dapat mendefinisikan korelasi silang tanpa pergeseran sebagai rata-rata hasil kali pasangan sampel. Definisi awal tersebut diberikan oleh persamaan berikut.
 
 ```math
 r_{12}=\frac{1}{N}\sum_{n=0}^{N-1}x_1[n]x_2[n].
@@ -458,11 +458,11 @@ r_{12}(j)_{\mathrm{true}}
 \tag{14}
 ```
 
-Koreksi ini mengikuti model geometris pada buku dan bukan identitas universal bagi setiap pasangan sinyal. Dalam estimasi statistik modern, pilihan yang lazim adalah normalisasi tetap $1/N$ yang sering disebut estimasi *biased*, atau pembagian dengan jumlah pasangan $N-|j|$ yang sering disebut estimasi *unbiased*.
+Koreksi ini mengikuti model geometris yang kita tetapkan dan bukan identitas universal bagi setiap pasangan sinyal. Dalam estimasi statistik modern, pilihan yang lazim adalah normalisasi tetap $1/N$ yang sering disebut estimasi *biased*, atau pembagian dengan jumlah pasangan $N-|j|$ yang sering disebut estimasi *unbiased*.
 
 ### Koefisien korelasi
 
-Nilai korelasi mentah bergantung pada skala amplitudo kedua sinyal. Agar derajat kemiripan dapat dibandingkan pada skala yang berbeda, buku menormalkan $r_{12}(j)$ dengan akar hasil kali energi rata-rata kedua sinyal.
+Nilai korelasi mentah bergantung pada skala amplitudo kedua sinyal. Agar derajat kemiripan dapat dibandingkan pada skala yang berbeda, kita menormalkan $r_{12}(j)$ dengan akar hasil kali energi rata-rata kedua sinyal.
 
 ```math
 \rho_{12}(j)
@@ -794,9 +794,10 @@ Pada titik $t=0$, kedua rumus tengah memberikan nilai yang sama, yaitu $2a$. Pad
 
 ![Hasil konvolusi dua pulsa persegi berupa fungsi segitiga](../Gambar/pertemuan-03/hasil-konvolusi-rect.svg)
 
-Gambar tersebut menggambar ulang Gambar 3.29 buku dan menambahkan perbandingan dengan integrasi numerik. Tinggi maksimum $2a$ sama dengan luas satu pulsa ketika kedua pulsa saling berimpit sempurna.
+Gambar tersebut menunjukkan fungsi $2a - |t|$ dan menambahkan perbandingan dengan integrasi numerik. Tinggi maksimum $2a$ sama dengan luas satu pulsa ketika kedua pulsa saling berimpit sempurna.
 
-Kode berikut menghitung hasil analitik dan hasil numerik untuk $a=1$. Kode lengkap yang juga menggambar keenam posisi tumpang tindih tersedia pada [`06_konvolusi_kontinu.py`](../Kode/pertemuan-03/06_konvolusi_kontinu.py).
+
+Kode berikut menghitung hasil analitik dan hasil numerik untuk $a=1$. Kode lengkap tersedia pada [`06_konvolusi_kontinu.py`](../Kode/pertemuan-03/06_konvolusi_kontinu.py).
 
 ```python
 import numpy as np
