@@ -110,7 +110,7 @@ Hubungan tersebut menjelaskan mengapa $h[n]$ disebut respons impuls. Impuls tida
 
 ### Langkah grafis konvolusi
 
-Penjumlahan konvolusi dapat dibaca sebagai prosedur **lipat(invers)–geser–kali–jumlah**. Variabel $k$ adalah indeks semu yang dijumlahkan, sedangkan $n$ adalah indeks keluaran yang sedang dihitung.
+Penjumlahan konvolusi dapat dibaca sebagai prosedur **lipat(cermin)–geser–kali–jumlah**. Variabel $k$ adalah indeks semu yang dijumlahkan, sedangkan $n$ adalah indeks keluaran yang sedang dihitung.
 
 1. Substitusikan $n=k$ pada kedua sinyal sehingga diperoleh $x[k]$ dan $h[k]$.
 2. Lipat $h[k]$ terhadap $k=0$ sehingga diperoleh $h[-k]$.
