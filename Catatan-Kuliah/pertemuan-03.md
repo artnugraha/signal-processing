@@ -769,12 +769,12 @@ y(t)
 Untuk $0<t<2a$, batas tumpang tindih berubah menjadi $t-a\leq\tau\leq a$. Panjang interval sekarang berkurang secara linear ketika pulsa bergeser menjauh.
 
 ```math
-\begin{aligned}
+\begin{align*}
 y(t)
 &=\int_{t-a}^{a}1\,d\tau\\
 &=a-(t-a)=2a-t,
 \qquad 0<t<2a.
-\end{aligned}
+\end{align*}
 ```
 
 Setelah $t>2a$, kedua pulsa kembali tidak bertumpang tindih. Hasil lengkapnya adalah fungsi segitiga berikut.
@@ -863,7 +863,7 @@ Diberikan $x[n]=u[n]-u[n-4]$ dan $h[n]=u[n]-u[n-3]$. Gunakan prosedur lipat–ge
 
 ### 4. Sifat konvolusi dan interkoneksi
 
-Misalkan $h_1[n]=\{1,1\}$, $h_2[n]=\{1,-1\}$, dan $h_3[n]=\{1,2\}$. Hitung $(h_1*h_2)*h_3$ dan $h_1*(h_2*h_3)$ secara terpisah untuk memverifikasi sifat asosiatif.
+Misalkan $h_1[n]=\{1,1\}$, $h_2[n]=\{1,-1\}$, dan $h_3[n]=\{1,2\}$. Hitung $(h_1 \ast h_2)\ast h_3$ dan $h_1 \ast (h_2 \ast h_3)$ secara terpisah untuk memverifikasi sifat asosiatif.
 
 ### 5. Konvolusi siklik
 
