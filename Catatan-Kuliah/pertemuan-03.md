@@ -669,8 +669,8 @@ Pada tabel berikut, bentuk di kolom definisi menyatakan keluaran sebagai sinyal 
 | Perkalian skalar | $a\{x[n]\}\triangleq\{a x[n]\}$ | $a x[n]$ |
 | Translasi | $\{x[n-n_0]\}\triangleq\{z[n]:z[n]=x[n-n_0]\}$ | $x[n-n_0]$ |
 | Refleksi atau pelipatan | $\{x[-n]\}\triangleq\{z[n]:z[n]=x[-n]\}$ | $x[-n]$ |
-| Konvolusi | $\{x[n]\}*\{y[n]\}\triangleq\left\{z[n]:z[n]=\sum_{k=-\infty}^{\infty}x[k]y[n-k]\right\}$ | $x[n]*y[n]$ |
-| Penjumlahan tak berhingga | $\sum_{k=-\infty}^{\infty}x[k]\triangleq\left\{z[n]:z[n]=\sum_{k=-\infty}^{\infty}x[k]\right\}$ | $\sum_{k=-\infty}^{\infty}x[k]$ |
+| Konvolusi | $\lbrace x[n]\rbrace\ast\lbrace y[n]\rbrace\triangleq\left\lbrace z[n]\mathrel{:}z[n]=\sum_{k=-\infty}^{\infty}x[k]y[n-k]\right\rbrace$ | $x[n]\ast y[n]$ |
+| Penjumlahan tak berhingga | $\sum_{k=-\infty}^{\infty}x[k]\triangleq\left\lbrace z[n]\mathrel{:}z[n]=\sum_{k=-\infty}^{\infty}x[k]\right\rbrace$ | $\sum_{k=-\infty}^{\infty}x[k]$ |
 | Penjumlahan berhingga | $\sum_{k=k_0}^{k_1}\{x[k]\}\triangleq\sum_{k=k_0}^{k_1}x[k]$ | $\sum_{k=k_0}^{k_1}x[k]$ |
 | Perbedaan mundur | $\nabla\{y[n]\}\triangleq\{z[n]:z[n]=y[n]-y[n-1]\}$ | $\nabla y[n]$ |
 | Perbedaan maju | $\Delta\{y[n]\}\triangleq\{z[n]:z[n]=y[n+1]-y[n]\}$ | $\Delta y[n]$ |
