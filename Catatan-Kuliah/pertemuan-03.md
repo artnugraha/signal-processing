@@ -760,15 +760,17 @@ Untuk $t<-2a$, kedua interval belum bertumpang tindih dan luasnya nol. Ketika $-
 ```math
 y(t)
 =\int_{-a}^{t+a}1\,d\tau
-=(t+a)-(-a)=t+2a,
-\qquad -2a<t<0.
+=(t+a)-(-a)=t+2a
 ```
+(untuk $-2a<t<0$).
 
 Untuk $0<t<2a$, batas tumpang tindih berubah menjadi $t-a\leq\tau\leq a$. Panjang interval sekarang berkurang secara linear ketika pulsa bergeser menjauh.
 ```math
 y(t) = \int_{t-a}^{a}1\,d\tau
-     = a-(t-a)=2a-t, \quad 0<t<2a.
+     = a-(t-a)=2a-t
 ```
+(untuk $0<t<2a$).
+
 Setelah $t>2a$, kedua pulsa kembali tidak bertumpang tindih. Hasil lengkapnya adalah fungsi segitiga berikut.
 
 ```math
