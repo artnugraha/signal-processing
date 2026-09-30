@@ -600,7 +600,7 @@ h[n]=h_1[n]+h_2[n].
 \tag{22}
 ```
 
-Persamaan ini mengikuti distributivitas konvolusi karena $y[n]=x[n]*h_1[n]+x[n]*h_2[n]$. Dengan mengeluarkan faktor konvolusi $x[n]$, diperoleh $y[n]=x[n]*(h_1[n]+h_2[n])$.
+Persamaan ini mengikuti distributivitas konvolusi karena $y[n]=x[n] \ast h_1[n]+x[n] \ast h_2[n]$. Dengan mengeluarkan faktor konvolusi $x[n]$, diperoleh $y[n]=x[n]\ast(h_1[n]+h_2[n])$.
 
 ![Hubungan seri, paralel, dan gabungan sistem LTI](../Gambar/pertemuan-03/interkoneksi-lti.svg)
 
