@@ -741,11 +741,11 @@ Integral tersebut konvergen karena faktor $e^{-\tau}$ menuju nol ketika $\tau\to
 
 ### Contoh 9: konvolusi dua pulsa persegi
 
-Misalkan kita mengonvolusikan dua pulsa persegi satuan yang sama. Kita memakai definisi $\operatorname{rect}(t/2a)=1$ untuk $|t|<a$ dan nol di luar interval tersebut; pilihan nilai tepat pada batas tidak memengaruhi integral.
+Misalkan kita mengonvolusikan dua pulsa persegi satuan yang sama. Kita memakai definisi $\text{rect}(t/2a)=1$ untuk $|t|<a$ dan nol di luar interval tersebut; pilihan nilai tepat pada batas tidak memengaruhi integral.
 
 ```math
-y(t)=\operatorname{rect}\!\left(\frac{t}{2a}\right)
-*\operatorname{rect}\!\left(\frac{t}{2a}\right).
+y(t)=\text{rect}\!\left(\frac{t}{2a}\right)
+*\text{rect}\!\left(\frac{t}{2a}\right).
 \tag{28}
 ```
 
@@ -758,20 +758,16 @@ Enam panel menggambarkan beberapa keadaan berbeda. Daerah hijau adalah tempat ke
 Untuk $t<-2a$, kedua interval belum bertumpang tindih dan luasnya nol. Ketika $-2a<t<0$, batas tumpang tindih adalah $-a\leq\tau\leq t+a$, sehingga panjang intervalnya bertambah secara linear.
 
 ```math
-\begin{aligned}
 y(t)
-&=\int_{-a}^{t+a}1\,d\tau\\
-&=(t+a)-(-a)=t+2a,
+=\int_{-a}^{t+a}1\,d\tau
+=(t+a)-(-a)=t+2a,
 \qquad -2a<t<0.
-\end{aligned}
 ```
 
 Untuk $0<t<2a$, batas tumpang tindih berubah menjadi $t-a\leq\tau\leq a$. Panjang interval sekarang berkurang secara linear ketika pulsa bergeser menjauh.
 ```math
-\begin{align*}
-y(t) &= \int_{t-a}^{a}1\,d\tau\\
-     &= a-(t-a)=2a-t, \quad 0<t<2a.
-\end{align*}
+y(t) = \int_{t-a}^{a}1\,d\tau
+     = a-(t-a)=2a-t, \quad 0<t<2a.
 ```
 Setelah $t>2a$, kedua pulsa kembali tidak bertumpang tindih. Hasil lengkapnya adalah fungsi segitiga berikut.
 
