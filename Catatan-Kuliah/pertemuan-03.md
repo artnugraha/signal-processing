@@ -767,13 +767,12 @@ y(t)
 ```
 
 Untuk $0<t<2a$, batas tumpang tindih berubah menjadi $t-a\leq\tau\leq a$. Panjang interval sekarang berkurang secara linear ketika pulsa bergeser menjauh.
-$$
+```math
 \begin{align*}
-y(t) &=\int_{t-a}^{a}1\,d\tau\\
-&=a-(t-a)=2a-t,
-\qquad 0<t<2a.
+y(t) &= \int_{t-a}^{a}1\,d\tau\\
+     &= a-(t-a)=2a-t, \quad 0<t<2a.
 \end{align*}
-$$
+```
 Setelah $t>2a$, kedua pulsa kembali tidak bertumpang tindih. Hasil lengkapnya adalah fungsi segitiga berikut.
 
 ```math
