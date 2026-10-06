@@ -278,7 +278,7 @@ $$
 \angle X(\omega)=-\arctan\left(\frac{\omega}{a}\right).
 $$
 
-Jika $a=2$ s$^{-1}$, nilai spektrum pada nol adalah $1/2$ s, sedangkan pada $\omega=2$ rad/s magnitudonya $1/(2\sqrt2)$ s dan fasenya $-\pi/4$. Magnitudo menurun ketika frekuensi meningkat karena eksponensial yang berubah secara halus memberi bobot lebih besar pada osilasi lambat.
+Jika $a=2~\text{s}^{-1}$, nilai spektrum pada nol adalah $1/2$ s, sedangkan pada $\omega=2$ rad/s magnitudonya $1/(2\sqrt2)$ s dan fasenya $-\pi/4$. Magnitudo menurun ketika frekuensi meningkat karena eksponensial yang berubah secara halus memberi bobot lebih besar pada osilasi lambat.
 
 ![FT eksponensial kausal dan fase](../Gambar/pertemuan-04/06_ft_eksponensial.png)
 
@@ -430,7 +430,7 @@ Fase utama biasanya dipilih pada rentang $(-\pi,\pi]$, sedangkan *unwrapping* me
 Untuk sinyal real, konjugasi definisi FT atau DTFT menunjukkan bahwa spektrum pada frekuensi negatif adalah konjugat spektrum pada frekuensi positif. Hubungannya ditulis sebagai berikut.
 
 $$
-X(-\omega)=X^*(\omega),
+X(-\omega)=X^\ast(\omega),
 \qquad
 X(e^{-j\Omega})=X^*(e^{j\Omega}).
 $$
