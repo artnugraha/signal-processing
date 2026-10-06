@@ -188,10 +188,10 @@ $$
 C_k
 &=\frac{A}{T_0}\int_{-\tau/2}^{\tau/2}e^{-jk\omega_0t}\,dt\\
 &=\frac{2A}{T_0k\omega_0}\sin\left(\frac{k\omega_0\tau}{2}\right)\\
-&=AD\,\operatorname{sinc}(kD),
+&=AD\,\text{sinc}(kD),
 \end{aligned}
 \qquad
-\operatorname{sinc}(v)=\frac{\sin(\pi v)}{\pi v},\quad\operatorname{sinc}(0)=1.
+\text{sinc}(v)=\frac{\sin(\pi v)}{\pi v},\quad\text{sinc}(0)=1.
 \tag{4}
 $$
 
@@ -254,7 +254,7 @@ $$
 X(\omega)
 &=A\int_{-\tau/2}^{\tau/2}e^{-j\omega t}\,dt\\
 &=\frac{2A\sin(\omega\tau/2)}{\omega}\\
-&=A\tau\,\operatorname{sinc}\left(\frac{\omega\tau}{2\pi}\right).
+&=A\tau\,\text{sinc}\left(\frac{\omega\tau}{2\pi}\right).
 \end{aligned}
 \tag{8}
 $$
@@ -379,7 +379,7 @@ X(e^{j\Omega})
 |X(e^{j\Omega})|
 &=\frac{1}{\sqrt{1+a^2-2a\cos\Omega}},\\
 \angle X(e^{j\Omega})
-&=-\operatorname{atan2}\bigl(a\sin\Omega,1-a\cos\Omega\bigr).
+&=-\text{atan2}\bigl(a\sin\Omega,1-a\cos\Omega\bigr).
 \end{aligned}
 \tag{16}
 $$
@@ -432,13 +432,13 @@ Spektrum kompleks dapat ditulis dalam bentuk polar. Magnitudo menyatakan besar k
 $$
 X=|X|e^{j\phi},
 \qquad
-|X|=\sqrt{(\operatorname{Re}X)^2+(\operatorname{Im}X)^2},
+|X|=\sqrt{(\text{Re}X)^2+(\text{Im}X)^2},
 \qquad
-\phi=\operatorname{atan2}(\operatorname{Im}X,\operatorname{Re}X).
+\phi=\text{atan2}(\text{Im}X,\text{Re}X).
 \tag{17}
 $$
 
-Fungsi `atan2` mempertahankan informasi kuadran yang dapat hilang jika hanya memakai $\arctan(\operatorname{Im}X/\operatorname{Re}X)$. Di titik spektrum nol, fase tidak terdefinisi walaupun perangkat lunak mungkin mengembalikan angka tertentu.
+Fungsi `atan2` mempertahankan informasi kuadran yang dapat hilang jika hanya memakai $\arctan(\text{Im}X/\text{Re}X)$. Di titik spektrum nol, fase tidak terdefinisi walaupun perangkat lunak mungkin mengembalikan angka tertentu.
 
 Fase utama biasanya dipilih pada rentang $(-\pi,\pi]$, sedangkan *unwrapping* menambahkan kelipatan $2\pi$ untuk mengurangi lompatan representasi. Proses tersebut tidak menentukan fase pada nol spektrum dan tidak membuat seluruh lompatan fase fisik menjadi hilang.
 
