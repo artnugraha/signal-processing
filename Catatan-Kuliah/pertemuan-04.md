@@ -108,7 +108,7 @@ $$
 
 Jika $f_s=1000$ Hz dan $f=100$ Hz, frekuensi diskretnya adalah $\Omega=0.2\pi$ rad/sampel. Hubungan ini menjelaskan mengapa grafik digital berlabel $\Omega/\pi=0.2$ menunjuk 100 Hz hanya ketika frekuensi samplingnya diketahui.
 
-Buku Gunawan-Juwono menggunakan notasi frekuensi sudut yang serupa pada beberapa transformasi. Catatan ini membedakan $\omega$ dan $\Omega$ secara eksplisit, tetapi mempertahankan tanda eksponensial negatif pada transformasi maju dan faktor $1/(2\pi)$ pada invers FT serta DTFT.
+Buku menggunakan notasi frekuensi sudut yang serupa pada beberapa transformasi. Catatan ini membedakan $\omega$ dan $\Omega$ secara eksplisit, tetapi mempertahankan tanda eksponensial negatif pada transformasi maju dan faktor $1/(2\pi)$ pada invers FT serta DTFT.
 
 ---
 
@@ -121,17 +121,15 @@ Sinyal periodik memenuhi $x(t+T_0)=x(t)$ dan mempunyai harmonik pada $k\omega_0$
 $$
 \boxed{x(t)=\sum_{k=-\infty}^{\infty}C_ke^{jk\omega_0t}},
 \qquad \omega_0=\frac{2\pi}{T_0}.
-\tag{1}
 $$
 
-Persamaan (1) disebut **sintesis** karena menyusun sinyal dari koefisiennya. Koefisien diperoleh melalui **analisis**, yaitu mengalikan sinyal dengan eksponensial kompleks yang sesuai lalu merata-ratakannya selama satu periode.
+Rumus deret Fourier di atas disebut **sintesis** karena menyusun sinyal dari koefisiennya. Koefisien diperoleh melalui **analisis**, yaitu mengalikan sinyal dengan eksponensial kompleks yang sesuai lalu merata-ratakannya selama satu periode.
 
 $$
 \boxed{C_k=\frac{1}{T_0}\int_{t_a}^{t_a+T_0}x(t)e^{-jk\omega_0t}\,dt}.
-\tag{2}
 $$
 
-Batas awal $t_a$ boleh dipilih bebas karena integrannya periodik dengan periode $T_0$. Notasi $C_k$ dalam catatan ini setara dengan koefisien yang ditulis sebagai $X[k]$ pada bagian FS di buku Gunawan-Juwono, tetapi $C_k$ membantu membedakannya dari DTFT.
+Batas awal $t_a$ boleh dipilih bebas karena integrannya periodik dengan periode $T_0$. Notasi $C_k$ dalam catatan ini setara dengan koefisien yang ditulis sebagai $X[k]$ pada bagian FS buku, tetapi $C_k$ membantu membedakannya dari DTFT.
 
 ### Mengapa koefisien dapat dipisahkan?
 
@@ -140,10 +138,9 @@ Eksponensial dengan nomor harmonik yang berbeda bersifat ortogonal selama satu p
 $$
 \frac{1}{T_0}\int_{t_a}^{t_a+T_0}e^{j(k-m)\omega_0t}\,dt
 =\begin{cases}1,&k=m,\\0,&k\ne m.\end{cases}
-\tag{3}
 $$
 
-Untuk $k\ne m$, integralnya proporsional terhadap selisih dua eksponensial yang terpisah sudut $2\pi(k-m)$, sehingga selisih itu nol. Dengan memasukkan Persamaan (1) ke integral Persamaan (2), sifat ini menyisakan tepat koefisien $C_k$.
+Untuk $k\ne m$, integralnya proporsional terhadap selisih dua eksponensial yang terpisah sudut $2\pi(k-m)$, sehingga selisih itu nol. Dengan memasukkan deret sintesis Fourier ke dalam integral analisis koefisien, sifat ortogonalitas ini menyisakan tepat koefisien $C_k$.
 
 Koefisien $C_0$ menyatakan nilai rata-rata atau komponen DC sinyal. Jika $x(t)$ real, berlaku $C_{-k}=C_k^*$, sehingga magnitudo koefisien genap terhadap $k$ dan fase pasangan harmonik berlawanan tanda modulo $2\pi$.
 
@@ -192,7 +189,6 @@ C_k
 \end{aligned}
 \qquad
 \text{sinc}(v)=\frac{\sin(\pi v)}{\pi v},\quad\text{sinc}(0)=1.
-\tag{4}
 $$
 
 Untuk $k=0$, integral menjadi luas pulsa dibagi periode, sehingga $C_0=AD$. Rumus sinc juga memberikan nilai yang sama melalui limit pada nol, sehingga dapat dipakai untuk seluruh $k$.
@@ -207,12 +203,11 @@ Program [`04_fs_pulsa.py`](../Kode/pertemuan-04/04_fs_pulsa.py) memperlihatkan s
 
 Untuk sinyal periodik yang cukup teratur, misalnya bagian-bagiannya mulus dengan jumlah lompatan berhingga per periode, FS konvergen ke nilai sinyal di titik kontinu. Pada lompatan, deret konvergen ke rata-rata limit kiri dan kanan, sehingga pulsa tinggi satu direkonstruksi menjadi $1/2$ tepat di batas lompatan.
 
-Sinyal periodik tak nol umumnya mempunyai energi total tak berhingga tetapi daya rata-rata berhingga. Dengan normalisasi koefisien Persamaan (2), hubungan Parseval untuk daya adalah sebagai berikut.
+Sinyal periodik tak nol umumnya mempunyai energi total tak berhingga tetapi daya rata-rata berhingga. Dengan normalisasi koefisien FS yang menggunakan faktor $1/T_0$, hubungan Parseval untuk daya adalah sebagai berikut.
 
 $$
 P=\frac{1}{T_0}\int_{t_a}^{t_a+T_0}|x(t)|^2\,dt
 =\sum_{k=-\infty}^{\infty}|C_k|^2.
-\tag{5}
 $$
 
 Untuk Contoh 2, daya adalah $1+1+1+1/4+1/4=3.5$. Hasil ini juga diperoleh dengan menjumlah daya DC, daya kosinus $2^2/2$, dan daya sinus $1^2/2$.
@@ -233,12 +228,10 @@ Dengan frekuensi sudut $\omega$, transformasi maju dan invers menggunakan pasang
 
 $$
 \boxed{X(\omega)=\int_{-\infty}^{\infty}x(t)e^{-j\omega t}\,dt},
-\tag{6}
 $$
 
 $$
 \boxed{x(t)=\frac{1}{2\pi}\int_{-\infty}^{\infty}X(\omega)e^{j\omega t}\,d\omega}.
-\tag{7}
 $$
 
 Kita menuliskan pasangan ini sebagai $x(t)\longleftrightarrow X(\omega)$. Apabila amplitudo $x(t)$ mempunyai satuan volt, $X(\omega)$ mempunyai satuan volt-sekon, sehingga nilainya tidak langsung sama dengan amplitudo sebuah kosinus.
@@ -256,7 +249,6 @@ X(\omega)
 &=\frac{2A\sin(\omega\tau/2)}{\omega}\\
 &=A\tau\,\text{sinc}\left(\frac{\omega\tau}{2\pi}\right).
 \end{aligned}
-\tag{8}
 $$
 
 Pada $\omega=0$, nilai limitnya adalah $X(0)=A\tau$, yaitu luas pulsa. Nol pertama terjadi pada $\omega=\pm2\pi/\tau$, sehingga pulsa yang lebih sempit mempunyai lobus utama spektrum yang lebih lebar.
@@ -276,7 +268,6 @@ X(\omega)
 &=\left[-\frac{e^{-(a+j\omega)t}}{a+j\omega}\right]_0^\infty
 =\frac{1}{a+j\omega}.
 \end{aligned}
-\tag{9}
 $$
 
 Karena $a>0$, magnitudo dan fase dapat dibaca tanpa ambiguitas kuadran pada penyebut. Hasilnya adalah berikut.
@@ -285,7 +276,6 @@ $$
 |X(\omega)|=\frac{1}{\sqrt{a^2+\omega^2}},
 \qquad
 \angle X(\omega)=-\arctan\left(\frac{\omega}{a}\right).
-\tag{10}
 $$
 
 Jika $a=2$ s$^{-1}$, nilai spektrum pada nol adalah $1/2$ s, sedangkan pada $\omega=2$ rad/s magnitudonya $1/(2\sqrt2)$ s dan fasenya $-\pi/4$. Magnitudo menurun ketika frekuensi meningkat karena eksponensial yang berubah secara halus memberi bobot lebih besar pada osilasi lambat.
@@ -303,7 +293,6 @@ e^{j\omega_0t}\longleftrightarrow2\pi\delta(\omega-\omega_0),
 \qquad
 \cos(\omega_0t)\longleftrightarrow
 \pi\bigl[\delta(\omega-\omega_0)+\delta(\omega+\omega_0)\bigr].
-\tag{11}
 $$
 
 Untuk sinyal periodik umum dengan koefisien $C_k$, FT dalam pengertian distribusi adalah $X(\omega)=2\pi\sum_k C_k\delta(\omega-k\omega_0)$. Jadi, spektrum garis FS dan FT impuls sinyal periodik berhubungan, tetapi label koefisien FS tidak boleh disamakan dengan tinggi impuls FT.
@@ -318,12 +307,10 @@ Pada sinyal waktu-diskret, waktu menjadi indeks bulat $n$, tetapi frekuensi DTFT
 
 $$
 \boxed{X(e^{j\Omega})=\sum_{n=-\infty}^{\infty}x[n]e^{-j\Omega n}},
-\tag{12}
 $$
 
 $$
 \boxed{x[n]=\frac{1}{2\pi}\int_{-\pi}^{\pi}X(e^{j\Omega})e^{j\Omega n}\,d\Omega}.
-\tag{13}
 $$
 
 Notasi $X(e^{j\Omega})$ lazim digunakan karena kelak DTFT dapat dihubungkan dengan transformasi Z pada lingkaran satuan. Dalam pertemuan ini, cukup membacanya sebagai fungsi kontinu dari frekuensi $\Omega$, tanpa memerlukan transformasi Z.
@@ -340,7 +327,6 @@ X(e^{j(\Omega+2\pi m)})
 &=\sum_n x[n]e^{-j\Omega n}e^{-j2\pi mn}\\
 &=X(e^{j\Omega}).
 \end{aligned}
-\tag{14}
 $$
 
 DTFT selalu periodik dengan periode $2\pi$; beberapa sinyal khusus dapat mempunyai periode lebih kecil. Satu interval sepanjang $2\pi$, misalnya $[-\pi,\pi)$ atau $[0,2\pi)$, sudah memuat seluruh informasi spektrumnya.
@@ -358,7 +344,6 @@ X(e^{j\Omega})
 &=e^{-j\Omega/2}\left(e^{j\Omega/2}+e^{-j\Omega/2}\right)\\
 &=2e^{-j\Omega/2}\cos(\Omega/2).
 \end{aligned}
-\tag{15}
 $$
 
 Magnitudonya adalah $2|\cos(\Omega/2)|$, dengan maksimum dua pada $\Omega=0$ dan nol pada $\Omega=\pm\pi$. Pada interval terbuka $-\pi<\Omega<\pi$, kosinusnya positif sehingga fase dapat dipilih $-\Omega/2$.
@@ -381,7 +366,6 @@ X(e^{j\Omega})
 \angle X(e^{j\Omega})
 &=-\text{atan2}\bigl(a\sin\Omega,1-a\cos\Omega\bigr).
 \end{aligned}
-\tag{16}
 $$
 
 Untuk $a=1/2$, magnitudo pada nol adalah $1/(1-1/2)=2$ dan pada $\pi$ adalah $1/(1+1/2)=2/3$. Spektrum ini periodik, berbeda dari FT eksponensial kontinu yang magnitudonya terus menurun menuju nol ketika $|\omega|$ membesar.
@@ -406,7 +390,7 @@ phase = np.angle(X)
 phase[magnitude < 1e-10] = np.nan
 ```
 
-Program lengkap [`07_dtft_dua_sampel.py`](../Kode/pertemuan-04/07_dtft_dua_sampel.py) menghasilkan gambar Contoh 6. Elemen matriks pada baris frekuensi $r$ dan kolom waktu $n$ adalah $e^{-j\Omega_r n}$, sehingga perkalian matriks melakukan penjumlahan dalam Persamaan (12).
+Program lengkap [`07_dtft_dua_sampel.py`](../Kode/pertemuan-04/07_dtft_dua_sampel.py) menghasilkan gambar Contoh 6. Elemen matriks pada baris frekuensi $r$ dan kolom waktu $n$ adalah $e^{-j\Omega_r n}$, sehingga perkalian matriks melakukan penjumlahan pada definisi DTFT.
 
 ### FS, FT, DTFT, dan batas cakupan pertemuan ini
 
@@ -435,7 +419,6 @@ X=|X|e^{j\phi},
 |X|=\sqrt{(\text{Re}X)^2+(\text{Im}X)^2},
 \qquad
 \phi=\text{atan2}(\text{Im}X,\text{Re}X).
-\tag{17}
 $$
 
 Fungsi `atan2` mempertahankan informasi kuadran yang dapat hilang jika hanya memakai $\arctan(\text{Im}X/\text{Re}X)$. Di titik spektrum nol, fase tidak terdefinisi walaupun perangkat lunak mungkin mengembalikan angka tertentu.
@@ -450,7 +433,6 @@ $$
 X(-\omega)=X^*(\omega),
 \qquad
 X(e^{-j\Omega})=X^*(e^{j\Omega}).
-\tag{18}
 $$
 
 Karena itu, magnitudo genap dan fase berlawanan tanda modulo $2\pi$ pada frekuensi yang magnitudonya tidak nol. Sifat ini berlaku untuk sinyal real, sehingga tidak boleh langsung diterapkan pada sembarang sinyal kompleks.
@@ -466,13 +448,11 @@ Integral dan penjumlahan dalam definisi transformasi bersifat linear. Jika pasan
 $$
 \alpha x_1(t)+\beta x_2(t)
 \longleftrightarrow\alpha X_1(\omega)+\beta X_2(\omega),
-\tag{19}
 $$
 
 $$
 \alpha x_1[n]+\beta x_2[n]
 \longleftrightarrow\alpha X_1(e^{j\Omega})+\beta X_2(e^{j\Omega}).
-\tag{20}
 $$
 
 Sifat yang sama berlaku pada koefisien FS jika kedua sinyal dinyatakan dengan periode acuan bersama. Misalnya, FT $3e^{-2t}u(t)-e^{-4t}u(t)$ adalah $3/(2+j\omega)-1/(4+j\omega)$.
@@ -487,14 +467,12 @@ Y(\omega)
 &=\int x(v)e^{-j\omega(v+t_0)}\,dv\\
 &=e^{-j\omega t_0}X(\omega).
 \end{aligned}
-\tag{21}
 $$
 
 Pada waktu-diskret, perubahan indeks $m=n-n_0$ memberikan hasil yang serupa. Pergeseran sebanyak $n_0$ sampel harus menggunakan $n_0$ bilangan bulat.
 
 $$
 x[n-n_0]\longleftrightarrow e^{-j\Omega n_0}X(e^{j\Omega}).
-\tag{22}
 $$
 
 Penundaan tidak mengubah magnitudo karena faktor eksponensial mempunyai magnitudo satu. Fase memperoleh tambahan $-\omega t_0$ atau $-\Omega n_0$, sehingga informasi waktu tunda tersimpan dalam fase.
@@ -523,12 +501,10 @@ Perkalian sinyal dengan eksponensial kompleks menggeser spektrumnya. Sifat ini m
 
 $$
 x(t)e^{j\omega_ct}\longleftrightarrow X(\omega-\omega_c),
-\tag{23}
 $$
 
 $$
 x[n]e^{j\Omega_cn}\longleftrightarrow X(e^{j(\Omega-\Omega_c)}).
-\tag{24}
 $$
 
 Jika pengalinya adalah kosinus real, rumus Euler memberi dua salinan spektrum dengan bobot setengah. Pada waktu-kontinu, pasangan modulasinya adalah berikut.
@@ -537,7 +513,6 @@ $$
 x(t)\cos(\omega_ct)
 \longleftrightarrow
 \frac{1}{2}\bigl[X(\omega-\omega_c)+X(\omega+\omega_c)\bigr].
-\tag{25}
 $$
 
 Pada waktu-diskret, rumus yang sama berlaku dengan mengganti $\omega$ oleh $\Omega$ dan membaca semua pergeseran modulo $2\pi$. Untuk modulasi FS oleh $e^{jm\omega_0t}$, koefisien bergeser menjadi $D_k=C_{k-m}$ ketika $m$ bulat.
@@ -568,13 +543,11 @@ Pada pertemuan sebelumnya, keluaran LTI dinyatakan sebagai konvolusi masukan den
 
 $$
 y(t)=x(t)*h(t)\longleftrightarrow Y(\omega)=X(\omega)H(\omega),
-\tag{26}
 $$
 
 $$
 y[n]=x[n]*h[n]\longleftrightarrow
 Y(e^{j\Omega})=X(e^{j\Omega})H(e^{j\Omega}).
-\tag{27}
 $$
 
 Untuk melihat asal rumus waktu-diskret, masukkan definisi konvolusi ke DTFT dan tetapkan $m=n-k$. Jika penjumlahan dapat dipertukarkan, misalnya ketika kedua barisan mutlak terjumlahkan, hasilnya terpisah menjadi dua faktor berikut.
@@ -617,7 +590,6 @@ Pasangan kebalikan teorema konvolusi menyatakan bahwa perkalian dua sinyal dalam
 $$
 x(t)g(t)\longleftrightarrow
 \frac{1}{2\pi}\int_{-\infty}^{\infty}X(\nu)G(\omega-\nu)\,d\nu.
-\tag{28}
 $$
 
 Untuk DTFT, konvolusi dilakukan secara periodik pada frekuensi dalam satu interval sepanjang $2\pi$. Bentuknya adalah berikut, dengan argumen spektrum dipahami modulo $2\pi$.
@@ -625,10 +597,9 @@ Untuk DTFT, konvolusi dilakukan secara periodik pada frekuensi dalam satu interv
 $$
 x[n]g[n]\longleftrightarrow
 \frac{1}{2\pi}\int_{-\pi}^{\pi}X(e^{j\theta})G(e^{j(\Omega-\theta)})\,d\theta.
-\tag{29}
 $$
 
-Modulasi merupakan contoh perkalian waktu ketika salah satu faktor adalah sinusoid. Dengan spektrum sinusoid yang berupa impuls, konvolusi frekuensi menyederhana menjadi salinan spektrum tergeser seperti Persamaan (25).
+Modulasi merupakan contoh perkalian waktu ketika salah satu faktor adalah sinusoid. Dengan spektrum sinusoid yang berupa impuls, konvolusi frekuensi menyederhana menjadi salinan spektrum tergeser seperti rumus modulasi kosinus pada bagian sebelumnya.
 
 ---
 
@@ -645,7 +616,6 @@ y[n]
 &=e^{j\Omega_0n}\sum_kh[k]e^{-j\Omega_0k}\\
 &=H(e^{j\Omega_0})e^{j\Omega_0n}.
 \end{aligned}
-\tag{30}
 $$
 
 Eksponensial kompleks disebut **fungsi eigen sistem LTI** karena bentuk frekuensinya dipertahankan dan hanya dikalikan bilangan kompleks $H(e^{j\Omega_0})$. Sistem LTI stabil BIBO mempunyai $\sum_k|h[k]|<\infty$, sehingga respons frekuensi biasa terdefinisi pada seluruh frekuensi.
@@ -657,10 +627,9 @@ Jika sistem memiliki respons impuls real dan masukannya $A\cos(\Omega_0n+\phi)$,
 $$
 y[n]=A|H(e^{j\Omega_0})|
 \cos\bigl(\Omega_0n+\phi+\angle H(e^{j\Omega_0})\bigr).
-\tag{31}
 $$
 
-Untuk sinusoid yang baru dinyalakan pada $n=0$ dalam sistem kausal dengan kondisi awal nol, keluaran juga dapat memuat transien. Rumus Persamaan (31) menyatakan respons sinusoidal yang telah berlangsung sepanjang waktu atau respons keadaan tunak setelah transien mereda pada sistem stabil.
+Untuk sinusoid yang baru dinyalakan pada $n=0$ dalam sistem kausal dengan kondisi awal nol, keluaran juga dapat memuat transien. Rumus keluaran kosinus di atas menyatakan respons sinusoidal yang telah berlangsung sepanjang waktu atau respons keadaan tunak setelah transien mereda pada sistem stabil.
 
 ### Contoh 11: filter rata-rata dua sampel
 
@@ -669,7 +638,6 @@ Tinjau $y[n]=(x[n]+x[n-1])/2$ dengan respons impuls $h[n]=(\delta[n]+\delta[n-1]
 $$
 H(e^{j\Omega})=\frac{1+e^{-j\Omega}}{2}
 =e^{-j\Omega/2}\cos(\Omega/2).
-\tag{32}
 $$
 
 Pada interval $-\pi<\Omega<\pi$, magnitudonya adalah $\cos(\Omega/2)$ dan fasenya $-\Omega/2$. Frekuensi nol dipertahankan dengan penguatan satu, sedangkan frekuensi $\pi$ ditekan menjadi nol.
@@ -702,12 +670,11 @@ $$
 H(e^{j\Omega})=
 \frac{\sum_{m=0}^{M}b_me^{-j\Omega m}}
 {\sum_{r=0}^{N}a_re^{-j\Omega r}}.
-\tag{33}
 $$
 
 Pembagian berlaku pada frekuensi dengan penyebut tak nol, dan interpretasi respons frekuensi biasa memerlukan keberadaan DTFT respons impuls. Kondisi awal tidak nol dapat memberi respons tambahan, sehingga hubungan $Y=HX$ tidak menyatakan seluruh keluaran untuk sembarang kondisi awal yang dipertahankan.
 
-Sebagai contoh, sistem kausal $y[n]=0.5y[n-1]+x[n]$ dengan kondisi awal nol mempunyai $h[n]=(0.5)^nu[n]$. Respons frekuensinya sama dengan Persamaan (16) untuk $a=0.5$, sehingga penguatan DC dua dan penguatan pada $\pi$ adalah $2/3$.
+Sebagai contoh, sistem kausal $y[n]=0.5y[n-1]+x[n]$ dengan kondisi awal nol mempunyai $h[n]=(0.5)^nu[n]$. Respons frekuensinya adalah $H(e^{j\Omega})=1/(1-0.5e^{-j\Omega})$, sesuai dengan DTFT eksponensial waktu-diskret untuk $a=0.5$, sehingga penguatan DC dua dan penguatan pada $\pi$ adalah $2/3$.
 
 ### Interkoneksi dalam frekuensi
 
