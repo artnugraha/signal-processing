@@ -108,7 +108,7 @@ $$
 
 Jika $f_s=1000$ Hz dan $f=100$ Hz, frekuensi diskretnya adalah $\Omega=0.2\pi$ rad/sampel. Hubungan ini menjelaskan mengapa grafik digital berlabel $\Omega/\pi=0.2$ menunjuk 100 Hz hanya ketika frekuensi samplingnya diketahui.
 
-Buku menggunakan notasi frekuensi sudut yang serupa pada beberapa transformasi. Catatan ini membedakan $\omega$ dan $\Omega$ secara eksplisit, tetapi mempertahankan tanda eksponensial negatif pada transformasi maju dan faktor $1/(2\pi)$ pada invers FT serta DTFT.
+Buku Gunawan-Juwono menggunakan notasi frekuensi sudut yang serupa pada beberapa transformasi. Catatan ini membedakan $\omega$ dan $\Omega$ secara eksplisit, tetapi mempertahankan tanda eksponensial negatif pada transformasi maju dan faktor $1/(2\pi)$ pada invers FT serta DTFT.
 
 ---
 
@@ -129,7 +129,7 @@ $$
 \boxed{C_k=\frac{1}{T_0}\int_{t_a}^{t_a+T_0}x(t)e^{-jk\omega_0t}\,dt}.
 $$
 
-Batas awal $t_a$ boleh dipilih bebas karena integrannya periodik dengan periode $T_0$. Notasi $C_k$ dalam catatan ini setara dengan koefisien yang ditulis sebagai $X[k]$ pada bagian FS buku, tetapi $C_k$ membantu membedakannya dari DTFT.
+Batas awal $t_a$ boleh dipilih bebas karena integrannya periodik dengan periode $T_0$. Notasi $C_k$ dalam catatan ini setara dengan koefisien yang ditulis sebagai $X[k]$ pada bagian FS di buku Gunawan-Juwono, tetapi $C_k$ membantu membedakannya dari DTFT.
 
 ### Mengapa koefisien dapat dipisahkan?
 
