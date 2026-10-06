@@ -126,7 +126,7 @@ $$
 Rumus deret Fourier di atas disebut **sintesis** karena menyusun sinyal dari koefisiennya. Koefisien diperoleh melalui **analisis**, yaitu mengalikan sinyal dengan eksponensial kompleks yang sesuai lalu merata-ratakannya selama satu periode.
 
 $$
-\boxed{C_k=\frac{1}{T_0}\int_{t_a}^{t_a+T_0}x(t)e^{-jk\omega_0t}\,dt}.
+\boxed{C_k=\frac{1}{T_0}\int_{t_a}^{t_a+T_0}x(t)e^{-jk\omega_0t}dt}.
 $$
 
 Batas awal $t_a$ boleh dipilih bebas karena integrannya periodik dengan periode $T_0$. Notasi $C_k$ dalam catatan ini setara dengan koefisien yang ditulis sebagai $X[k]$ pada bagian FS di buku Gunawan-Juwono, tetapi $C_k$ membantu membedakannya dari DTFT.
@@ -136,7 +136,7 @@ Batas awal $t_a$ boleh dipilih bebas karena integrannya periodik dengan periode 
 Eksponensial dengan nomor harmonik yang berbeda bersifat ortogonal selama satu periode. Hal tersebut berarti rata-rata hasil perkaliannya dengan pasangan konjugat bernilai nol, kecuali kedua nomor harmonik sama.
 
 $$
-\frac{1}{T_0}\int_{t_a}^{t_a+T_0}e^{j(k-m)\omega_0t}\,dt
+\frac{1}{T_0}\int_{t_a}^{t_a+T_0}e^{j(k-m)\omega_0t}dt
 =\begin{cases}1,&k=m,\\0,&k\ne m.\end{cases}
 $$
 
@@ -183,12 +183,12 @@ Untuk $k\ne0$, integral hanya memerlukan bagian interval yang pulsanya tidak nol
 $$
 \begin{aligned}
 C_k
-&=\frac{A}{T_0}\int_{-\tau/2}^{\tau/2}e^{-jk\omega_0t}\,dt\\
+&=\frac{A}{T_0}\int_{-\tau/2}^{\tau/2}e^{-jk\omega_0t}dt\\
 &=\frac{2A}{T_0k\omega_0}\sin\left(\frac{k\omega_0\tau}{2}\right)\\
-&=AD\,\text{sinc}(kD),
+&=AD \text{sinc}(kD),
 \end{aligned}
 \qquad
-\text{sinc}(v)=\frac{\sin(\pi v)}{\pi v},\quad\text{sinc}(0)=1.
+\text{sinc}(v)=\frac{\sin(\pi v)}{\pi v},\quad\text{sinc}(0)=1. 
 $$
 
 Untuk $k=0$, integral menjadi luas pulsa dibagi periode, sehingga $C_0=AD$. Rumus sinc juga memberikan nilai yang sama melalui limit pada nol, sehingga dapat dipakai untuk seluruh $k$.
@@ -206,7 +206,7 @@ Untuk sinyal periodik yang cukup teratur, misalnya bagian-bagiannya mulus dengan
 Sinyal periodik tak nol umumnya mempunyai energi total tak berhingga tetapi daya rata-rata berhingga. Dengan normalisasi koefisien FS yang menggunakan faktor $1/T_0$, hubungan Parseval untuk daya adalah sebagai berikut.
 
 $$
-P=\frac{1}{T_0}\int_{t_a}^{t_a+T_0}|x(t)|^2\,dt
+P=\frac{1}{T_0}\int_{t_a}^{t_a+T_0}|x(t)|^2 dt
 =\sum_{k=-\infty}^{\infty}|C_k|^2.
 $$
 
@@ -227,11 +227,11 @@ Secara intuitif, jika satu pulsa dibuat berulang dengan periode yang makin panja
 Dengan frekuensi sudut $\omega$, transformasi maju dan invers menggunakan pasangan berikut. Tanda eksponensial dan faktor normalisasi wajib dipakai secara konsisten.
 
 $$
-\boxed{X(\omega)=\int_{-\infty}^{\infty}x(t)e^{-j\omega t}\,dt},
+\boxed{X(\omega)=\int_{-\infty}^{\infty}x(t)e^{-j\omega t} dt},
 $$
 
 $$
-\boxed{x(t)=\frac{1}{2\pi}\int_{-\infty}^{\infty}X(\omega)e^{j\omega t}\,d\omega}.
+\boxed{x(t)=\frac{1}{2\pi}\int_{-\infty}^{\infty}X(\omega)e^{j\omega t} d\omega}.
 $$
 
 Kita menuliskan pasangan ini sebagai $x(t)\longleftrightarrow X(\omega)$. Apabila amplitudo $x(t)$ mempunyai satuan volt, $X(\omega)$ mempunyai satuan volt-sekon, sehingga nilainya tidak langsung sama dengan amplitudo sebuah kosinus.
@@ -245,9 +245,9 @@ Misalkan $x(t)=A$ untuk $-\tau/2<t<\tau/2$ dan nol di luar interval tersebut. Ka
 $$
 \begin{aligned}
 X(\omega)
-&=A\int_{-\tau/2}^{\tau/2}e^{-j\omega t}\,dt\\
+&=A\int_{-\tau/2}^{\tau/2}e^{-j\omega t} dt\\
 &=\frac{2A\sin(\omega\tau/2)}{\omega}\\
-&=A\tau\,\text{sinc}\left(\frac{\omega\tau}{2\pi}\right).
+&=A\tau \text{sinc}\left(\frac{\omega\tau}{2\pi}\right).
 \end{aligned}
 $$
 
@@ -264,7 +264,7 @@ Untuk $x(t)=e^{-at}u(t)$ dengan $a>0$, unit step membatasi integral menjadi $t\g
 $$
 \begin{aligned}
 X(\omega)
-&=\int_0^\infty e^{-(a+j\omega)t}\,dt\\
+&=\int_0^\infty e^{-(a+j\omega)t} dt\\
 &=\left[-\frac{e^{-(a+j\omega)t}}{a+j\omega}\right]_0^\infty
 =\frac{1}{a+j\omega}.
 \end{aligned}
@@ -310,7 +310,7 @@ $$
 $$
 
 $$
-\boxed{x[n]=\frac{1}{2\pi}\int_{-\pi}^{\pi}X(e^{j\Omega})e^{j\Omega n}\,d\Omega}.
+\boxed{x[n]=\frac{1}{2\pi}\int_{-\pi}^{\pi}X(e^{j\Omega})e^{j\Omega n} d\Omega}.
 $$
 
 Notasi $X(e^{j\Omega})$ lazim digunakan karena kelak DTFT dapat dihubungkan dengan transformasi Z pada lingkaran satuan. Dalam pertemuan ini, cukup membacanya sebagai fungsi kontinu dari frekuensi $\Omega$, tanpa memerlukan transformasi Z.
@@ -464,7 +464,7 @@ Untuk $y(t)=x(t-t_0)$, lakukan substitusi $v=t-t_0$ di integral FT. Faktor yang 
 $$
 \begin{aligned}
 Y(\omega)
-&=\int x(v)e^{-j\omega(v+t_0)}\,dv\\
+&=\int x(v)e^{-j\omega(v+t_0)} dv\\
 &=e^{-j\omega t_0}X(\omega).
 \end{aligned}
 $$
@@ -589,14 +589,14 @@ Pasangan kebalikan teorema konvolusi menyatakan bahwa perkalian dua sinyal dalam
 
 $$
 x(t)g(t)\longleftrightarrow
-\frac{1}{2\pi}\int_{-\infty}^{\infty}X(\nu)G(\omega-\nu)\,d\nu.
+\frac{1}{2\pi}\int_{-\infty}^{\infty}X(\nu)G(\omega-\nu) d\nu.
 $$
 
 Untuk DTFT, konvolusi dilakukan secara periodik pada frekuensi dalam satu interval sepanjang $2\pi$. Bentuknya adalah berikut, dengan argumen spektrum dipahami modulo $2\pi$.
 
 $$
 x[n]g[n]\longleftrightarrow
-\frac{1}{2\pi}\int_{-\pi}^{\pi}X(e^{j\theta})G(e^{j(\Omega-\theta)})\,d\theta.
+\frac{1}{2\pi}\int_{-\pi}^{\pi}X(e^{j\theta})G(e^{j(\Omega-\theta)}) d\theta.
 $$
 
 Modulasi merupakan contoh perkalian waktu ketika salah satu faktor adalah sinusoid. Dengan spektrum sinusoid yang berupa impuls, konvolusi frekuensi menyederhana menjadi salinan spektrum tergeser seperti rumus modulasi kosinus pada bagian sebelumnya.
