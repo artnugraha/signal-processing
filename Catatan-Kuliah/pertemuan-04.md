@@ -216,7 +216,7 @@ Untuk Contoh 2, daya adalah $1+1+1+1/4+1/4=3.5$. Hasil ini juga diperoleh dengan
 
 ## Fourier Transform: spektrum frekuensi kontinu
 
-### Dari harmonik terpisah menuju frekuensi kontinu
+### Tinjauan frekuensi kontinu
 
 FS cocok untuk sinyal yang berulang, tetapi pulsa tunggal tidak mempunyai periode pengulangan. FT memperluas gagasan sintesis menjadi integral atas seluruh frekuensi sehingga tidak harus memakai kelipatan satu frekuensi dasar.
 
