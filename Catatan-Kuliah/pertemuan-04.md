@@ -135,10 +135,16 @@ Batas awal $t_a$ boleh dipilih bebas karena integrannya periodik dengan periode 
 
 Eksponensial dengan nomor harmonik yang berbeda bersifat ortogonal selama satu periode. Hal tersebut berarti rata-rata hasil perkaliannya dengan pasangan konjugat bernilai nol, kecuali kedua nomor harmonik sama.
 
-$$
-\frac{1}{T_0}\int_{t_a}^{t_a+T_0}e^{j(k-m)\omega_0t}dt
-=\begin{cases}1,&k=m,\\0,&k\ne m.\end{cases}
-$$
+```math
+\frac{1}{T_0}
+\int_{t_a}^{t_a+T_0}
+e^{j(k-m)\omega_0t}dt
+=
+\begin{cases}
+1, & k=m, \\
+0, & k\ne m.
+\end{cases}
+```
 
 Untuk $k\ne m$, integralnya proporsional terhadap selisih dua eksponensial yang terpisah sudut $2\pi(k-m)$, sehingga selisih itu nol. Dengan memasukkan deret sintesis Fourier ke dalam integral analisis koefisien, sifat ortogonalitas ini menyisakan tepat koefisien $C_k$.
 
