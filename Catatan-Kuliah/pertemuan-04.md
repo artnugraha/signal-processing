@@ -739,7 +739,7 @@ Uraikan $4\cos(200\pi t+\pi/4)$ menjadi dua eksponensial kompleks dan tentukan f
 
 ### 2. Koefisien FS sinusoid
 
-Tentukan seluruh koefisien FS tak nol untuk $x(t)=2+3\cos(\omega_0t)-2\sin(2\omega_0t)$. Tuliskan magnitudo dan fase setiap koefisien serta hitung daya rata-ratanya menggunakan Parseval.
+Tentukan seluruh koefisien FS tak nol untuk $x(t)=2+3\cos(\omega_0t)-2\sin(2\omega_0t)$. Tuliskan magnitudo dan fase setiap koefisien serta hitung daya rata-ratanya menggunakan hubungan Parseval.
 
 ### 3. FS pulsa periodik
 
