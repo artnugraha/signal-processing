@@ -78,15 +78,14 @@ Jika ada $M$ sampel dan kita memilih $N\geq M$, tambahkan $N-M$ nol di akhir blo
 
 Penambahan nol, atau *zero padding*, membuat kisi frekuensi lebih rapat karena $\Delta\Omega=2\pi/N$. Operasi ini tidak menambah data pengukuran dan tidak mempersempit lobus spektrum yang ditentukan oleh panjang pengamatan; manfaatnya adalah mengambil lebih banyak sampel dari DTFT blok yang sama.
 
-Jika frekuensi sampling diketahui, jarak bin dalam Hz adalah $\Delta f=f_s/N$. Indeks yang melewati setengah spektrum dapat dibaca sebagai frekuensi negatif:
-
-```math
-f_k=
-\begin{cases}
-kf_s/N, & 0\leq k\leq \vert N/2 \vert,\\
-(k-N)f_s/N, & \vert N/2\vert<k<N.
-\end{cases}
-```
+Jika frekuensi sampling diketahui, jarak bin dalam Hz adalah $\Delta f=f_s/N$. Untuk indeks $0 \leq k \leq \lfloor N/2 \rfloor$, frekuensinya adalah:
+$$
+f_k=\frac{kf_s}{N}.
+$$
+Untuk indeks $\lfloor N/2 \rfloor < k < N$, frekuensinya dibaca sebagai frekuensi negatif:
+$$
+f_k=\frac{(k-N)f_s}{N}.
+$$
 
 Untuk $N$ genap, bin $k=N/2$ dapat dilabeli $+f_s/2$ atau $-f_s/2$ karena keduanya ekuivalen setelah sampling. Fungsi `np.fft.fftfreq` menggunakan label negatif untuk bin tersebut.
 
