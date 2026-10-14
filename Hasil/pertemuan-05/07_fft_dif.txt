@@ -1,0 +1,6 @@
+Tahap DIF 0 = [0.+0.j 1.+0.j 2.+0.j 3.+0.j]
+Tahap DIF 1 = [ 2.+0.j  4.+0.j -2.+0.j -0.+2.j]
+Tahap DIF 2 = [ 6.+0.j -2.+0.j -2.+2.j -2.-2.j]
+Keluaran mentah = [ 6.+0.j -2.+0.j -2.+2.j -2.-2.j]
+Setelah penataan ulang = [ 6.+0.j -2.+2.j -2.+0.j -2.-2.j]
+DIF dan FFT NumPy cocok untuk deret kompleks sampai 32 titik.

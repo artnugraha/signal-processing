@@ -1,0 +1,1 @@
+FS dan FT: pulsa lebar 1; DTFT dan DFT: blok {1,0,0,1}.

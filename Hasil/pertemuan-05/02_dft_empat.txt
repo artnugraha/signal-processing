@@ -1,0 +1,4 @@
+Contoh 1, X = [2.+0.j 1.+1.j 0.-0.j 1.-1.j]
+Fase (radian) = [ 0.      0.7854     nan -0.7854]
+Contoh 2, DFT matriks = [ 6.+0.j -2.+2.j -2.-0.j -2.-2.j]
+Ortogonalitas matriks DFT diperiksa.

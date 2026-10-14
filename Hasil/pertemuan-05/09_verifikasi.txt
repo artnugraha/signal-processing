@@ -1,0 +1,8 @@
+N=3: semua sifat DFT, simetri, invers, dan Parseval sesuai.
+N=4: semua sifat DFT, simetri, invers, dan Parseval sesuai.
+N=5: semua sifat DFT, simetri, invers, dan Parseval sesuai.
+N=8: semua sifat DFT, simetri, invers, dan Parseval sesuai.
+N=9: semua sifat DFT, simetri, invers, dan Parseval sesuai.
+N=16: semua sifat DFT, simetri, invers, dan Parseval sesuai.
+Validasi panjang radix-2 sesuai.
+Seluruh pemeriksaan matematis berhasil.

@@ -1,0 +1,5 @@
+IDFT 4 titik = [ 1.-0.j -0.+0.j  0.+0.j  1.+0.j]
+Galat maksimum IFFT = 2.2776579365114115e-16
+IDFT 8 titik = [ 1.-0.j -1.+0.j -1.+0.j -1.+0.j  1.+0.j  1.-0.j  1.+0.j -1.-0.j]
+Galat maksimum IFFT = 1.7415274367059434e-15
+Invers spektrum kompleks Y = [ 1.+0.j  0.+1.j -1.+0.j -0.-1.j]

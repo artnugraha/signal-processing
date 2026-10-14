@@ -1,0 +1,4 @@
+n0=0, y = [0 1 2 3 4 5]
+n0=1, y = [5 0 1 2 3 4]
+n0=4, y = [2 3 4 5 0 1]
+Pergeseran mempertahankan magnitudo DFT.
