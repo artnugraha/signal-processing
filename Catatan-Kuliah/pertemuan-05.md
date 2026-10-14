@@ -912,5 +912,3 @@ Waktu diskret menyebabkan periodisitas spektrum, sedangkan periodisitas waktu me
 3. Oppenheim, A. V. [MIT OpenCourseWare: Computation of the Discrete Fourier Transform, Part 2](https://ocw.mit.edu/courses/res-6-008-digital-signal-processing-spring-2011/resources/lecture-19-computation-of-the-discrete-fourier-transform-part-2/).
 
 4. NumPy. [Discrete Fourier Transform (`numpy.fft`)](https://numpy.org/doc/stable/reference/routines.fft.html), [fungsi FFT](https://numpy.org/doc/stable/reference/generated/numpy.fft.fft.html), dan [fungsi IFFT](https://numpy.org/doc/stable/reference/generated/numpy.fft.ifft.html).
-
-Catatan: Materi dan contoh utama mengikuti bagian buku yang diminta. Notasi dibakukan dengan $W_N=e^{-j2\pi/N}$, pemisahan $\omega$ dan $\Omega$, konjugasi dengan $\ast$, perhitungan fase yang memperhatikan kuadran, serta penjelasan periodisitas dan penambahan nol yang lebih tepat.
