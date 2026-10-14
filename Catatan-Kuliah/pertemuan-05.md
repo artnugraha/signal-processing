@@ -81,9 +81,10 @@ Penambahan nol, atau *zero padding*, membuat kisi frekuensi lebih rapat karena $
 Jika frekuensi sampling diketahui, jarak bin dalam Hz adalah $\Delta f=f_s/N$. Indeks yang melewati setengah spektrum dapat dibaca sebagai frekuensi negatif:
 
 ```math
-f_k=\begin{cases}
-kf_s/N, & 0\leq k\leq \lfloor N/2\rfloor,\\
-(k-N)f_s/N, & \lfloor N/2\rfloor<k<N.
+f_k=
+\begin{cases}
+kf_s/N, & 0\leq k\leq \vert N/2 \vert,\\
+(k-N)f_s/N, & \vert N/2\vert<k<N.
 \end{cases}
 ```
 
