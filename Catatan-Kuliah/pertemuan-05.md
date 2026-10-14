@@ -1,10 +1,6 @@
 # Kuliah 5: DFT, FFT, Invers DFT/FFT, dan Sifat Representasi Fourier
 
-## Tujuan pembelajaran
-
-Pada pertemuan keempat, kita menyatakan sinyal melalui FS, FT, dan DTFT. Pada pertemuan ini, kita mempelajari cara menghitung representasi frekuensi dengan sejumlah data berhingga serta cara mempercepat perhitungannya.
-
-Urutan materi mengikuti bagian buku Gunawan-Juwono yang dipilih, dengan susunan **DFT, FFT, invers DFT/FFT, kemudian rangkuman sifat representasi Fourier**. Contoh utama, metode matriks, pergeseran siklik, konvolusi, serta FFT desimasi dalam waktu dan frekuensi tetap dipertahankan.
+Pada materi kuliah sebelumnya, kita menyatakan sinyal melalui FS, FT, dan DTFT. Kali ini, kita akan mempelajari cara menghitung representasi frekuensi dengan sejumlah data berhingga serta cara mempercepat perhitungannya.
 
 Setelah mengikuti kuliah ini, mahasiswa diharapkan dapat melakukan hal-hal berikut.
 
@@ -16,19 +12,6 @@ Setelah mengikuti kuliah ini, mahasiswa diharapkan dapat melakukan hal-hal berik
 - Membaca pembalikan bit dan operasi dasar *butterfly*.
 - Menghitung IDFT dan memperoleh IFFT melalui FFT.
 - Membedakan sifat domain waktu dan frekuensi pada FS, FT, DTFT, dan DFT.
-
-### Alokasi penyampaian: 90 menit
-
-| Bagian | Waktu | Fokus penyampaian |
-|---|:---:|---|
-| Pengantar dan konvensi | 5 menit | Hubungan dengan DTFT dan notasi. |
-| DFT | 35 menit | Definisi, contoh empat titik, matriks, pergeseran, dan konvolusi. |
-| FFT | 30 menit | Penurunan DIT/DIF, pembalikan bit, dan contoh delapan titik. |
-| IDFT dan IFFT | 10 menit | Rekonstruksi dan penggunaan konjugasi. |
-| Rangkuman representasi Fourier | 7 menit | Perbandingan domain dan normalisasi. |
-| Cek pemahaman | 3 menit | Tiga pertanyaan penghubung. |
-
-Tabel sifat DFT dan simetri dapat digunakan sebagai lembar rujukan, dengan pembuktian sifat pergeseran dan konvolusi dibahas di kelas. Program lengkap serta latihan disediakan untuk kegiatan mandiri setelah kuliah; keluaran program cukup ditunjukkan tanpa membacakan seluruh kode.
 
 ---
 
@@ -144,7 +127,7 @@ print(fase)
 
 ### DFT dalam bentuk matriks
 
-Definisikan vektor kolom $\mathbf{x}$ dan $\mathbf{X}$ dari sampel waktu dan frekuensi. Dengan elemen matriks $[\mathbf{D}_N]_{k,n}=W_N^{kn}$, definisi DFT dapat ditulis sebagai berikut.
+Definisikan vektor kolom $\mathbf{x}$ dan $\mathbf{X}$ dari sampel waktu dan frekuensi. Dengan elemen matriks $`[\mathbf{D}_N]_{k,n}=W_N^{kn}`$, definisi DFT dapat ditulis sebagai berikut.
 
 $$
 \mathbf{X}=\mathbf{D}_N\mathbf{x},\qquad
@@ -170,7 +153,7 @@ Superskrip $H$ berarti transpose-konjugat. Karena matriks DFT simetris, transpos
 
 Ambil $x[n]=\{0,1,2,3\}$ dengan $W_4=-j$. Pangkat-pangkatnya adalah $1,-j,-1,j$, kemudian berulang, sehingga matriks dan hasil perkaliannya menjadi:
 
-$$
+```math
 \mathbf{X}=
 \begin{bmatrix}
 1&1&1&1\\
@@ -178,8 +161,13 @@ $$
 1&-1&1&-1\\
 1&j&-1&-j
 \end{bmatrix}
-\begin{bmatrix}0\\1\\2\\3\end{bmatrix}.
-$$
+\begin{bmatrix}
+0\\
+1\\
+2\\
+3
+\end{bmatrix}.
+```
 
 Setiap baris memberikan satu nilai DFT. Perhitungan lengkapnya adalah:
 
@@ -532,12 +520,12 @@ Setiap pasangan menggunakan rumus $a+w b$ dan $a-w b$. Semua keluaran diperoleh 
 
 Tuliskan hasil dalam urutan $k=0,\ldots,7$, bukan urutan pasangan pada baris tabel. Secara numerik, hasilnya adalah:
 
-$$
+```math
 \begin{aligned}
 X=\{&0,\ -1.4142+3.4142j,\ 2-2j,\ 1.4142-0.5858j,\\
 &4,\ 1.4142+0.5858j,\ 2+2j,\ -1.4142-3.4142j\}.
 \end{aligned}
-$$
+```
 
 Komponen DC adalah nol karena jumlah sampel masukan nol. Karena semua sampel real, pasangan $X[1],X[7]$, $X[2],X[6]$, dan $X[3],X[5]$ juga harus saling konjugat.
 
