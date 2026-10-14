@@ -60,7 +60,7 @@ Garis kontinu pada gambar adalah DTFT blok $\{1,0,0,1\}$. Titik-titik menunjukka
 
 ### Pembacaan sebagai satu periode
 
-Blok yang sama juga dapat dibaca sebagai satu periode dari barisan periodik $\tilde{x}[n]=x[(n)_N]$. Pembacaan ini menjelaskan penggunaan indeks modulo dan konvolusi siklik dalam DFT, tanpa mengharuskan sinyal pengukuran semula benar-benar periodik.
+Blok yang sama juga dapat dibaca sebagai satu periode dari barisan periodik $`\tilde{x}[n] = x[(n)_N]`$. Pembacaan ini menjelaskan penggunaan indeks modulo dan konvolusi siklik dalam DFT, tanpa mengharuskan sinyal pengukuran semula benar-benar periodik.
 
 Untuk barisan periodik tersebut, koefisien DTFS dengan normalisasi analisis $1/N$ adalah $c[k]=X[k]/N$. Maka sintesis satu periodenya memberikan pasangan invers:
 
