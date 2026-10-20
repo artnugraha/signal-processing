@@ -876,21 +876,6 @@ Bangkitkan $x[n]=\cos(2\pi\cdot50n/f_s)+0.5\cos(2\pi\cdot120n/f_s)$ dengan $f_s=
 
 ---
 
-## Menjalankan program dalam paket
-
-Direktori paket mengikuti susunan repositori: catatan berada di `Catatan-Kuliah`, program di `Kode/pertemuan-05`, gambar di `Gambar/pertemuan-05`, dan keluaran teks di `Hasil/pertemuan-05`. Semua gambar pada catatan dihasilkan oleh program yang disertakan dan dapat dibuat ulang.
-
-Dari direktori utama paket, jalankan perintah berikut. Program `jalankan_semua.py` menjalankan seluruh demo, menyimpan keluaran setiap program, dan berhenti jika suatu pemeriksaan gagal.
-
-```bash
-python -m pip install -r requirements.txt
-python Kode/pertemuan-05/jalankan_semua.py
-```
-
-Untuk menjalankan satu demo, gunakan misalnya `python Kode/pertemuan-05/06_fft_contoh.py`. Seluruh program membutuhkan NumPy dan Matplotlib; fungsi dasar transformasi juga ditulis sendiri agar dapat dipelajari tanpa menganggap FFT sebagai operasi yang tidak terlihat langkahnya.
-
----
-
 ## Rangkuman
 
 DFT mengambil $N$ sampel frekuensi dari DTFT suatu blok dan dapat dibaca sebagai representasi satu periode. Pembacaan periodik ini menyebabkan pergeseran serta konvolusi DFT bersifat siklik.
