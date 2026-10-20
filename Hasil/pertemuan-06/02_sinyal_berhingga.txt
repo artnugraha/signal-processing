@@ -1,0 +1,1 @@
+Polinomial dua sisi, pergeseran, dan pemotongan satu sisi diperiksa.

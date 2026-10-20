@@ -1,0 +1,3 @@
+Koefisien sisi kanan: [1.       +0.j 1.5      +0.j 1.75     +0.j 1.875    +0.j 1.9375   +0.j
+ 1.96875  +0.j 1.984375 +0.j 1.9921875+0.j]
+Koefisien pangkat positif z: [  0.+0.j   0.+0.j   2.+0.j   6.+0.j  14.+0.j  30.+0.j  62.+0.j 126.+0.j]

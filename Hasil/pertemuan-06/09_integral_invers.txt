@@ -1,0 +1,2 @@
+Galat maksimum integral invers: 5.551336578972477e-16
+Tiga radius kontur di dalam ROC memberikan hasil yang sama.

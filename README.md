@@ -22,7 +22,7 @@ Pustaka `scipy` akan digunakan pada beberapa bagian tertentu ketika diperlukan.
 | 3 | 🧩 Konvolusi, Korelasi, dan Interkoneksi Sistem LTI | [Materi 3](Catatan-Kuliah/pertemuan-03.md) |
 | 4 | 🌊 Representasi Fourier: FS, FT, dan DTFT | [Materi 4](Catatan-Kuliah/pertemuan-04.md) |
 | 5 | ⚡ DFT, FFT, dan Analisis Spektrum Numerik | [Materi 5](Catatan-Kuliah/pertemuan-05.md) |
-| 6 | 🌀 Transformasi Z, Fungsi Sistem, dan Pole-Zero | Menyusul |
+| 6 | 🌀 Transformasi Z, Fungsi Sistem, dan Pole-Zero | [Materi 6](Catatan-Kuliah/pertemuan-06.md) |
 | 7 | 🧱 Filter Digital FIR | Menyusul |
 | 8 | 🔄 Filter Digital IIR | Menyusul |
 | 9 | 📊 Analisis Spektral Sinyal Pengukuran dan Sinyal Tidak Stasioner | Menyusul |

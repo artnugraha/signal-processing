@@ -1,0 +1,4 @@
+Seluruh pasangan pada tabel yang diuji sesuai.
+Integral domain Z dari perkalian dua eksponensial sesuai.
+Respons keadaan nol dan kontribusi keadaan awal sesuai.
+SEMUA PEMERIKSAAN BERHASIL.
