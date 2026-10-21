@@ -82,7 +82,7 @@ Jika ada $M$ sampel dan kita memilih $N\geq M$, tambahkan $N-M$ nol di akhir blo
 
 Penambahan nol, atau *zero padding*, membuat kisi frekuensi lebih rapat karena $\Delta\Omega=2\pi/N$. Operasi ini tidak menambah data pengukuran dan tidak mempersempit lobus spektrum yang ditentukan oleh panjang pengamatan; manfaatnya adalah mengambil lebih banyak sampel dari DTFT blok yang sama.
 
-Jika frekuensi sampling diketahui, jarak bin dalam Hz adalah $\Delta f=f_s/N$. Untuk indeks $0 \leq k \leq \lfloor N/2 \rfloor$, frekuensinya adalah:
+Jika frekuensi sampling diketahui, jarak 'bin' (selang atau interval tertentu) dalam Hz adalah $\Delta f=f_s/N$. Untuk indeks $0 \leq k \leq \lfloor N/2 \rfloor$, frekuensinya adalah:
 ```math
 f_k=\frac{kf_s}{N}.
 ```
