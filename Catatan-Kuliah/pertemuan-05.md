@@ -293,30 +293,7 @@ Jika $x[n]$ real, $x^{\ast}[n]=x[n]$, sehingga $X[k]=X^{\ast}[(-k)_N]$. Akibatny
 
 Pada sinyal real, bagian genap siklik $x_e[n]=(x[n]+x[(-n)_N])/2$ mempunyai DFT $\text{Re}\{X[k]\}$. Bagian ganjil siklik $x_o[n]=(x[n]-x[(-n)_N])/2$ mempunyai DFT $j\text{Im}\{X[k]\}$.
 
-Bin DC selalu real, dan untuk $N$ genap bin $N/2$ juga real karena masing-masing berpasangan dengan dirinya sendiri. Pada Contoh 1, $X[3]=X^{\ast}[1]$ dan $X[0],X[2]$ real, sesuai hubungan ini.
-
-### Konvolusi siklik melalui DFT
-
-Definisi konvolusi siklik adalah penjumlahan sepanjang satu blok dengan indeks kedua dibaca modulo $N$. Bentuknya berbeda dari konvolusi linear yang hasilnya dapat lebih panjang daripada masing-masing masukan.
-
-$$
-y_c[n]=\sum_{m=0}^{N-1}x[m]h[(n-m)_N].
-$$
-
-Ambil DFT kedua sisi dan tukarkan dua jumlah berhingga. Dengan $r=(n-m)_N$, kita memperoleh penurunan berikut.
-
-$$
-\begin{aligned}
-Y_c[k]
-&=\sum_{n=0}^{N-1}\sum_{m=0}^{N-1}x[m]h[(n-m)_N]W_N^{kn}\\
-&=\sum_{m=0}^{N-1}x[m]\sum_{r=0}^{N-1}h[r]W_N^{k(r+m)}\\
-&=\left(\sum_{m=0}^{N-1}x[m]W_N^{km}\right)
-\left(\sum_{r=0}^{N-1}h[r]W_N^{kr}\right)\\
-&=X[k]H[k].
-\end{aligned}
-$$
-
-Jadi, IDFT dari $X[k]H[k]$ menghasilkan konvolusi siklik sepanjang $N$. Untuk memperoleh konvolusi linear, panjang transformasi harus dipilih agar tidak ada sampel hasil yang terlipat.
+Bin sinyal DC selalu real, dan untuk $N$ genap bin $N/2$ juga real karena masing-masing berpasangan dengan dirinya sendiri. Pada Contoh 1, $X[3]=X^{\ast}[1]$ dan $X[0],X[2]$ real, sesuai hubungan ini.
 
 ### Konvolusi linear melalui penambahan nol
 
@@ -382,6 +359,29 @@ y = np.fft.ifft(np.fft.fft(x, P)*np.fft.fft(h, P))
 assert np.allclose(y, np.convolve(x, h))
 print(np.round(y.real, 6))
 ```
+
+### Pengayaan: Konvolusi siklik melalui DFT
+
+Definisi konvolusi siklik adalah penjumlahan sepanjang satu blok dengan indeks kedua dibaca modulo $N$. Bentuknya berbeda dari konvolusi linear yang hasilnya dapat lebih panjang daripada masing-masing masukan.
+
+$$
+y_c[n]=\sum_{m=0}^{N-1}x[m]h[(n-m)_N].
+$$
+
+Ambil DFT kedua sisi dan tukarkan dua jumlah berhingga. Dengan $r=(n-m)_N$, kita memperoleh penurunan berikut.
+
+$$
+\begin{aligned}
+Y_c[k]
+&=\sum_{n=0}^{N-1}\sum_{m=0}^{N-1}x[m]h[(n-m)_N]W_N^{kn}\\
+&=\sum_{m=0}^{N-1}x[m]\sum_{r=0}^{N-1}h[r]W_N^{k(r+m)}\\
+&=\left(\sum_{m=0}^{N-1}x[m]W_N^{km}\right)
+\left(\sum_{r=0}^{N-1}h[r]W_N^{kr}\right)\\
+&=X[k]H[k].
+\end{aligned}
+$$
+
+Jadi, IDFT dari $X[k]H[k]$ menghasilkan konvolusi siklik sepanjang $N$. Untuk memperoleh konvolusi linear, panjang transformasi harus dipilih agar tidak ada sampel hasil yang terlipat.
 
 ### Contoh 5: konvolusi siklik empat titik
 
