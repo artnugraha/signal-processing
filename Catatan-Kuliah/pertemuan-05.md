@@ -137,10 +137,11 @@ $$
 \mathbf{X}=\mathbf{D}_N\mathbf{x},\qquad
 \mathbf{D}_N=
 \begin{bmatrix}
-1&1&\cdots&1\\
-1&W_N&\cdots&W_N^{N-1}\\
-\vdots&\vdots&\ddots&\vdots\\
-1&W_N^{N-1}&\cdots&W_N^{(N-1)^2}
+1&1&1&\cdots&1\\
+1&W_N^1&W_N^2&\cdots&W_N^{N-1}\\
+1&W_N^2&W_N^4&\cdots&W_N^{2{N-1}}\\
+\vdots&\vdots&\vdots&\ddots&\vdots\\
+1&W_N^{N-1}&W_N^{2(N-1)}&\cdots&W_N^{(N-1)(N-1)}
 \end{bmatrix}.
 $$
 
