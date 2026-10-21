@@ -110,7 +110,7 @@ Gunakan nilai eksponensial pada kelipatan $\pi/2$, lalu hitung setiap indeks. Ti
 | 2 | $-1$ | 0 | 0 | Tidak terdefinisi |
 | 3 | $-j$ | $1-j$ | $\sqrt2$ | $-\pi/4$ |
 
-Dengan demikian, $X[k]=\{2,1+j,0,1-j\}$. Komponen DC $X[0]=2$ adalah jumlah sampel, sedangkan rata-rata satu blok adalah $X[0]/4=1/2$.
+Dengan demikian, $X[k]=\{2,1+j,0,1-j\}$. 
 
 Untuk $z=a+jb$, magnitudo adalah $\sqrt{a^2+b^2}$ dan fase dihitung menggunakan $\text{atan2}(b,a)$. Bentuk $\arctan(b/a)$ saja tidak selalu memilih kuadran yang benar, dan fase tidak terdefinisi apabila magnitudo nol.
 
