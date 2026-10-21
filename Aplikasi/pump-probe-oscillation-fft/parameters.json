@@ -1,0 +1,26 @@
+{
+  "description": "Data sintetis pedagogis differential reflectance; bukan material tertentu.",
+  "dt_ps": 0.005,
+  "delay_min_ps": -1.0,
+  "delay_max_ps": 12.0,
+  "seed": 20261021,
+  "irf_fwhm_ps": 0.04,
+  "background_amplitude": 0.0008,
+  "background_tau_ps": 4.5,
+  "offset": 2e-05,
+  "noise_std": 2e-05,
+  "modes": [
+    {
+      "frequency_THz": 2.2,
+      "amplitude": 0.001,
+      "tau_ps": 4.0,
+      "phase_rad": 0.2
+    },
+    {
+      "frequency_THz": 4.1,
+      "amplitude": 0.00075,
+      "tau_ps": 3.0,
+      "phase_rad": -0.65
+    }
+  ]
+}
