@@ -299,7 +299,9 @@ Bin sinyal DC selalu real, dan untuk $N$ genap bin $N/2$ juga real karena masing
 
 Jika panjang masukan adalah $L_x$ dan $L_h$, hasil konvolusi linear memiliki paling banyak $L_x+L_h-1$ sampel. Pilih panjang transformasi $P\geq L_x+L_h-1$ dan tambahkan nol pada kedua masukan sampai panjangnya sama-sama $P$.
 
-Langkah perhitungannya berurutan sebagai berikut. Panjang $P$ boleh tepat pada batas tersebut atau lebih besar, misalnya agar cocok dengan FFT radix-2.
+Langkah perhitungannya berurutan sebagai berikut. Panjang $P$ boleh tepat pada batas tersebut atau lebih besar (misalnya agar cocok dengan fast Fourier transform FFT radix-2 yang dibahas belakangan).
+
+Perhitungan DFT konvolusi linear pada dasarnya sebagai berikut:
 
 1. Tambahkan nol pada $x[n]$ dan $h[n]$ sampai panjang $P$.
 2. Hitung $X_P[k]$ dan $H_P[k]$ dengan DFT $P$ titik.
