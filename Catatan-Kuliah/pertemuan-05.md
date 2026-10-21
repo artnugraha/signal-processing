@@ -823,7 +823,7 @@ Hitung konvolusi siklik empat titik dari $x=\{1,2,0,1\}$ dan $h=\{1,-1,0,0\}$ se
 
 ### 6. Konvolusi linear dengan DFT
 
-Untuk $x=\{1,2,3\}$ dan $h=\{1,1,1\}$, tentukan panjang DFT minimum dan hitung keluaran linear secara manual. Jika justru dipakai DFT empat titik, tentukan hasil konvolusi sikliknya melalui pelipatan keluaran linear.
+Untuk $x=\{1,2,3\}$ dan $h=\{1,1,1\}$, tentukan panjang DFT minimum dan hitung keluaran linear secara manual. 
 
 ### 7. FFT DIT delapan titik
 
