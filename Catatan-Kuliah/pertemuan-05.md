@@ -206,8 +206,10 @@ print(np.round(X, 6))
 Pergeseran linear dapat memindahkan sampel keluar dari blok, sedangkan pergeseran siklik mengembalikannya melalui indeks modulo. Untuk penundaan $n_0$ dalam blok sepanjang $N$, definisinya adalah:
 
 $$
-x_s[n]=x[(n-n_0)_N],\qquad 0\leq n<N.
+x_s[n]=x[(n-n_0)_N],\qquad 0\leq n<N ,
 $$
+
+dengan notasi $(n-n_0)_N$ di sini bermakna $n-n_0$ mod $N$. (Perlu diperhatikan bahwa buku Gunawan-Juwono menggunakan notasi $\langle n-n_0\rangle_N$)
 
 Sebagai contoh, $(-1)_6=5$, sehingga sampel terakhir menjadi sampel pertama ketika suatu blok enam titik digeser satu sampel ke kanan. Pergeseran kanan satu sampel juga sama dengan pergeseran kiri lima sampel.
 
