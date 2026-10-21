@@ -49,8 +49,9 @@ Pilih $N$ frekuensi yang berjarak sama dalam satu periode spektrum, yaitu $\Omeg
 $$
 \boxed{X[k]=\sum_{n=0}^{N-1}x[n]e^{-j2\pi kn/N}
 =\sum_{n=0}^{N-1}x[n]W_N^{kn}},
-\qquad k=0,1,\ldots,N-1.
+\qquad k=0,1,\ldots,N-1,
 $$
+dengan $W_N = e^{-j2\pi/N}$ dan $W_N^{kn} = e^{-j2\pi k n/N}$
 
 Jadi, $X[k]=X(e^{j\Omega_k})$ untuk blok berhingga yang sama. DFT mempunyai $N$ nilai kompleks, sedangkan DTFT tetap berupa fungsi kontinu dan periodik terhadap $\Omega$.
 
