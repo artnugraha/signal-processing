@@ -803,7 +803,7 @@ Gunakan tiga pertanyaan ini pada akhir kuliah, masing-masing dengan satu alasan 
 
 ### 1. DFT empat titik
 
-Diberikan $x[n]=\{0,1,1,0\}$. Hitung keempat nilai DFT, magnitudo dan fase pada bin yang tidak nol, lalu periksa hubungan konjugat untuk sinyal real.
+Diberikan $x[n]=\{0,1,1,0\}$. Hitung keempat nilai DFT, magnitudo, dan fasenya.
 
 ### 2. Matriks DFT
 
