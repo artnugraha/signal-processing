@@ -22,7 +22,7 @@ E=\sum_{n=0}^{N-1}|x[n]|^2
 =\frac{1}{N}\sum_{k=0}^{N-1}|X[k]|^2.
 $$
 
-Semua fase dinyatakan modulo $2\pi$ dan fase pada bin bernilai nol tidak terdefinisi. FFT menghitung DFT yang sama dengan algoritme lebih efisien; FFT bukan representasi frekuensi yang berbeda.
+Semua fase dinyatakan dalam modulo $2\pi$, sedangkan fase pada bin bernilai nol tidak terdefinisi. FFT menghitung DFT yang sama dengan algoritma lebih efisien. FFT bukan representasi frekuensi yang berbeda.
 
 ---
 
@@ -453,7 +453,7 @@ Hitung FFT DIT $x=\{1,1,1,1,0,0,0,0\}$ dengan tiga tahap butterfly. Tuliskan uru
 
 ### Penyelesaian
 
-**Langkah 1: tetapkan bentuk algoritme.** Kita menggunakan DIT iteratif radix-2 dengan masukan dalam urutan bit terbalik dan keluaran akhir dalam urutan frekuensi biasa. Karena $N=8=2^3$, diperlukan tiga tahap dengan panjang blok berturut-turut $L=2,4,8$.
+**Langkah 1: tetapkan bentuk algoritma.** Kita menggunakan DIT iteratif radix-2 dengan masukan dalam urutan bit terbalik dan keluaran akhir dalam urutan frekuensi biasa. Karena $N=8=2^3$, diperlukan tiga tahap dengan panjang blok berturut-turut $L=2,4,8$.
 
 Satu butterfly pada blok panjang $L$ mengubah pasangan $(a,b)$ menjadi
 
