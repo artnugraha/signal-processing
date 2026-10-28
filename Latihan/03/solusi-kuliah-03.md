@@ -487,9 +487,9 @@ $$
 
 Dengan urutan *lag* $-2,-1,0,1,2$, hasil lengkapnya adalah
 
-$$
+```math
 \boxed{r_{xx}(j)=\left\{\frac{2}{3},-1,2,-1,\frac{2}{3}\right\}.}
-$$
+```
 
 **Langkah 3: periksa nilai maksimum.** Pada *lag* nol, setiap sampel dikalikan dengan dirinya sendiri. Nilainya $r_{xx}(0)=2$, lebih besar daripada $-1$ dan $2/3$, sehingga maksimum terjadi pada $j=0$.
 
