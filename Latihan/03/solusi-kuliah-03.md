@@ -432,9 +432,9 @@ $$
 
 Urutan hasilnya, dengan *lag* berturut-turut $-4,-3,\ldots,4$, adalah
 
-$$
+```math
 \boxed{\left\{0,\frac{1}{5},0,\frac{4}{5},0,1,0,\frac{2}{5},0\right\}.}
-$$
+```
 
 Di luar rentang $-4\leq j\leq4$, kedua rekaman tidak bertumpang tindih dan korelasinya nol. Nilai maksimum adalah
 
