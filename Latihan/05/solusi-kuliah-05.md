@@ -86,7 +86,7 @@ Bentuk matriks DFT empat titik dan gunakan untuk menghitung DFT $x[n]=\{1,2,1,0\
 
 **Langkah 1: bentuk matriksnya.** Pada $N=4$, setiap elemen baris $k$ dan kolom $n$ bernilai $W_4^{kn}$, dengan $W_4=-j$. Vektor frekuensi diperoleh dengan perkalian
 
-$$
+```math
 \begin{bmatrix}X[0]\\X[1]\\X[2]\\X[3]\end{bmatrix}
 =
 \begin{bmatrix}
@@ -96,7 +96,7 @@ $$
 1&j&-1&-j
 \end{bmatrix}
 \begin{bmatrix}1\\2\\1\\0\end{bmatrix}.
-$$
+```
 
 **Langkah 2: hitung hasil setiap baris.** Perkalian matriks memberikan empat penjumlahan berikut:
 
