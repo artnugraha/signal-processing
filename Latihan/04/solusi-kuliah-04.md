@@ -356,11 +356,11 @@ Hasilnya dirangkum berikut. Fase pada $\omega=3$ negatif karena bagian imajiner 
 
 **Langkah 4: periksa simetri konjugat.** Mengganti $\omega$ dengan $-\omega$ menghasilkan
 
-$$
+```math
 X(-\omega)=\frac{2}{3-j\omega}
 =\left(\frac{2}{3+j\omega}\right)^{*}
 =X^{*}(\omega).
-$$
+```
 
 Jadi, simetri konjugat terpenuhi, sesuai sifat FT sinyal real. Sebagai contoh, $X(-3)=(1+j)/3$ adalah konjugat $X(3)$. Magnitudo genap terhadap frekuensi, sedangkan fase pada cabang yang dipakai di sini bersifat ganjil.
 
