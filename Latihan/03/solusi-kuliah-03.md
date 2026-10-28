@@ -250,9 +250,9 @@ $$
 
 Dengan demikian, kedua pengelompokan menghasilkan nilai yang sama pada setiap indeks:
 
-$$
+```math
 \boxed{(h_1*h_2)*h_3=h_1*(h_2*h_3)=\{1,2,-1,-2\}.}
-$$
+```
 
 Perhitungan ini memverifikasi sifat asosiatif untuk barisan pada soal. Dalam hubungan tiga sistem seri, kita dapat menggabungkan dua blok pertama atau dua blok terakhir terlebih dahulu tanpa mengubah respons impuls total.
 
