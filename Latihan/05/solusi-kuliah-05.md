@@ -36,7 +36,7 @@ Diberikan $x[n]=\{0,1,1,0\}$. Hitung keempat nilai DFT, magnitudo, dan fasenya.
 
 **Langkah 1: tentukan faktor DFT.** Panjang blok adalah $N=4$, sehingga $W_4=e^{-j\pi/2}=-j$. Pangkat-pangkatnya berulang sebagai $1,-j,-1,j$.
 
-Hanya $x[1]=1$ dan $x[2]=1$ yang tidak nol. Maka definisi DFT menyederhana menjadi
+Hanya $x[1]=1$ dan $x[2]=1$ yang tidak nol. Maka definisi DFT dapat disederhanakan menjadi
 
 $$
 X[k]=W_4^k+W_4^{2k}.
@@ -330,7 +330,7 @@ Y_c[3]&=(1+j)(1-j)=2.
 \end{aligned}
 $$
 
-Dengan $Y_c=\{0,2,-4,2\}$, rumus IDFT menyederhana menjadi
+Dengan $Y_c=\{0,2,-4,2\}$, rumus IDFT dapat disederhanakan menjadi
 
 $$
 y_c[n]=\frac{1}{4}\left[2j^n-4(-1)^n+2(-j)^n\right].
