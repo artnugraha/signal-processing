@@ -551,9 +551,9 @@ Tuliskan hasil dalam urutan $k=0,1,\ldots,7$, bukan menurut urutan pasangan pada
 
 **Pemeriksaan DC dan simetri.** Komponen DC harus sama dengan jumlah masukan, yaitu $X[0]=1+1+1+1=4$. Karena masukan real, berlaku
 
-$$
+```math
 X[7]=X^{*}[1],\qquad X[6]=X^{*}[2]=0,\qquad X[5]=X^{*}[3].
-$$
+```
 
 Bin yang berpasangan dengan dirinya sendiri, yaitu $X[0]$ dan $X[4]$, juga real. Semua hasil di atas memenuhi pemeriksaan tersebut.
 
@@ -684,20 +684,20 @@ $$
 
 **Langkah 3: periksa invers $Y$ melalui FFT maju.** Identitas yang dipakai adalah
 
-$$
+```math
 \text{IFFT}(Y)=\frac{1}{4}\left(\text{FFT}(Y^{*})\right)^{*}.
-$$
+```
 
 Urutan perhitungannya dapat ditulis lengkap sebagai berikut. Konjugasi pertama tidak mengubah angka pada soal karena seluruh elemen $Y$ real.
 
-$$
+```math
 \begin{aligned}
 Y^{*}&=\{0,4,0,0\},\\
 B=\text{FFT}(Y^{*})&=\{4,-4j,-4,4j\},\\
 B^{*}&=\{4,4j,-4,-4j\},\\
 \frac{B^{*}}{4}&=\{1,j,-1,-j\}.
 \end{aligned}
-$$
+```
 
 Pada langkah FFT, hanya sampel indeks satu yang tidak nol, sehingga $B[n]=4W_4^n$. Konjugasi kedua membalik tanda bagian imajiner, dan pembagian dengan empat mengembalikan normalisasi IDFT.
 
