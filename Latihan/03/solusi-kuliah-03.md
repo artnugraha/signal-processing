@@ -291,7 +291,7 @@ Maka satu periode keluarannya adalah $\{-1,5,3,5\}$. Jika dipandang sebagai bari
 
 **Cara kedua: matriks sirkulan.** Elemen baris $n$ dan kolom $k$ pada matriks adalah $h[(n-k)\bmod4]$. Dengan urutan indeks yang sama seperti tabel, kita memperoleh
 
-$$
+```math
 \begin{bmatrix}
 y_c[0]\\y_c[1]\\y_c[2]\\y_c[3]
 \end{bmatrix}
@@ -305,7 +305,7 @@ y_c[0]\\y_c[1]\\y_c[2]\\y_c[3]
 \begin{bmatrix}2\\1\\0\\3\end{bmatrix}
 =
 \begin{bmatrix}-1\\5\\3\\5\end{bmatrix}.
-$$
+```
 
 Setiap baris perkalian matriks tepat sama dengan satu perhitungan pergeseran siklik. Jadi, kedua metode memberikan
 
