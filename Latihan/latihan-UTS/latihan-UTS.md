@@ -427,7 +427,7 @@ Dengan konvensi di atas, DFT satu periode memenuhi $X[k]=Nc[k]$. Jadi, DTFS dan 
 
 #### Soal
 
-Suatu sinyal sinus $x(t)=0{,}1\sin(200\pi t)$. Bila sinyal itu akan disampling, agar tidak terjadi aliasing, frekuensi samplingnya paling sedikit:
+Suatu sinyal sinus $x(t)=0.1\sin(200\pi t)$. Bila sinyal itu akan disampling, agar tidak terjadi aliasing, frekuensi samplingnya paling sedikit:
 
 - A. 100 Hz.
 - B. 300 Hz.
@@ -451,7 +451,7 @@ $$
 f_{\text{Nyquist}}=2f_{\max}=2(100)=200\text{ Hz}.
 $$
 
-Apabila soal hanya menanyakan **laju Nyquist**, jawabannya adalah **C, 200 Hz**. Ini kemungkinan hasil yang dimaksud pembuat soal.
+Apabila soal hanya menanyakan **laju Nyquist**, jawabannya adalah **200 Hz**.
 
 **Langkah 3: periksa apa yang benar-benar terjadi pada batas itu.** Dengan $f_s=200$ Hz, $T_s=1/200$ s. Sampelnya menjadi:
 
@@ -478,9 +478,7 @@ $$
 
 yang mempunyai pola $0$, $0{,}1\sqrt3/2$, $-0{,}1\sqrt3/2$, lalu berulang.
 
-**Kesimpulan jawaban:** secara ketat untuk sinus yang tertulis, **B, 300 Hz** adalah pilihan sampling terkecil yang aman. **C, 200 Hz** benar sebagai *laju Nyquist*, tetapi berada tepat pada batas dan menghasilkan sampel nol pada sinyal ini. Soal sebaiknya diperjelas menjadi “hitung laju Nyquist” jika kunci yang diinginkan adalah C.
-
-Perlu dibedakan pula: laju Nyquist suatu sinyal adalah $2f_{\max}$, sedangkan frekuensi Nyquist sebuah sampler adalah $f_s/2$.
+**Kesimpulan jawaban:** secara ketat untuk sinus yang tertulis, **B, 300 Hz** adalah pilihan sampling terkecil yang aman. Sementara itu, **C, 200 Hz** benar sebagai *laju Nyquist*, tetapi berada tepat pada batas dan menghasilkan sampel nol pada sinyal ini. 
 
 ![Sampling sinus 100 Hz pada 200 Hz dan 300 Hz](gambar/04-batas-sampling.png)
 
