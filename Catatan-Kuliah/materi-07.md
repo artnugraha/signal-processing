@@ -120,7 +120,7 @@ Pada $0<\Omega<\pi$, $\theta=\pi/2-\Omega/2$. Di $\Omega=\pi/2$ diperoleh $\thet
 
 ---
 
-## Dari kebutuhan pengukuran ke spesifikasi filter
+## Spesifikasi filter berdasarkan kebutuhan pengukuran
 
 Pada setengah spektrum positif, **lowpass** meloloskan frekuensi rendah, **highpass** frekuensi tinggi, **bandpass** satu pita di antaranya, dan **bandstop** menolak satu pita di antaranya. Dalam rancangan nyata, batas daerah lolos dan batas daerah henti dipisahkan oleh **pita transisi**. Di sana tidak ditentukan batas riak kecuali jika spesifikasi menyatakannya.
 
