@@ -7,7 +7,7 @@ Setelah mengikuti kuliah ini, mahasiswa diharapkan dapat:
 - menghitung keluaran filter FIR dan menjelaskan hubungan antara koefisien, fungsi sistem, dan respons frekuensi;
 - membedakan tunda fase dan tunda kelompok serta memilih satu dari empat tipe FIR fase linear;
 - menerjemahkan kebutuhan dalam Hz dan dB menjadi tepi pita serta toleransi amplitudo;
-- menghitung koefisien dengan metode jendela, menjelaskan prinsip desain optimal, dan merancang filter kecil dengan IDFT;
+- menghitung koefisien dengan metode jendela (*window*), menjelaskan prinsip desain optimal, dan merancang filter kecil dengan IDFT;
 - mengubah lowpass menjadi highpass, menguji hasil rancangan, dan menafsirkan keluarannya pada sinyal dua nada.
 
 ---
@@ -382,7 +382,7 @@ Perkiraan **panjang** lowpass adalah $1+D/d-[11.01217+0.51244(p-s)]d$. Untuk ban
 
 ---
 
-## Metode sampling frekuensi: dari sampel spektrum ke tap
+## Metode sampling frekuensi
 
 Pilih $N$ titik berjarak sama, $\Omega_k=2\pi k/N$, lalu tentukan sampel **kompleks** $H[k]$ yang diinginkan. Jika tap $h[0],\ldots,h[N-1]$ dianggap satu blok, DFT dan inversnya memberi
 
