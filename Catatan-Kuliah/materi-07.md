@@ -2,8 +2,6 @@
 
 ## Tujuan pembelajaran
 
-Pada pertemuan ke-6, kita memakai transformasi Z untuk memperoleh fungsi sistem dari respons impuls. Sekarang kita membalik pertanyaannya: **jika komponen frekuensi yang ingin diloloskan sudah diketahui, bagaimana kita menentukan respons impulsnya?** Jawaban akhirnya berupa sejumlah koefisien yang dapat langsung dipakai untuk menyaring data.
-
 Setelah mengikuti kuliah ini, mahasiswa diharapkan dapat:
 
 - menghitung keluaran filter FIR dan menjelaskan hubungan antara koefisien, fungsi sistem, dan respons frekuensi;
@@ -12,24 +10,9 @@ Setelah mengikuti kuliah ini, mahasiswa diharapkan dapat:
 - menghitung koefisien dengan metode jendela, menjelaskan prinsip desain optimal, dan merancang filter kecil dengan IDFT;
 - mengubah lowpass menjadi highpass, menguji hasil rancangan, dan menafsirkan keluarannya pada sinyal dua nada.
 
-### Alokasi penyampaian: 120 menit
-
-| Menit | Kegiatan | Hasil yang diperiksa di kelas |
-|---|---|---|
-| 0–12 | FIR sebagai penjumlahan sampel tertunda | Hitung satu sampel keluaran |
-| 12–30 | Fase, tunda, dan empat tipe FIR | Tentukan tipe yang boleh meloloskan DC atau Nyquist |
-| 30–42 | Spesifikasi dan tahapan perancangan | Ubah masker bandpass menjadi Hz dan dB |
-| 42–70 | Respons ideal dan metode jendela | Hitung tiga koefisien Hamming dan uji panjangnya |
-| 70–84 | Jendela Kaiser | Tentukan parameter dari spesifikasi dan periksa pita henti |
-| 84–98 | Desain optimal berbobot | Hubungkan bobot dengan tinggi riak |
-| 98–110 | Sampling frekuensi | Hitung koefisien tengah dan ujung melalui IDFT |
-| 110–120 | Transformasi frekuensi dan rangkuman | Prediksi komponen yang lolos dari sinyal dua nada |
-
-Untuk kelas, jalankan sel notebook pada contoh yang sedang dibahas. Kotak **Pendalaman** dan latihan akhir dapat dibaca atau dikerjakan setelah kelas. [Notebook dengan hasil dan grafik](../Notebook/pertemuan-07.ipynb) dan [program pembuat semua gambar](../Kode/pertemuan-07/demo_fir.py) menggunakan contoh numerik yang sama.
-
 ---
 
-## Filter FIR: dari sampel masukan ke keluaran
+## Mengenal Filter FIR
 
 Sebuah sensor dapat merekam getaran lambat yang ingin dipertahankan bersama getaran cepat yang ingin diredam. Filter digital memproses sampel hasil ADC. Koefisiennya dapat diubah tanpa mengganti rangkaian; sebagai gantinya, perancang harus memperhitungkan laju sampel, waktu komputasi, dan ketelitian bilangan.
 
