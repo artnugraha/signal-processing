@@ -23,7 +23,7 @@ Pustaka `scipy` akan digunakan pada beberapa bagian tertentu ketika diperlukan.
 | 4 | 🌊 Representasi Fourier: FS, FT, dan DTFT | [Materi 4](Catatan-Kuliah/pertemuan-04.md) |
 | 5 | ⚡ DFT, FFT, dan Analisis Spektrum Numerik | [Materi 5](Catatan-Kuliah/pertemuan-05.md) |
 | 6 | 🌀 Transformasi Z, Fungsi Sistem, dan Pole-Zero | [Materi 6](Catatan-Kuliah/materi-06.md) |
-| 7 | 🧱 Filter Digital FIR | Menyusul |
+| 7 | 🧱 Filter Digital FIR | [Materi 7](Catatan-Kuliah/materi-07.md) |
 | 8 | 🔄 Filter Digital IIR | Menyusul |
 | 9 | 📊 Analisis Spektral Sinyal Pengukuran dan Sinyal Tidak Stasioner | Menyusul |
 | 10 | 🎵 Sistem Pengolahan Sinyal Audio | Menyusul |
